@@ -4,7 +4,7 @@
 ## Notes:  DKP and raid utility for Guild WoW-Error@Venoxis
 ## Version: 1.13.2.0
 ## DefaultState: enabled
-## SavedVariables: ErrorDKPDB, ErrorDKPDKPList
+## SavedVariables: ErrorDKPDB, ErrorDKPDKPList, ErrorDKPPriceList
 
 
 
@@ -16,9 +16,15 @@ embeds.xml
 
 # core module
 core.lua
-ErrorDKP.lua
+imports\pricelist.lua
+imports\dkplist.lua
+
 init.lua
 
+ErrorDKP.lua
+
+modules\itemtooltip.lua
 modules\dkptable.lua
+modules\pricelisttable.lua
 
 localization\localization.lua

@@ -21,27 +21,14 @@ local function HandleSlashCommands(cmd)
 
     if( #cmd == 0 ) then
         --open list
-        core:PrintDebug("Open List")
         core.ErrorDKP:Toggle()
     elseif( cmd == "config" ) then
-        core:PrintDebug("Open config")
     end
-end
-
-local function LoadDebugToolsFrameStack()
-    LoadAddOn('Blizzard_DebugTools')
-    FrameStackTooltip_Toggle()
 end
 
 --Register slash commands
 local function RegisterSlashCommands()
     core:PrintDebug("Register slash commands")
-
-    -- SLASH_FRAMESTK1 = "/fs" -- For quicker access to frame stack
-    -- SlashCmdList.FRAMESTK = LoadDebugToolsFrameStack
-
-    -- SLASH_RELOADUI1 = "/rl" -- For quicker access to frame stack
-    -- SlashCmdList.RELOADUI = ReloadUI
 
     SLASH_ERRORDKP1 = "/edkp"
     SlashCmdList.ERRORDKP = HandleSlashCommands 
@@ -62,6 +49,18 @@ local function dummyDKPData(d)
     return d
 end
 
+local function importDKPData()
+    local imported = {}
+    local index = 1
+    for k,v in pairs(gdkp["players"]) do
+        core:PrintDebug('imported:', k, v["DKP"])
+        imported[index] = { name = k, dkp = v["DKP"] }
+        index = index + 1
+    end
+
+    return imported
+end
+
 local function OnInit()
     core:PrintDebug("Initialize")
     RegisterSlashCommands()
@@ -69,10 +68,14 @@ local function OnInit()
     core:Print(addonName, core.Version)
     --Load Saved Data
     if not ErrorDKPDB then ErrorDKPDB = {} end
-    if not ErrorDKPDKPList then ErrorDKPDKPList = dummyDKPData({}) end
+    --if not ErrorDKPDKPList then ErrorDKPDKPList = dummyDKPData({}) end
+    ErrorDKPDKPList = importDKPData()
+    --if not ErrorDKPPriceList then ErrorDKPPriceList = core.Imports.ItemPriceList end 
+    ErrorDKPPriceList = core.Imports.ItemPriceList
 
     --Apply to core
     core.DKPTableWorkingEntries = ErrorDKPDKPList
+    core.ItemPriceList = ErrorDKPPriceList
 end
 
 

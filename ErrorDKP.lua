@@ -19,30 +19,35 @@ function ErrorDKP:CreateMain()
     --
     -- Create The Main Windows
     --
-    ErrorDKP.UIMain = CreateFrame("Frame", "ErrorDKPMain", UIParent, "UIPanelDialogTemplate")
-    local uiMain = ErrorDKP.UIMain
+    core.UI.Main = CreateFrame("Frame", "ErrorDKPMain", UIParent, "UIPanelDialogTemplate")
+    local uiMain = core.UI.Main
 
 
-    ErrorDKP.UIMain:SetSize(550, 590);
-    ErrorDKP.UIMain:SetPoint("CENTER", UIParent, "CENTER", 0, 0);
-    ErrorDKP.UIMain:SetMovable(true);
-    ErrorDKP.UIMain:EnableMouse(true);
-    ErrorDKP.UIMain:RegisterForDrag("LeftButton");
-    ErrorDKP.UIMain:SetScript("OnDragStart", ErrorDKP.UIMain.StartMoving);
-    ErrorDKP.UIMain:SetScript("OnDragStop", ErrorDKP.UIMain.StopMovingOrSizing);
+    uiMain:SetSize(1000, 590);
+    uiMain:SetPoint("CENTER", UIParent, "CENTER", 0, 0);
+    uiMain:SetMovable(true);
+    uiMain:EnableMouse(true);
+    uiMain:RegisterForDrag("LeftButton");
+    uiMain:SetScript("OnDragStart", uiMain.StartMoving);
+    uiMain:SetScript("OnDragStop", uiMain.StopMovingOrSizing);
 
     -- Add Title
     uiMain.Title:ClearAllPoints()
     uiMain.Title:SetFontObject("GameFontHighlight")
-    uiMain.Title:SetPoint("LEFT", ErrorDKPMainTitleBG, "LEFT", 5 , 0)
-    uiMain.Title:SetText("WoW Error Venoxis DKP")
+    uiMain.Title:SetPoint("CENTER", ErrorDKPMainTitleBG, "CENTER", 5 , 0)
+    uiMain.Title:SetText("WoW Error - Venoxis DKP")
 
     ---
     -- Append DKP Table
     --
     ErrorDKP:CreateDKPScrollingTable()
 
+    --
+    -- Append Price List Table
+    --
+    ErrorDKP:CreatePriceListTable()
+
     uiMain:Hide()
-    return ErrorDKP.UIMain
+    return uiMain
 
 end

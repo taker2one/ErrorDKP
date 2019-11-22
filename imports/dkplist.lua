@@ -3,8 +3,8 @@ multiTable = {
 ["name"] = "dkp",
 ["disc"] = "Raid DKP",
 ["events"] = " "
-},
-},
+}
+}
 }
 DKPInfo = {
 	["date"] = "20.11.19 13:12:20",

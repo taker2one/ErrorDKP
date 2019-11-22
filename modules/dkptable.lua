@@ -9,7 +9,7 @@ local addonName, core = ...;
 local ErrorDKP = core.ErrorDKP;
 local UI = core.UI;
 
-local ScrollingTable = LibStub("ScrollingTable");
+local ScrollingTable = LibStub("ScrollingTable")
 
 function DKPTable_OnClick(self)   
   local offset = FauxScrollFrame_GetOffset(UI.DKPTable) or 0
@@ -126,6 +126,18 @@ local function CreateRow(parent, id, width, rowHeight)
     return f
 end
 
+function DKPTableUpdate()
+  local DKPTableData = {}
+  local index = 1
+  for k, v in pairs(core.DKPTableWorkingEntries) do
+    DKPTableData[index] = { index,  v.name, v.dkp}
+    index = index + 1
+  end
+  table.sort(DKPTableData, function(a, b) return (a[3] > b[3]); end);
+  UI.DKPTable:ClearSelection()
+  UI.DKPTable:SetData(DKPTableData, true)
+end
+
 function DKPTable_Update()
   if not UI.Main:IsShown() then     -- does not update list if DKP window is closed. Gets done when /dkp is used anyway.
     return;
@@ -217,13 +229,18 @@ function DKPTable_Update()
 end
 
 local tableDef = {
-  { ["name"] = "Name", ["width"] = 80 },
-  { ["name"] = "DKP", ["width"] = 80 }
+  { ["name"] = "", ["width"] = 1 },
+  { ["name"] = "Name", ["width"] = 150 },
+  { ["name"] = "DKP", ["width"] = 80, ["defaultsort"] = "dsc" }
 }
 
 function ErrorDKP:CreateDKPScrollingTable()
-    local scrollFrame = ScrollingTable:CreateST(tableDef, 12, nil, nil, UI.Main)
-    scrollFrame.frame:SetPoint("TOPLEFT", ErrorDKPMainDialogBG, "BOTTOMLEFT", 0, -15);
+    UI.DKPTable = ScrollingTable:CreateST(tableDef, 34, nil, nil, UI.Main)
+    UI.DKPTable.frame:SetPoint("TOPLEFT", ErrorDKPMainDialogBG, "TOPLEFT", 10, -25);
+    UI.DKPTable.frame:SetPoint("BOTTOMLEFT", ErrorDKPMainDialogBG, "BOTTOMLEFT", 0, 10);
+    UI.DKPTable:EnableSelection(true)
+
+    DKPTableUpdate()
 end
 
 function ErrorDKP:CreateDKPTable()
