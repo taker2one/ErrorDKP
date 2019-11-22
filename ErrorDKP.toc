@@ -1,0 +1,24 @@
+## Interface: 11302
+## Title: ErrorDKP
+## Author: Manuel "Doktorwho@Venoxis" Ebner
+## Notes:  DKP and raid utility for Guild WoW-Error@Venoxis
+## Version: 1.13.2.0
+## DefaultState: enabled
+## SavedVariables: ErrorDKPDB, ErrorDKPDKPList
+
+
+
+localization\localization.en.lua
+localization\localization.de.lua
+
+# First load libs
+embeds.xml
+
+# core module
+core.lua
+ErrorDKP.lua
+init.lua
+
+modules\dkptable.lua
+
+localization\localization.lua
