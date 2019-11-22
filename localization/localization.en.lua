@@ -4,6 +4,16 @@ local addonName, core = ...;
             COLICON = "Icon",
             COLNAME = "Name",
             COLPRICE = "Price",
-            COLPRIO = "Priority"
+            COLPRIO = "Priority",
+            TITLE = "Itempricelist"
+        },
+        DKPLISTTABLE = {
+            COLNAME = "Name",
+            COLDKP = "DKP",
+            TITLE = "DKP-List"
+        },
+        DKPPRICE = "DKP Price",
+        MINIMAP = {
+            DESCRLCLICK = "Left CLick - Open Window"
         }
     }

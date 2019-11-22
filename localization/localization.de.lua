@@ -5,7 +5,17 @@ if GetLocale() == "deDE" then
             COLICON = "Icon",
             COLNAME = "Name",
             COLPRICE = "Preis",
-            COLPRIO = "Priorität"
+            COLPRIO = "Priorität",
+            TITLE = "Item-Preisliste"
+        },
+        DKPLISTTABLE = {
+            COLNAME = "Name",
+            COLDKP = "DKP",
+            TITLE = "DKP-Liste"
+        },
+        DKPPRICE = "DKP Preis",
+        MINIMAP = {
+            DESCRLCLICK = "Left CLick - Open Window"
         }
     }
 

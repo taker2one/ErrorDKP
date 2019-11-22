@@ -7,6 +7,7 @@
 --###############################################
 
 local addonName, core = ...
+local ErrorDKP = core.ErrorDKP
 
 
 -------------------------------------------------------------------
@@ -53,7 +54,6 @@ local function importDKPData()
     local imported = {}
     local index = 1
     for k,v in pairs(gdkp["players"]) do
-        core:PrintDebug('imported:', k, v["DKP"])
         imported[index] = { name = k, dkp = v["DKP"] }
         index = index + 1
     end
@@ -68,6 +68,7 @@ local function OnInit()
     core:Print(addonName, core.Version)
     --Load Saved Data
     if not ErrorDKPDB then ErrorDKPDB = {} end
+    if not ErrorDKPConfig then ErrorDKPConfig = {} end
     --if not ErrorDKPDKPList then ErrorDKPDKPList = dummyDKPData({}) end
     ErrorDKPDKPList = importDKPData()
     --if not ErrorDKPPriceList then ErrorDKPPriceList = core.Imports.ItemPriceList end 
@@ -76,6 +77,15 @@ local function OnInit()
     --Apply to core
     core.DKPTableWorkingEntries = ErrorDKPDKPList
     core.ItemPriceList = ErrorDKPPriceList
+    core.Settings = ErrorDKPConfig
+
+    -- Hook ItemPriceToolTipScript
+    ErrorDKP:RegisterItemPriceTooltip()
+    -- Create MiniMapIcon
+    ErrorDKP:CreateMiniMapIcon()
+
+    --test sync
+    --core.Sync:Send("ErrDKPPriceList", core.ItemPriceList)
 end
 
 

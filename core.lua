@@ -43,7 +43,7 @@ core.Settings = {
 core.UI = {}
 
 -- Debug
-core.Debug = true
+core.Debug = false
 function core:PrintDebug(...)
     if core.Debug then
         print("|cff90EE90<ErrorDKP-Dbg>|r", ...)

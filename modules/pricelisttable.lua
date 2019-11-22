@@ -93,10 +93,16 @@ end
 function ErrorDKP:CreatePriceListTable()
     ---------------------------------------------Defin----#cols-height-?-anchorelement
     UI.PriceListTable  = ScrollingTable:CreateST(ItemPriceListTableColDef, 20, 25, nil, UI.Main)
-    UI.PriceListTable.frame:SetPoint("TOPLEFT", ErrorDKPMainDialogBG, "TOPLEFT", 300, -25);
+    UI.PriceListTable.frame:SetPoint("TOPLEFT", ErrorDKPMainDialogBG, "TOPLEFT", 300, -40);
     UI.PriceListTable.frame:SetPoint("BOTTOMLEFT", ErrorDKPMainDialogBG, "BOTTOMLEFT", 0, 10);
     UI.PriceListTable.head:SetHeight(15)
     UI.PriceListTable:EnableSelection(true)
+
+    -- Title
+    local title = UI.PriceListTable.frame:CreateFontString("test123")
+    title:SetFontObject("GameFontNormal")
+    title:SetText(_L["TITLE"])
+    title:SetPoint("TOPLEFT", UI.PriceListTable.frame, "TOPLEFT", 0, 30)
 
     PreparePriceListTableData()
     PriceListTableUpdate()
