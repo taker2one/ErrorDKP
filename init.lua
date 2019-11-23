@@ -83,7 +83,8 @@ local function OnInit()
     ErrorDKP:RegisterItemPriceTooltip()
     -- Create MiniMapIcon
     ErrorDKP:CreateMiniMapIcon()
-
+    ErrorDKP:CreateLootNeedSurveyFrame()
+    core:VersionCheck(11320, "Herbert")
     --test sync
     --core.Sync:Send("ErrDKPPriceList", core.ItemPriceList)
 end

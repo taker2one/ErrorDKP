@@ -10,6 +10,8 @@ local ErrorDKP = core.ErrorDKP
 local UI = core.UI
 local _L = core._L.PRICELISTTABLE
 
+local pendingItemRequests = {}
+
 local ScrollingTable = LibStub("ScrollingTable")
 
 local ItemPriceListTableColDef = {
@@ -49,41 +51,53 @@ local ItemPriceListTableColDef = {
 
 
 local function PriceListTable_OnEvent(self, event, itemId, success)
-    if event == "GET_ITEM_INFO_RECEIVED" then
-        core:PrintDebug("GET_ITEM_INFO_RECEIVED", itemId, success)
-        if core.WorkItemPriceList[itemId] and core.WorkItemPriceList[itemId].requestPending == true then
-            core.WorkItemPriceList[itemId].requestPending = false
-            PriceListTableUpdate()
+    if event == "ITEM_DATA_LOAD_RESULT" then
+        local itemIdString = tostring(itemId)
+        if #pendingItemRequests > 0 then
+            core:PrintDebug(event, #pendingItemRequests, itemId)
+            for i,v in ipairs(pendingItemRequests) do
+                if itemIdString == v.itemId then
+                    core:PrintDebug(event, itemId, success)
+                    if #pendingItemRequests == 1 then
+                        PriceListTableUpdate()
+                    end
+                    table.remove(pendingItemRequests, i)
+                end
+            end
         end
-    end
-end
-
-local function PreparePriceListTableData()
-    if not core.WorkItemPriceList or #core.WorkItemPriceList == 0 then
-        for k,v in pairs(core.ItemPriceList) do
-            core.WorkItemPriceList[k] = { price = v.price, prio = v.prio, itemLink = nil, requestPending = true }
-        end
-
-        UI.PriceListTable.frame:RegisterEvent("GET_ITEM_INFO_RECEIVED")
-        UI.PriceListTable.frame:SetScript("OnEvent", PriceListTable_OnEvent)
-    else
-    
     end
 end
 
 function PriceListTableUpdate()
     local PriceListTableData = {};
     local index = 1
-    for k,v in pairs(core.WorkItemPriceList) do
-        -- TODO: we should get itemdata only once not on every update!
-        local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(k)
-        --core:Print("Does item exist:", C_Item.DoesItemExistByID(k))
-        --link = "|cff9d9d9d|Hitem:"..k..":::::::::::::::|h[Fractured Canine]|h|r"
-        if itemLink then
+    for k,v in pairs(core.ItemPriceList) do
+
+        if C_Item.IsItemDataCachedByID(k) then
+            core:PrintDebug("Already chached")
+            local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(k)
+
+            -- TODO: we should get itemdata only once not on every update!
+            --core:Print("Does item exist:", C_Item.DoesItemExistByID(k))
+            --link = "|cff9d9d9d|Hitem:"..k..":::::::::::::::|h[Fractured Canine]|h|r"
             PriceListTableData[index]= { 
                 k, itemLink, v["price"], v["prio"], itemLink
             }
             index = index + 1
+        else
+            local alreadyIn = false
+            if #pendingItemRequests > 0 then
+                for i,v in ipairs(pendingItemRequests) do
+                    if itemId == v.itemId then
+                        alreadyIn = true
+                    end
+                end
+            end
+            if not alreadyIn then
+                core:PrintDebug("Not in chache do rquest")
+                C_Item.RequestLoadItemDataByID(k)
+                table.insert(pendingItemRequests,{itemId = k})
+            end
         end 
     end
     UI.PriceListTable:ClearSelection()
@@ -104,6 +118,8 @@ function ErrorDKP:CreatePriceListTable()
     title:SetText(_L["TITLE"])
     title:SetPoint("TOPLEFT", UI.PriceListTable.frame, "TOPLEFT", 0, 30)
 
-    PreparePriceListTableData()
+    UI.PriceListTable.frame:RegisterEvent("ITEM_DATA_LOAD_RESULT")
+    UI.PriceListTable.frame:SetScript("OnEvent", PriceListTable_OnEvent)
+
     PriceListTableUpdate()
 end

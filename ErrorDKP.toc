@@ -29,5 +29,6 @@ modules\dkptable.lua
 modules\pricelisttable.lua
 modules\itempricetooltip.lua
 modules\communication.lua
+modules\lootneedsurvey.lua
 
 localization\localization.lua

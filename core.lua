@@ -43,7 +43,7 @@ core.Settings = {
 core.UI = {}
 
 -- Debug
-core.Debug = false
+core.Debug = true
 function core:PrintDebug(...)
     if core.Debug then
         print("|cff90EE90<ErrorDKP-Dbg>|r", ...)
@@ -54,6 +54,22 @@ end
 function core:Print(...)
     print("|cff75DAFF"..core.PrintPrefix.."|r", ...)
 end
+
+-- Version Check
+function core:VersionCheck(sentvers, sender)
+    local vers = GetAddOnMetadata("ErrorDKP", "Version")
+    local one, two, three , four = string.match(vers, "(%d).*(%d).*(%d).*(%d)")
+    core:PrintDebug("VERSION", "VersionCheck called")
+    if one and two and three and four then
+      vers = tonumber(one..two..three..four)
+      core:PrintDebug("VERSION", "VersionCheck version is", vers, ", sent vers was ", sentvers)
+      if vers<sentvers then
+        core:Print("A newer version of ErrorDKP is available.  Visit wow-error.at to download.")
+      elseif vers>sentvers then
+        --SendAddonMessage("flamingloot", "print:"..GetUnitName("player").." has a newer version of flaming loot than you.  Visit curse.com/addons/wow/flaming to update.", "WHISPER", sender)
+      end
+    end
+  end
 
 -- -----------------UI-------------------
 -- local UIConfig = CreateFrame("Frame", "ERRORDKPListFrame", UIParent, "UIPanelDialogTemplate")
