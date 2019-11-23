@@ -37,6 +37,10 @@ function ErrorDKP:CreateLootNeedSurveyFrame()
     IconButton:SetSize(30,30)
     IconButton:SetPoint("TOPLEFT", f, "TOPLEFT", 20, -20)
 
+    local closeButton = CreateFrame("Button", nil, f, "UIPanelCloseButton")
+    --closeButton:SetSize(18,18)
+    closeButton:SetPoint("TOPRIGHT", f, "TOPRIGHT", 0, 0)
+    --closeButton:SetText("Passen")
 
     local button1 = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
     button1:SetSize(109,24)

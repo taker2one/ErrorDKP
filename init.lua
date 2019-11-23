@@ -148,13 +148,13 @@ end
 local event = CreateFrame("Frame", "EventFrame")
 event:RegisterEvent("ADDON_LOADED")
 event:RegisterEvent("PLAYER_ENTERING_WORLD")
-frame:RegisterEvent("BOSS_KILL");
-frame:RegisterEvent("CHAT_MSG_LOOT");
-frame:RegisterEvent("CHAT_MSG_WHISPER");
-frame:RegisterEvent("ENCOUNTER_END");
-frame:RegisterEvent("RAID_INSTANCE_WELCOME");
-frame:RegisterEvent("RAID_ROSTER_UPDATE");
-frame:RegisterEvent("ZONE_CHANGED_NEW_AREA");
-frame:RegisterEvent("ENCOUNTER_END");
+event:RegisterEvent("BOSS_KILL");
+event:RegisterEvent("CHAT_MSG_LOOT");
+event:RegisterEvent("CHAT_MSG_WHISPER");
+event:RegisterEvent("ENCOUNTER_END");
+event:RegisterEvent("RAID_INSTANCE_WELCOME");
+event:RegisterEvent("RAID_ROSTER_UPDATE");
+event:RegisterEvent("ZONE_CHANGED_NEW_AREA");
+event:RegisterEvent("ENCOUNTER_END");
 event:SetScript("OnEvent", ErrorDKP_OnEventHandler)
 

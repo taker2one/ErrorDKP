@@ -8,7 +8,7 @@
 local addonName, core = ...
 local ErrorDKP = core.ErrorDKP
 
-local deformat = LibStub("LibDeformat-3.0");
+local deformat = LibStub("LibDeformat-3.0")
 
 function DecomposeItemLink(link)
     core:PrintDebug("DecomposeItemLink", link)
