@@ -15,5 +15,7 @@ local addonName, core = ...;
         DKPPRICE = "DKP Price",
         MINIMAP = {
             DESCRLCLICK = "Left CLick - Open Window"
-        }
+        },
+        OK = "Ok",
+        CANCEL = "Cancel"
     }

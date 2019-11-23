@@ -16,7 +16,9 @@ if GetLocale() == "deDE" then
         DKPPRICE = "DKP Preis",
         MINIMAP = {
             DESCRLCLICK = "Left CLick - Open Window"
-        }
+        },
+        OK = "Ok",
+        CANCEL = "Abbrechen"
     }
 
 end

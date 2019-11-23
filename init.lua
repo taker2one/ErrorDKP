@@ -41,16 +41,20 @@ end
 --
 -------------------------------------------------------------------
 
-local function dummyDKPData(d)
-    for i=1, 5 do
-     d[i]={}
-     d[i].name = "Tester"..i
-     d[i].dkp = 50+i
+local function GetNewestData(dkpdb, dkpinfo, importinfo)
+    if #dkpdb == 0 or (importinfo["timestamp"] and tonumber(importinfo["timestamp"]) > dkpinfo["timestamp"] ) then
+        dkpdb = importDKPData()
+        dkpinfo["timestamp"] = importinfo["timestamp"]
+
+        return importDKPData(), dkpinfo
     end
-    return d
+
+    return dkpdb                                                                                                                                                                                                                 
 end
 
-local function importDKPData()
+local function GetNewestItemprices()
+
+local function mapImportDKPData()
     local imported = {}
     local index = 1
     for k,v in pairs(gdkp["players"]) do
@@ -61,6 +65,7 @@ local function importDKPData()
     return imported
 end
 
+
 local function OnInit()
     core:PrintDebug("Initialize")
     RegisterSlashCommands()
@@ -70,12 +75,25 @@ local function OnInit()
     if not ErrorDKPDB then ErrorDKPDB = {} end
     if not ErrorDKPConfig then ErrorDKPConfig = {} end
     if not ErrorDKPLootLog then ErrorDKPLootLog = {} end
-    --if not ErrorDKPDKPList then ErrorDKPDKPList = dummyDKPData({}) end
-    ErrorDKPDKPList = importDKPData()
-    --if not ErrorDKPPriceList then ErrorDKPPriceList = core.Imports.ItemPriceList end 
-    ErrorDKPPriceList = core.Imports.ItemPriceList
+    if not ErrorDKPDataInfo then ErrorDKPDKPDataInfo = {} end
+    if not ErrorDKPDKPList then ErrorDKPDKPList = {} end 
+    if not ErrorDKPPriceList then ErrorDKPPriceList = {} end
+
+    -- Check which data is the newest
+    if not ErrorDKPDataInfo.DKPInfo then ErrorDKPDataInfo.DKPInfo = {} end
+    ErrorDKPDKPList, ErrorDKPDataInfo.DkpInfo = GetNewestData(ErrorDKPDKPList, ErrorDKPDataInfo.DkpInfo, DKPInfo) --DKP is global from the jdkp export
+
+    -- Same for itemprices
+    if not ErrorDKPDataInfo.PriceListInfo then ErrorDKPDKPDataInfo.PriceListInfo = {} end
+    if #ErrorDKPPriceList = 0 or ErrorDKPDataInfo.PriceListInfo["timestamp"] < core.Imports.ItemPriceListInfo then
+        ErrorDKPPriceList = core.Imports.ItemPriceList
+        ErrorDKPDataInfo.PriceListInfo["timestamp"] = core.Imports.ItemPriceListInfo["timestamp"]
+        ErrorDKPDataInfo.PriceListInfo["version"] = core.Imports.ItemPriceListInfo["version"]
+    end
 
     --Apply to core
+    core.DKPTable = ErrorDKPDKPList                     -- the dkp table
+    core.DKPDataInfo = ErrorDKPDKPDataInfo              -- contains info about the data like last sync, last full import
     core.DKPTableWorkingEntries = ErrorDKPDKPList
     core.ItemPriceList = ErrorDKPPriceList
     core.Settings = ErrorDKPConfig
@@ -83,12 +101,11 @@ local function OnInit()
 
     -- Hook ItemPriceToolTipScript
     ErrorDKP:RegisterItemPriceTooltip()
+    
     -- Create MiniMapIcon
     ErrorDKP:CreateMiniMapIcon()
     ErrorDKP:CreateLootNeedSurveyFrame()
     core:VersionCheck(11320, "Herbert")
-    --test sync
-    --core.Sync:Send("ErrDKPPriceList", core.ItemPriceList)
 end
 
 

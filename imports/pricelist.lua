@@ -6,6 +6,11 @@
 --###############################################
 local addonName, core = ...
 
+local pricelistInfo {
+    ["version"] = "1.1"
+    ["timestamp"] = "1574534620",
+}
+
 local pricelist = {
     ["16800"]= { price = "50" ,prio = ""},
     ["16829"]= { price = "50" ,prio = ""},
@@ -18,9 +23,6 @@ local pricelist = {
     ["18872"]= { price = "10" ,prio = ""},
     ["19147"]= { price = "80" ,prio = "Caster"},
     ["19145"]= { price = "60" ,prio = "Caster"},
-    
-    
-    
     
     ["18823"]= { price = "40" ,prio = "Dagger Rogue"},
     ["16796"]= { price = "30" ,prio = ""},
@@ -242,3 +244,4 @@ local pricelist = {
 }
 
 core.Imports.ItemPriceList = pricelist
+core.Imports.ItemPriceListInfo = pricelistInfo
