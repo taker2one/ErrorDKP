@@ -127,7 +127,7 @@ local function CreateRow(parent, id, width, rowHeight)
     return f
 end
 
-function DKPTableUpdate()
+function ErrorDKP:DKPTableUpdate()
   local DKPTableData = {}
   local index = 1
   for k, v in pairs(core.DKPTableWorkingEntries) do
@@ -247,7 +247,27 @@ function ErrorDKP:CreateDKPScrollingTable()
     title:SetText(_L["TITLE"])
     title:SetPoint("TOPLEFT", UI.DKPTable.frame, "TOPLEFT", 0, 30)
 
-    DKPTableUpdate()
+
+    local adjustDKPButton = CreateFrame("Button", nil, UI.DKPTable.frame, "UIPanelButtonTemplate")
+    adjustDKPButton:SetSize(109,24)
+    adjustDKPButton:SetPoint("TOPLEFT", UI.DKPTable.frame, "BOTTOMLEFT", 0,0)
+    adjustDKPButton:SetText("Adjust")
+    adjustDKPButton:SetScript("OnClick", function(self, ...)
+      local selection = UI.DKPTable:GetSelection()
+      if selection then
+        core:PrintDebug(UI.DKPTable:GetCell(selection, 2))
+        ErrorDKP:StartAdjustment(UI.DKPTable:GetCell(selection, 2))
+      end
+    end)
+
+    if not core:IsOfficer() then
+      adjustDKPButton:Hide()
+    end
+
+    --MRT_GUI_RaidLogTable:GetCell()
+    --:GetSelection
+
+    ErrorDKP:DKPTableUpdate()
 end
 
 -- function ErrorDKP:CreateDKPTable()

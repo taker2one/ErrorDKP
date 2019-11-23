@@ -41,12 +41,14 @@ end
 --# Send
 --###############################################
 function core.Sync:Send(prefix, data)
-    --core.Sync:SendCommMessage(prefix, data, "GUILD")
+    core:PrintDebug(type(data), data)
     if type(data) == "table" then
         core:PrintDebug("Data is a tabla -> serialize to string")
         local serialized = Serializer:Serialize(data)
         core:PrintDebug("serialized:", serialized)
         core.Sync:SendCommMessage(prefix, serialized, "GUILD")
+    else
+        core.Sync:SendCommMessage(prefix, data, "GUILD")
     end
 
 end
