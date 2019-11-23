@@ -69,6 +69,7 @@ local function OnInit()
     --Load Saved Data
     if not ErrorDKPDB then ErrorDKPDB = {} end
     if not ErrorDKPConfig then ErrorDKPConfig = {} end
+    if not ErrorDKPLootLog then ErrorDKPLootLog = {} end
     --if not ErrorDKPDKPList then ErrorDKPDKPList = dummyDKPData({}) end
     ErrorDKPDKPList = importDKPData()
     --if not ErrorDKPPriceList then ErrorDKPPriceList = core.Imports.ItemPriceList end 
@@ -78,6 +79,7 @@ local function OnInit()
     core.DKPTableWorkingEntries = ErrorDKPDKPList
     core.ItemPriceList = ErrorDKPPriceList
     core.Settings = ErrorDKPConfig
+    core.LootLog = ErrorDKPLootLog
 
     -- Hook ItemPriceToolTipScript
     ErrorDKP:RegisterItemPriceTooltip()
@@ -104,6 +106,24 @@ function ErrorDKP_OnEventHandler(self, event, ...)
         core:PrintDebug(event)
         OnInit()
         self:UnregisterEvent("ADDON_LOADED")
+    elseif event == "CHAT_MSG_LOOT" then
+        --Add loot
+    elseif event == "ENCOUNTER_END" then
+        --currently no use for that, just for reference
+        local encounterID, name, difficulty, size, success = ...
+        core:PrintDebug("ENCOUNTER_END,encounterID="..encounterID..", name="..name..", difficulty="..difficulty..", size="..size..", success="..success)
+    elseif (event == "BOSS_KILL") then
+        local encounterID, name = ...
+        core:PrintDebug("BOSS_KILL", "encounterID="..encounterID..", name="..name)
+        --if (not MRT_Options["General_MasterEnable"]) then return end;
+        --mrt:BossKillHandler(encounterID, name);  
+    elseif (event == "PARTY_LOOT_METHOD_CHANGED") then
+        -- check if mastlooter an enable modules
+    elseif (event == "RAID_ROSTER_UPDATE") then
+        -- track attendance
+        -- members goes offline triggers this?
+        core:PrintDebug("RAID_ROSTER_UPDATE", ...)
+
     end
 end
 
@@ -111,5 +131,13 @@ end
 local event = CreateFrame("Frame", "EventFrame")
 event:RegisterEvent("ADDON_LOADED")
 event:RegisterEvent("PLAYER_ENTERING_WORLD")
+frame:RegisterEvent("BOSS_KILL");
+frame:RegisterEvent("CHAT_MSG_LOOT");
+frame:RegisterEvent("CHAT_MSG_WHISPER");
+frame:RegisterEvent("ENCOUNTER_END");
+frame:RegisterEvent("RAID_INSTANCE_WELCOME");
+frame:RegisterEvent("RAID_ROSTER_UPDATE");
+frame:RegisterEvent("ZONE_CHANGED_NEW_AREA");
+frame:RegisterEvent("ENCOUNTER_END");
 event:SetScript("OnEvent", ErrorDKP_OnEventHandler)
 
