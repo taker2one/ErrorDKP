@@ -24,7 +24,8 @@ end
 --###############################################
 
 function core.Sync:OnEnable()
-    core.Sync:RegisterComm("ErrDKPPriceList") -- Price List Broadcast
+    core.Sync:RegisterComm("ErrDKPPriceList")       -- Price List Broadcast
+    core.Sync:RegisterComm("ErrDKPAdjP")            -- Adjust DKP Points of a player
 end
 
 

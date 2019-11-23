@@ -12,7 +12,11 @@ local _L = core._L
 
 function AdjustDKP(player, dkp)
     --Validate that player exists
-    for k, v in pairs(core.)
+    for k, v in pairs(core.DKPTable) Doktorwho
+        if player == k then
+            found
+        end
+    end
 
 
     core.Sync:Send("ErrDKPPAdj")
