@@ -12,7 +12,8 @@ local ErrorDKP = core.ErrorDKP
 
 
 -- Version
-core.Version = "1.13.2.0"
+core.Version = GetAddOnMetadata("ErrorDKP", "Version")
+core.Build = 1130200
 core.Type = "R" -- R = Release, B = Beta
 
 SetCVar("ScriptErrors", 1)
