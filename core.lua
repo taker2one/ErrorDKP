@@ -29,6 +29,9 @@ core.ItemPriceList = {} -- From saved data
 core.WorkItemPriceList = {} 
 core.ItemInfosLoaded = {}
 
+--
+core.IsOfficer = ""
+
 -- Internal Settings
 core.ISettings = {
     DKPTable = {
@@ -71,6 +74,35 @@ function core:VersionCheck(sentvers, sender)
         --SendAddonMessage("flamingloot", "print:"..GetUnitName("player").." has a newer version of flaming loot than you.  Visit curse.com/addons/wow/flaming to update.", "WHISPER", sender)
       end
     end
+  end
+
+  function core:IsOfficer()      
+    if core.IsOfficer == "" then    
+      if MonDKP:GetGuildRankIndex(UnitName("player")) == 1 then       -- automatically gives permissions above all settings if player is guild leader
+        core.IsOfficer = true
+        MonDKP.ConfigTab3.WhitelistContainer:Show()
+        return;
+      end
+      if IsInGuild() then
+        if #MonDKP_Whitelist > 0 then
+          core.IsOfficer = false;
+          for i=1, #MonDKP_Whitelist do
+            if MonDKP_Whitelist[i] == UnitName("player") then
+              core.IsOfficer = true;
+            end
+          end
+        else
+          local curPlayerRank = MonDKP:GetGuildRankIndex(UnitName("player"))
+          if curPlayerRank then
+            core.IsOfficer = C_GuildInfo.GuildControlGetRankFlags(curPlayerRank)[12]
+          end
+        end
+      else
+        core.IsOfficer = false;
+      end
+    end
+
+    return core.IsOfficer
   end
 
 -- -----------------UI-------------------

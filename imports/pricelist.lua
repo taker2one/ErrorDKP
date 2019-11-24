@@ -6,9 +6,9 @@
 --###############################################
 local addonName, core = ...
 
-local pricelistInfo {
-    ["version"] = "1.1"
-    ["timestamp"] = "1574534620",
+local pricelistInfo = {
+    ["version"] = "1.1",
+    ["timestamp"] = "1574534620"
 }
 
 local pricelist = {

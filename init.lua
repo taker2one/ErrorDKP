@@ -40,20 +40,6 @@ end
 --    Init
 --
 -------------------------------------------------------------------
-
-local function GetNewestData(dkpdb, dkpinfo, importinfo)
-    if #dkpdb == 0 or (importinfo["timestamp"] and tonumber(importinfo["timestamp"]) > dkpinfo["timestamp"] ) then
-        dkpdb = importDKPData()
-        dkpinfo["timestamp"] = importinfo["timestamp"]
-
-        return importDKPData(), dkpinfo
-    end
-
-    return dkpdb                                                                                                                                                                                                                 
-end
-
-local function GetNewestItemprices()
-
 local function mapImportDKPData()
     local imported = {}
     local index = 1
@@ -65,6 +51,16 @@ local function mapImportDKPData()
     return imported
 end
 
+local function GetNewestData(dkpdb, dkpinfo, importinfo)
+    if #dkpdb == 0 or not dkpinfo["timestamp"] or( importinfo["timestamp"] and tonumber(importinfo["timestamp"]) > tonumber(dkpinfo["timestamp"]) ) then
+        dkpdb = mapImportDKPData()
+        dkpinfo["timestamp"] = importinfo["timestamp"]
+
+        return dkpdb, dkpinfo
+    end
+
+    return dkpdb                                                                                                                                                                                                                 
+end
 
 local function OnInit()
     core:PrintDebug("Initialize")
@@ -75,17 +71,17 @@ local function OnInit()
     if not ErrorDKPDB then ErrorDKPDB = {} end
     if not ErrorDKPConfig then ErrorDKPConfig = {} end
     if not ErrorDKPLootLog then ErrorDKPLootLog = {} end
-    if not ErrorDKPDataInfo then ErrorDKPDKPDataInfo = {} end
+    if not ErrorDKPDataInfo then ErrorDKPDataInfo = {} end
     if not ErrorDKPDKPList then ErrorDKPDKPList = {} end 
     if not ErrorDKPPriceList then ErrorDKPPriceList = {} end
 
     -- Check which data is the newest
     if not ErrorDKPDataInfo.DKPInfo then ErrorDKPDataInfo.DKPInfo = {} end
-    ErrorDKPDKPList, ErrorDKPDataInfo.DkpInfo = GetNewestData(ErrorDKPDKPList, ErrorDKPDataInfo.DkpInfo, DKPInfo) --DKP is global from the jdkp export
+    ErrorDKPDKPList, ErrorDKPDataInfo.DkpInfo = GetNewestData(ErrorDKPDKPList, ErrorDKPDataInfo.DKPInfo, DKPInfo) --DKP is global from the jdkp export
 
     -- Same for itemprices
-    if not ErrorDKPDataInfo.PriceListInfo then ErrorDKPDKPDataInfo.PriceListInfo = {} end
-    if #ErrorDKPPriceList = 0 or ErrorDKPDataInfo.PriceListInfo["timestamp"] < core.Imports.ItemPriceListInfo then
+    if not ErrorDKPDataInfo.PriceListInfo then ErrorDKPDataInfo.PriceListInfo = {} end
+    if #ErrorDKPPriceList == 0 or (ErrorDKPDataInfo.PriceListInfo["timestamp"] < core.Imports.ItemPriceListInfo) then
         ErrorDKPPriceList = core.Imports.ItemPriceList
         ErrorDKPDataInfo.PriceListInfo["timestamp"] = core.Imports.ItemPriceListInfo["timestamp"]
         ErrorDKPDataInfo.PriceListInfo["version"] = core.Imports.ItemPriceListInfo["version"]
@@ -104,7 +100,8 @@ local function OnInit()
     
     -- Create MiniMapIcon
     ErrorDKP:CreateMiniMapIcon()
-    ErrorDKP:CreateLootNeedSurveyFrame()
+    --ErrorDKP:CreateLootNeedSurveyFrame()
+    --ErrorDKP:CreateDKPAdjustmentDialog()
     core:VersionCheck(11320, "Herbert")
 end
 
@@ -148,13 +145,12 @@ end
 local event = CreateFrame("Frame", "EventFrame")
 event:RegisterEvent("ADDON_LOADED")
 event:RegisterEvent("PLAYER_ENTERING_WORLD")
-event:RegisterEvent("BOSS_KILL");
-event:RegisterEvent("CHAT_MSG_LOOT");
-event:RegisterEvent("CHAT_MSG_WHISPER");
-event:RegisterEvent("ENCOUNTER_END");
-event:RegisterEvent("RAID_INSTANCE_WELCOME");
-event:RegisterEvent("RAID_ROSTER_UPDATE");
-event:RegisterEvent("ZONE_CHANGED_NEW_AREA");
-event:RegisterEvent("ENCOUNTER_END");
+event:RegisterEvent("BOSS_KILL")
+event:RegisterEvent("CHAT_MSG_LOOT")
+event:RegisterEvent("CHAT_MSG_WHISPER")
+event:RegisterEvent("ENCOUNTER_END")
+event:RegisterEvent("RAID_INSTANCE_WELCOME")
+event:RegisterEvent("RAID_ROSTER_UPDATE")
+event:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+event:RegisterEvent("ENCOUNTER_END")
 event:SetScript("OnEvent", ErrorDKP_OnEventHandler)
-

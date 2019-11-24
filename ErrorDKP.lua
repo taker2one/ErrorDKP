@@ -22,7 +22,7 @@ function ErrorDKP:CreateMain()
     core.UI.Main = CreateFrame("Frame", "ErrorDKPMain", UIParent, "UIPanelDialogTemplate")
     local uiMain = core.UI.Main
 
-
+    uiMain:SetFrameLevel(9)
     uiMain:SetSize(1000, 590);
     uiMain:SetPoint("CENTER", UIParent, "CENTER", 0, 0);
     uiMain:SetMovable(true);
