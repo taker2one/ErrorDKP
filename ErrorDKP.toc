@@ -31,5 +31,6 @@ modules\itempricetooltip.lua
 modules\communication.lua
 modules\lootneedsurvey.lua
 modules\dkpadjustment.lua
+modules\loottrack.lua
 
 localization\localization.lua

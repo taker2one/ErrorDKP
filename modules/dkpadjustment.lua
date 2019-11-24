@@ -91,6 +91,7 @@ function ErrorDKP:CreateDKPAdjustmentDialog()
     UI.DKPAdjustment.DkpInput = input
     input:SetPoint("TOPLEFT", f, "TOPLEFT", 23,-60)
     input:SetSize(225, 25)
+    input:SetMultiLine(false)
     input:SetScript("OnEnterPressed", function()
         UI.DKPAdjustment.OkButton:Click()
     end)
