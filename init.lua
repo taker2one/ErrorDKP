@@ -123,6 +123,7 @@ function ErrorDKP_OnEventHandler(self, event, ...)
         self:UnregisterEvent("ADDON_LOADED")
     elseif event == "CHAT_MSG_LOOT" then
         --Add loot
+        ErrorDKP:AutoAddLoot(...)
     elseif event == "ENCOUNTER_END" then
         --currently no use for that, just for reference
         local encounterID, name, difficulty, size, success = ...

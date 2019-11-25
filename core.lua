@@ -29,6 +29,8 @@ core.ItemPriceList = {} -- From saved data
 core.WorkItemPriceList = {} 
 core.ItemInfosLoaded = {}
 
+core.AskCostQueueRinning = false
+core.AskCostQueue = {}
 --
 core.IsOfficer = ""
 
@@ -42,7 +44,8 @@ core.ISettings = {
 }
 
 core.Settings = {
-
+  ItemTracking_MinItemQualityToLog = 4,
+  ItemTracking_IgnoreEnchantingMats = true
 }
 
 core.UI = {}

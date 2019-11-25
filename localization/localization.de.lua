@@ -18,7 +18,9 @@ if GetLocale() == "deDE" then
             DESCRLCLICK = "Left CLick - Open Window"
         },
         OK = "Ok",
-        CANCEL = "Abbrechen"
+        CANCEL = "Abbrechen",
+        LCD_ENTERCOSTFOR = "DKP-Preis eingeben für",
+        LCD_LOOTETBY = "Geplünter von"
     }
 
 end

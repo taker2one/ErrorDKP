@@ -17,5 +17,7 @@ local addonName, core = ...;
             DESCRLCLICK = "Left CLick - Open Window"
         },
         OK = "Ok",
-        CANCEL = "Cancel"
+        CANCEL = "Cancel",
+        LCD_ENTERCOSTFOR = "Enter DKP cost for",
+        LCD_LOOTETBY = "Geplünter von"
     }
