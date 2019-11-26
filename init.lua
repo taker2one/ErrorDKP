@@ -100,7 +100,7 @@ local function OnInit()
     
     -- Create MiniMapIcon
     ErrorDKP:CreateMiniMapIcon()
-    ErrorDKP:CreateLootConfirmDialog()
+    --ErrorDKP:CreateLootConfirmDialog()
     --ErrorDKP:CreateLootNeedSurveyFrame()
     --ErrorDKP:CreateDKPAdjustmentDialog()
     core:VersionCheck(11320, "Herbert")

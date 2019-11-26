@@ -13,15 +13,231 @@ local _L = core._L
 local deformat = LibStub("LibDeformat-3.0")
 local ScrollingTable = LibStub("ScrollingTable")
 
-function DecomposeItemLink(link)
+local function DecomposeItemLink(link)
     core:PrintDebug("DecomposeItemLink", link)
     local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice, itemClassID, itemSubClassID = GetItemInfo(link);
-    if (not itemLink) then return nil; end
+    if (not itemLink) then 
+        core:Debug('DecomposeItemLink: No itemLink')
+        return nil; 
+    end
     local _, itemString, _ = deformat(itemLink, "|c%s|H%s|h%s|h|r");
     local itemId, _ = deformat(itemString, "item:%d:%s");
     local itemColor = MRT_ItemColors[itemRarity + 1];
+    core:PrintDebug("Demposed: ", itemRarity)
     return itemName, itemLink, itemId, itemString, itemRarity, itemColor, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice, itemClassID, itemSubClassID;
 end
+
+---------------------------
+--  loot cost functions  --
+---------------------------
+-- basic idea: add looted items to a little queue and ask cost for each item in the queue 
+--             this should avoid missing dialogs for fast looted items
+-- note: standard dkpvalue is already 0
+local function ErrorDKP_LCD_AddToItemCostQueue(LootInfo)
+    tinsert(core.AskCostQueue, LootInfo);
+    if (core.AskCostQueueRunning) then return; end
+    core.AskCostQueueRunning = true;
+    ErrorDKP_LCD_AskCost();
+end
+
+local function ErrorDKPAutoAddLootItem(playerName, itemLink, itemCount)
+	if (not playerName) then return; end
+	if (not itemLink) then return; end
+	if (not itemCount) then return; end
+    core:PrintDebug("ErrorDKPAutoAddLootItem called - playerName: "..playerName.." - itemLink: "..itemLink.." - itemCount: "..itemCount);
+    local itemName, _, itemId, itemString, itemRarity, itemColor, itemLevel, _, itemType, itemSubType, _, _, _, _, itemClassID, itemSubClassID = DecomposeItemLink(itemLink);
+    if (not itemName == nil) then core:PrintDebug("Panic! Item information lookup failed horribly. Source: ErrorDKPAutoAddLootItem()"); return; end
+    -- check options, if this item should be tracked
+    if (core.ISettings.ItemTracking_MinItemQualityToLog > itemRarity) then core:PrintDebug("Item not tracked - quality is too low."); return; end
+    if (core.ISettings["ItemTracking_IgnoreEnchantingMats"] and itemClassID == 7 and itemSubClassID == 12) then core:PrintDebug("Item not tracked - it is a enchanting material and the corresponding ignore option is on."); return; end
+    --if (MRT_IgnoredItemIDList[itemId]) then core:PrintDebug("Item not tracked - ItemID is listed on the ignore list"); return; end
+    
+    local dkpValue = 0;
+    local lootAction = nil;
+    local itemNote = nil;
+    local supressCostDialog = nil;
+    local gp1, gp2 = nil, nil;
+  
+    -- TODO: DKP Price from Pricelist3
+
+    -- Quick&Dirty for trash drops before first boss kill
+    if (MRT_NumOfLastBoss == nil) then 
+        MRT_AddBosskill(MRT_L.Core["Trash Mob"], "N");
+    end
+    -- if code reach this point, we should have valid item information, an active raid and at least one boss kill entry - make a table!
+    local LootInfo = {
+        ["ItemLink"] = itemLink,
+        ["ItemString"] = itemString,
+        ["ItemId"] = itemId,
+        ["ItemName"] = itemName,
+        ["ItemColor"] = itemColor,
+        ["ItemCount"] = itemCount,
+        ["Looter"] = playerName,
+        ["DKPValue"] = dkpValue,
+        ["BossNumber"] = MRT_NumOfLastBoss,
+        ["Time"] = MRT_GetCurrentTime(),
+        ["Note"] = itemNote,
+    };
+    --tinsert(MRT_RaidLog[MRT_NumOfCurrentRaid]["Loot"], LootInfo);
+    -- get current loot mode
+    -- local isPersonal = select(1, GetLootMethod()) == "personalloot"
+    -- -- check if we should ask the player for item cost
+    -- if (supressCostDialog or (not MRT_Options["Tracking_AskForDKPValue"]) or (isPersonal and not MRT_Options["Tracking_AskForDKPValuePersonal"])) then 
+    --     -- notify registered, external functions
+    --     local itemNum = #MRT_RaidLog[MRT_NumOfCurrentRaid]["Loot"];
+    --     if (#MRT_ExternalLootNotifier > 0) then
+    --         local itemInfo = {};
+    --         for key, val in pairs(MRT_RaidLog[MRT_NumOfCurrentRaid]["Loot"][itemNum]) do
+    --             itemInfo[key] = val;
+    --         end
+    --         if (itemInfo.Looter == "bank") then
+    --             itemInfo.Action = MRT_LOOTACTION_BANK;
+    --         elseif (itemInfo.Looter == "disenchanted") then
+    --             itemInfo.Action = MRT_LOOTACTION_DISENCHANT;
+    --         elseif (itemInfo.Looter == "_deleted_") then
+    --             itemInfo.Action = MRT_LOOTACTION_DELETE;
+    --         else
+    --             itemInfo.Action = MRT_LOOTACTION_NORMAL;
+    --         end
+    --         for i, val in ipairs(MRT_ExternalLootNotifier) do
+    --             pcall(val, itemInfo, MRT_NOTIFYSOURCE_ADD_SILENT, MRT_NumOfCurrentRaid, itemNum);
+    --         end
+    --     end
+    --     return; 
+    -- end
+    -- if (MRT_Options["Tracking_MinItemQualityToGetDKPValue"] > MRT_ItemColorValues[itemColor]) then return; end
+    -- ask the player for item cost
+    ErrorDKP_LCD_AddToItemCostQueue(LootInfo);
+end
+
+-- process first queue entry
+function ErrorDKP_LCD_AskCost()
+    -- if there are no entries in the queue, then return
+    if (#core.AskCostQueue == 0) then
+        core.AskCostQueueRunning = nil;
+        return; 
+    end
+
+    local LootInfo = core.AskCostQueue[1]
+
+    -- Make Sure LootConfirmDialog exists
+    ErrorDKP:GetLootConfirmDialog()
+
+    -- else format text and show "Enter Cost" frame
+    -- local raidNum = core.AskCostQueue[1]["RaidNum"];
+    -- local itemNum = core.AskCostQueue[1]["ItemNum"];
+    -- local itemLink = core.AskCostQueue[1]["ItemLink"]
+    -- gather playerdata and fill drop down menu
+    local playerData = {};
+    local numRaidMembers = GetNumGroupMembers()
+    for i=1, numRaidMembers do
+        name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(i)
+        playerData[i] = name
+    end
+    
+
+    -- for i, val in ipairs(MRT_RaidLog[raidNum]["Bosskills"][MRT_NumOfLastBoss]["Players"]) do
+    --     playerData[i] = { val };
+    -- end
+
+    table.sort(playerData, function(a, b) return (a[1] < b[1]); end )
+
+    local ddt = core.UI.LCDDropDownTable or ErrorDKP:CreateDropDownTable()
+    ddt:SetData(playerData, true);
+    if (#playerData < 8) then
+        ddt:SetDisplayRows(#playerData, 15);
+    else
+        ddt:SetDisplayRows(8, 15);
+    end
+    ddt.frame:Hide();
+
+    -- set up rest of the frame
+    local lcd = core.UI.LootConfirmDialog or ErrorDKP:CreateLootConfirmDialog()
+    lcd.Textline1:SetText(_L["LCD_ENTERCOSTFOR"])
+    lcd.Textline2:SetText(LootInfo["ItemLink"])
+    lcd.Textline3:SetText(string.format(_L["LCD_LOOTETBY"], LootInfo["Looter"]))
+    UI.LootConfirmDialog.ttarea:SetWidth(lcd.Textline2:GetWidth())
+    if (LootInfo["DKPValue"] == 0) then
+        UI.LootConfirmDialog.PriceInput:SetText("");
+    else
+        UI.LootConfirmDialog.PriceInput:SetText(tostring(LootInfo["DKPValue"]));
+    end
+    if (LootInfo["Note"]) then
+        UI.LootConfirmDialog.NoteInput:SetText(LootInfo["Note"]);
+    else
+        UI.LootConfirmDialog.NoteInput:SetText("");
+    end
+    UI.LootConfirmDialog.Looter = LootInfo["Looter"];
+    -- set autoFocus of EditBoxes
+    --if (MRT_Options["Tracking_AskCostAutoFocus"] == 3 or (MRT_Options["Tracking_AskCostAutoFocus"] == 2 and UnitAffectingCombat("player")) ) then
+        --MRT_GetDKPValueFrame_EB:SetAutoFocus(false);
+    --else
+        UI.LootConfirmDialog.NoteInput:SetAutoFocus(true);
+    --end
+    -- show DKPValue Frame
+    ErrorDKP:GetLootConfirmDialog():Show();  
+end
+
+function ErrorDKP:AddToLootHistory(item, looter, dkp)
+
+end
+
+function ErrorDKP_LCD_Handler(button)
+    core:PrintDebug("DKPFrame: "..button.." pressed.");
+    -- if OK was pressed, check input data
+    local dkpValue = nil;
+    local lootNote = UI.LootConfirmDialog.NoteText:GetText();
+
+    if (button == "OK") then
+        if (UI.LootConfirmDialog.PriceInput:GetText() == "") then
+            dkpValue = 0;
+        else
+            dkpValue = tonumber(UI.LootConfirmDialog.PriceInput:GetText(), 10);
+        end
+        if (dkpValue == nil) then return; end
+    end
+    if (lootNote == "" or lootNote == " ") then
+        lootNote = nil;
+    end
+
+    -- hide frame
+    UI.LootConfirmDialog:Hide();
+
+    -- local raidNum = MRT_AskCostQueue[1]["RaidNum"];
+    -- local itemNum = MRT_AskCostQueue[1]["ItemNum"];
+    local looter = UI.LootConfirmDialog.Textline1:GetText();
+    local item = UI.LootConfirmDialog.Textline2:GetText();
+    if (button == "OK") then
+        --Add to loot
+        ErrorDKP:AddToLootHistory(item, looter, dkpValue)
+    elseif (button == "Cancel") then
+    elseif (button == "Delete") then
+
+    elseif (button == "Bank") then
+        ErrorDKP:AddToLootHistory(item, "Errorbank", dkpValue)
+    elseif (button == "Disenchanted") then
+        ErrorDKP:AddToLootHistory(item, "disenchanted", 0)
+    end
+  
+    -- done with handling item - proceed to next one
+    table.remove(core.AskCostQueue, 1);
+    if (#core.AskCostQueue == 0) then
+        core.AskCostQueueRunning = nil;
+    else
+        ErrorDKP_LCD_AskCost();
+    end    
+end
+
+function ErrorDKP_LCD_DropDownList_Toggle()
+    local ddt = core.UI.LCDDropDownTable or ErrorDKP:CreateDropDownTable()
+    if (ddt.frame:IsShown()) then
+        ddt.frame:Hide();
+    else
+        ddt.frame:Show();
+        ddt.frame:SetPoint("TOPRIGHT", UI.LootConfirmDialog.DdButton, "BOTTOMRIGHT", 0, 0);
+    end
+end
+
 
 function ErrorDKP:AutoAddLoot(chatmsg)
     core:PrintDebug("Adding Loot")
@@ -53,244 +269,7 @@ function ErrorDKP:AutoAddLoot(chatmsg)
 	ErrorDKPAutoAddLootItem(playerName, itemLink, itemCount);
 end	
 
-local function ErrorDKPAutoAddLootItem(playerName, itemLink, itemCount)
-	if (not playerName) then return; end
-	if (not itemLink) then return; end
-	if (not itemCount) then return; end
-	core:PrintDebug("ErrorDKPAutoAddLootItem called - playerName: "..playerName.." - itemLink: "..itemLink.." - itemCount: "..itemCount);
-    -- example itemLink: |cff9d9d9d|Hitem:7073:0:0:0:0:0:0:0|h[Broken Fang]|h|r (outdated!)
-    local itemName, _, itemId, itemString, itemRarity, itemColor, itemLevel, _, itemType, itemSubType, _, _, _, _, itemClassID, itemSubClassID = MRT_GetDetailedItemInformation(itemLink);
-    if (not itemName == nil) then core:PrintDebug("Panic! Item information lookup failed horribly. Source: ErrorDKPAutoAddLootItem()"); return; end
-    -- check options, if this item should be tracked
-    if (core.Settings["ItemTracking_MinItemQualityToLog"] > itemRarity) then core:PrintDebug("Item not tracked - quality is too low."); return; end
-    --if (MRT_Options["Tracking_OnlyTrackItemsAboveILvl"] > itemLevel) then core:PrintDebug("Item not tracked - iLvl is too low."); return; end
-    -- itemClassID 3 = "Gem", itemSubClassID 11 = "Artifact Relic"; itemClassID 7 = "Tradeskill", itemSubClassID 4 = "Jewelcrafting", 12 = Enchanting
-    --if (MRT_Options["ItemTracking_IgnoreGems"] and itemClassID == 3 and itemSubClassID ~= 11) then core:PrintDebug("Item not tracked - it is a gem and the corresponding ignore option is on."); return; end
-    --if (MRT_Options["ItemTracking_IgnoreGems"] and itemClassID == 7 and itemSubClassID == 4) then core:PrintDebug("Item not tracked - it is a gem and the corresponding ignore option is on."); return; end
-    if (Settings["ItemTracking_IgnoreEnchantingMats"] and itemClassID == 7 and itemSubClassID == 12) then core:PrintDebug("Item not tracked - it is a enchanting material and the corresponding ignore option is on."); return; end
-    --if (MRT_IgnoredItemIDList[itemId]) then core:PrintDebug("Item not tracked - ItemID is listed on the ignore list"); return; end
-    
-    local dkpValue = 0;
-    local lootAction = nil;
-    local itemNote = nil;
-    local supressCostDialog = nil;
-    local gp1, gp2 = nil, nil;
-  
-    -- TODO: DKP Price from Pricelist3
-
-    -- Quick&Dirty for trash drops before first boss kill
-    if (MRT_NumOfLastBoss == nil) then 
-        MRT_AddBosskill(MRT_L.Core["Trash Mob"], "N");
-    end
-    -- if code reach this point, we should have valid item information, an active raid and at least one boss kill entry - make a table!
-    local MRT_LootInfo = {
-        ["ItemLink"] = itemLink,
-        ["ItemString"] = itemString,
-        ["ItemId"] = itemId,
-        ["ItemName"] = itemName,
-        ["ItemColor"] = itemColor,
-        ["ItemCount"] = itemCount,
-        ["Looter"] = playerName,
-        ["DKPValue"] = dkpValue,
-        ["BossNumber"] = MRT_NumOfLastBoss,
-        ["Time"] = MRT_GetCurrentTime(),
-        ["Note"] = itemNote,
-    };
-    tinsert(MRT_RaidLog[MRT_NumOfCurrentRaid]["Loot"], MRT_LootInfo);
-    -- get current loot mode
-    local isPersonal = select(1, GetLootMethod()) == "personalloot"
-    -- check if we should ask the player for item cost
-    if (supressCostDialog or (not MRT_Options["Tracking_AskForDKPValue"]) or (isPersonal and not MRT_Options["Tracking_AskForDKPValuePersonal"])) then 
-        -- notify registered, external functions
-        local itemNum = #MRT_RaidLog[MRT_NumOfCurrentRaid]["Loot"];
-        if (#MRT_ExternalLootNotifier > 0) then
-            local itemInfo = {};
-            for key, val in pairs(MRT_RaidLog[MRT_NumOfCurrentRaid]["Loot"][itemNum]) do
-                itemInfo[key] = val;
-            end
-            if (itemInfo.Looter == "bank") then
-                itemInfo.Action = MRT_LOOTACTION_BANK;
-            elseif (itemInfo.Looter == "disenchanted") then
-                itemInfo.Action = MRT_LOOTACTION_DISENCHANT;
-            elseif (itemInfo.Looter == "_deleted_") then
-                itemInfo.Action = MRT_LOOTACTION_DELETE;
-            else
-                itemInfo.Action = MRT_LOOTACTION_NORMAL;
-            end
-            for i, val in ipairs(MRT_ExternalLootNotifier) do
-                pcall(val, itemInfo, MRT_NOTIFYSOURCE_ADD_SILENT, MRT_NumOfCurrentRaid, itemNum);
-            end
-        end
-        return; 
-    end
-    if (MRT_Options["Tracking_MinItemQualityToGetDKPValue"] > MRT_ItemColorValues[itemColor]) then return; end
-    -- ask the player for item cost
-    ErrorDKP_LCD_AddToItemCostQueue(MRT_NumOfCurrentRaid, #MRT_RaidLog[MRT_NumOfCurrentRaid]["Loot"]);
-end
-
----------------------------
---  loot cost functions  --
----------------------------
--- basic idea: add looted items to a little queue and ask cost for each item in the queue 
---             this should avoid missing dialogs for fast looted items
--- note: standard dkpvalue is already 0
-local function ErrorDKP_LCD_AddToItemCostQueue(raidnum, itemnum)
-    local queueItem = {
-        ["RaidNum"] = raidnum,
-        ["ItemNum"] = itemnum,
-    }
-    tinsert(core.AskCostQueue, queueItem);
-    if (core.AskCostQueueRunning) then return; end
-    core.AskCostQueueRunning = true;
-    ErrorDKP_LCD_AskCost();
-end
-
--- process first queue entry
-function ErrorDKP_LCD_AskCost()
-    -- if there are no entries in the queue, then return
-    if (#core.AskCostQueue == 0) then
-        core.AskCostQueueRunning = nil;
-        return; 
-    end
-    -- else format text and show "Enter Cost" frame
-    local raidNum = core.AskCostQueue[1]["RaidNum"];
-    local itemNum = core.AskCostQueue[1]["ItemNum"];
-    -- gather playerdata and fill drop down menu
-    local playerData = {};
-    local numRaidMembers = GetNumGroupMembers()
-    for i=1, numRaidMembers do
-        name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(i)
-        playerData[i] = name
-    end
-    
-
-    -- for i, val in ipairs(MRT_RaidLog[raidNum]["Bosskills"][MRT_NumOfLastBoss]["Players"]) do
-    --     playerData[i] = { val };
-    -- end
-
-    table.sort(playerData, function(a, b) return (a[1] < b[1]); end )
-
-    local ddt = core.UI.LCDDropDownTable or ErrorDKP:CreateDropDownTable()
-    ddt:SetData(playerData, true);
-    if (#playerData < 8) then
-        ddt:SetDisplayRows(#playerData, 15);
-    else
-        ddt:SetDisplayRows(8, 15);
-    end
-    ddt.frame:Hide();
-
-    -- set up rest of the frame
-    local lcd = core.UI.LootConfirmDialog or ErrorDKP:CreateLootConfirmDialog()
-    lcd.Textline1:SetText(_L["LCD_ENTERCOSTFOR"])
-    lcd.Textline2:SetText(MRT_RaidLog[raidNum]["Loot"][itemNum]["ItemLink"])
-    lcd.Textline3:SetText(string.format(_L["LCD_LOOTETBY"], MRT_RaidLog[raidNum]["Loot"][itemNum]["Looter"]))
-    UI.LootConfirmDialog.ttarea:SetWidth(lcd.Textline2:GetWidth())
-    if (MRT_RaidLog[raidNum]["Loot"][itemNum]["DKPValue"] == 0) then
-        MRT_GetDKPValueFrame_EB:SetText("");
-    else
-        MRT_GetDKPValueFrame_EB:SetText(tostring(MRT_RaidLog[raidNum]["Loot"][itemNum]["DKPValue"]));
-    end
-    if (MRT_RaidLog[raidNum]["Loot"][itemNum]["Note"]) then
-        MRT_GetDKPValueFrame_EB2:SetText(MRT_RaidLog[raidNum]["Loot"][itemNum]["Note"]);
-    else
-        MRT_GetDKPValueFrame_EB2:SetText("");
-    end
-    MRT_GetDKPValueFrame.Looter = MRT_RaidLog[raidNum]["Loot"][itemNum]["Looter"];
-    -- set autoFocus of EditBoxes
-    if (MRT_Options["Tracking_AskCostAutoFocus"] == 3 or (MRT_Options["Tracking_AskCostAutoFocus"] == 2 and UnitAffectingCombat("player")) ) then
-        MRT_GetDKPValueFrame_EB:SetAutoFocus(false);
-    else
-        MRT_GetDKPValueFrame_EB:SetAutoFocus(true);
-    end
-    -- show DKPValue Frame
-    MRT_GetDKPValueFrame:Show();  
-end
-
-function MRT_DKPFrame_Handler(button)
-    core:PrintDebug("DKPFrame: "..button.." pressed.");
-    -- if OK was pressed, check input data
-    local dkpValue = nil;
-    local lootNote = MRT_GetDKPValueFrame_EB2:GetText();
-    if (button == "OK") then
-        if (MRT_GetDKPValueFrame_EB:GetText() == "") then
-            dkpValue = 0;
-        else
-            dkpValue = tonumber(MRT_GetDKPValueFrame_EB:GetText(), 10);
-        end
-        if (dkpValue == nil) then return; end
-    end
-    if (lootNote == "" or lootNote == " ") then
-        lootNote = nil;
-    end
-    -- hide frame
-    MRT_GetDKPValueFrame:Hide();
-    -- this line is solely for debug purposes 
-    -- if (button == "Cancel") then return; end
-    -- process item
-    local raidNum = MRT_AskCostQueue[1]["RaidNum"];
-    local itemNum = MRT_AskCostQueue[1]["ItemNum"];
-    local looter = MRT_GetDKPValueFrame.Looter;
-    if (button == "OK") then
-        MRT_RaidLog[raidNum]["Loot"][itemNum]["Looter"] = looter;
-        MRT_RaidLog[raidNum]["Loot"][itemNum]["DKPValue"] = dkpValue;
-        MRT_RaidLog[raidNum]["Loot"][itemNum]["Note"] = lootNote;
-    elseif (button == "Cancel") then
-    elseif (button == "Delete") then
-        MRT_RaidLog[raidNum]["Loot"][itemNum]["Looter"] = "_deleted_";
-        MRT_RaidLog[raidNum]["Loot"][itemNum]["DKPValue"] = 0;
-    elseif (button == "Bank") then
-        MRT_RaidLog[raidNum]["Loot"][itemNum]["Looter"] = "bank";
-        MRT_RaidLog[raidNum]["Loot"][itemNum]["Note"] = lootNote;
-        MRT_RaidLog[raidNum]["Loot"][itemNum]["DKPValue"] = 0;
-    elseif (button == "Disenchanted") then
-        MRT_RaidLog[raidNum]["Loot"][itemNum]["Looter"] = "disenchanted";
-        MRT_RaidLog[raidNum]["Loot"][itemNum]["Note"] = lootNote;
-        MRT_RaidLog[raidNum]["Loot"][itemNum]["DKPValue"] = 0;
-    end
-    -- notify registered, external functions
-    if (#MRT_ExternalLootNotifier > 0) then
-        local itemInfo = {};
-        for key, val in pairs(MRT_RaidLog[raidNum]["Loot"][itemNum]) do
-            itemInfo[key] = val;
-        end
-        if (itemInfo.Looter == "bank") then
-            itemInfo.Action = MRT_LOOTACTION_BANK;
-        elseif (itemInfo.Looter == "disenchanted") then
-            itemInfo.Action = MRT_LOOTACTION_DISENCHANT;
-        elseif (itemInfo.Looter == "_deleted_") then
-            itemInfo.Action = MRT_LOOTACTION_DELETE;
-        else
-            itemInfo.Action = MRT_LOOTACTION_NORMAL;
-        end
-        for i, val in ipairs(MRT_ExternalLootNotifier) do
-            pcall(val, itemInfo, MRT_NOTIFYSOURCE_ADD_POPUP, raidNum, itemNum);
-        end
-    end
-    -- done with handling item - proceed to next one
-    table.remove(MRT_AskCostQueue, 1);
-    if (#MRT_AskCostQueue == 0) then
-        MRT_AskCostQueueRunning = nil;
-        -- queue finished, delete itemes which were marked as deleted - FIXME!
-    else
-        MRT_DKPFrame_AskCost();
-    end    
-end
-
-function ErrorDKP_LCD_DropDownList_Toggle()
-    local ddt = core.UI.LCDDropDownTable or ErrorDKP:CreateDropDownTable()
-    if (ddt.frame:IsShown()) then
-        ddt.frame:Hide();
-    else
-        ddt.frame:Show();
-        ddt.frame:SetPoint("TOPRIGHT", UI.LootConfirmDialog.DdButton, "BOTTOMRIGHT", 0, 0);
-    end
-end
-
-local function ErrorDKP_LCD_Handler()
-
-end
-
-function ErrorDKP:CreateLootConfirmDialog()
+local function CreateLootConfirmDialog()
     core.UI.LootConfirmDialog = CreateFrame("Frame", "ErrorDKP_LootConfirmDialog", UIParent)
     local f = core.UI.LootConfirmDialog;
     f:SetSize(365,285)
@@ -464,7 +443,7 @@ function ErrorDKP:CreateLootConfirmDialog()
         core:PrintDebug("ttarea onleave")
     end)
 
-
+    return f
 end
 
 -- Table definition for the drop down menu for the DKPFrame
@@ -495,4 +474,8 @@ function ErrorDKP:CreateDropDownTable()
     MRT_DKPFrame_DropDownTable.head:SetHeight(1);
 
     return ddt
+end
+
+function ErrorDKP:GetLootConfirmDialog()
+    return core.UI.LootConfirmDialog or CreateLootConfirmDialog()
 end
