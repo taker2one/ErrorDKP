@@ -7,8 +7,8 @@
 local addonName, core = ...
 
 local pricelistInfo = {
-    ["version"] = "1.1",
-    ["timestamp"] = "1574534620"
+    ["version"] = "1.2",
+    ["timestamp"] = "1574779920 "
 }
 
 local pricelist = {
@@ -50,7 +50,7 @@ local pricelist = {
     
     
     
-    ["17077"]= { price = "20" ,prio = ""},
+    ["17077"]= { price = "10" ,prio = ""},
     ["16839"]= { price = "50" ,prio = ""},
     ["18861"]= { price = "40" ,prio = "Tank"},
     ["16849"]= { price = "50" ,prio = ""},
@@ -62,7 +62,7 @@ local pricelist = {
     ["19145"]= { price = "40" ,prio = "Caster"},
     ["16862"]= { price = "50" ,prio = ""},
     ["18875"]= { price = "40" ,prio = "Dudu & Schami Heal"},
-    ["18878"]= { price = "40" ,prio = "Caster (übergangswaffe)"},
+    ["18878"]= { price = "30" ,prio = "Caster (übergangswaffe)"},
     ["19146"]= { price = "40" ,prio = "Warri & Schami DPS"},
     
     
@@ -97,13 +97,12 @@ local pricelist = {
     ["16801"]= { price = "50" ,prio = ""},
     ["16811"]= { price = "50" ,prio = ""},
     ["16831"]= { price = "50" ,prio = ""},
-    ["17077"]= { price = "20" ,prio = ""},
+    ["17077"]= { price = "10" ,prio = ""},
     ["16803"]= { price = "50" ,prio = ""},
     ["16852"]= { price = "50" ,prio = ""},
     ["16824"]= { price = "50" ,prio = ""},
     ["19147"]= { price = "80" ,prio = "Caster"},
     ["19145"]= { price = "60" ,prio = "Caster"},
-    ["18878"]= { price = "40" ,prio = "Caster (Übergangswaffe)"},
     ["18872"]= { price = "20" ,prio = ""},
     
     
@@ -152,7 +151,7 @@ local pricelist = {
     
     
     
-    ["17077"]= { price = "20" ,prio = ""},
+    ["17077"]= { price = "10" ,prio = ""},
     ["18861"]= { price = "40" ,prio = "Tank"},
     ["16848"]= { price = "50" ,prio = ""},
     ["18879"]= { price = "10" ,prio = "Tank"},
