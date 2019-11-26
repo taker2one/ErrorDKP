@@ -8,7 +8,7 @@ local addonName, core = ...
 
 local pricelistInfo = {
     ["version"] = "1.2",
-    ["timestamp"] = "1574779920 "
+    ["timestamp"] = "1574779921"
 }
 
 local pricelist = {
@@ -162,7 +162,6 @@ local pricelist = {
     ["19147"]= { price = "80" ,prio = "Caster"},
     ["18875"]= { price = "40" ,prio = "Dudu & Schami Heal"},
     ["17074"]= { price = "20" ,prio = ""},
-    ["18878"]= { price = "40" ,prio = "Caster (Übergangswaffe)"},
     ["19146"]= { price = "40" ,prio = "Warri & Schami DPS"},
     
     
