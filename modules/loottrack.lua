@@ -34,7 +34,7 @@ end
 --             this should avoid missing dialogs for fast looted items
 -- note: standard dkpvalue is already 0
 local function ErrorDKP_LCD_AddToItemCostQueue(LootInfo)
-    tinsert(core.AskCostQueue, LootInfo);
+    tinsert(core.LootQueue, LootInfo);
     if (core.AskCostQueueRunning) then return; end
     core.AskCostQueueRunning = true;
     ErrorDKP_LCD_AskCost();
@@ -113,12 +113,12 @@ end
 -- process first queue entry
 function ErrorDKP_LCD_AskCost()
     -- if there are no entries in the queue, then return
-    if (#core.AskCostQueue == 0) then
+    if (#core.LootQueue == 0) then
         core.AskCostQueueRunning = nil;
         return; 
     end
 
-    local LootInfo = core.AskCostQueue[1]
+    local LootInfo = core.LootQueue[1]
 
     -- Make Sure LootConfirmDialog exists
     ErrorDKP:GetLootConfirmDialog()
@@ -130,11 +130,16 @@ function ErrorDKP_LCD_AskCost()
     -- gather playerdata and fill drop down menu
     local playerData = {};
     local numRaidMembers = GetNumGroupMembers()
+    
     for i=1, numRaidMembers do
         name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(i)
         playerData[i] = name
     end
-    
+    if numRaidMembers==0  then 
+        core:PrintDebug("Add to dd list:", LootInfo.Looter)
+        playerData[1] = { LootInfo.Looter }
+        playerData[2] = { "DaEbner" }
+    end
 
     -- for i, val in ipairs(MRT_RaidLog[raidNum]["Bosskills"][MRT_NumOfLastBoss]["Players"]) do
     --     playerData[i] = { val };
@@ -178,13 +183,14 @@ function ErrorDKP_LCD_AskCost()
     ErrorDKP:GetLootConfirmDialog():Show();  
 end
 
-function ErrorDKP:AddToLootHistory(item, looter, dkp)
-
+function ErrorDKP:AddToLootHistory(itemLink, itemId, looter, dkp)
+    ErrorDKP:AddItemToHistory(itemLink, itemId, looter, dkp, time())
 end
 
 function ErrorDKP_LCD_Handler(button)
     core:PrintDebug("DKPFrame: "..button.." pressed.");
     -- if OK was pressed, check input data
+    local LootInfo = core.LootQueue[1]
     local dkpValue = nil;
     local lootNote = UI.LootConfirmDialog.NoteText:GetText();
 
@@ -205,23 +211,24 @@ function ErrorDKP_LCD_Handler(button)
 
     -- local raidNum = MRT_AskCostQueue[1]["RaidNum"];
     -- local itemNum = MRT_AskCostQueue[1]["ItemNum"];
-    local looter = UI.LootConfirmDialog.Textline1:GetText();
-    local item = UI.LootConfirmDialog.Textline2:GetText();
+    local looter = UI.LootConfirmDialog.Looter
+    --local item = UI.LootConfirmDialog.Textline2:GetText()
     if (button == "OK") then
         --Add to loot
-        ErrorDKP:AddToLootHistory(item, looter, dkpValue)
+        ErrorDKP:AddToLootHistory(LootInfo.ItemLink, LootInfo.ItemId , looter, dkpValue)
+        ErrorDKP:AutoAdjustDKP(looter, -dkpValue, LootInfo.ItemLink)
     elseif (button == "Cancel") then
     elseif (button == "Delete") then
 
     elseif (button == "Bank") then
-        ErrorDKP:AddToLootHistory(item, "Errorbank", dkpValue)
+        ErrorDKP:AddToLootHistory(LootInfo.ItemLink, LootInfo.ItemId, "Errorbank", dkpValue)
     elseif (button == "Disenchanted") then
-        ErrorDKP:AddToLootHistory(item, "disenchanted", 0)
+        ErrorDKP:AddToLootHistory(LootInfo.ItemLink, LootInfo.ItemId, "disenchanted", 0)
     end
   
     -- done with handling item - proceed to next one
-    table.remove(core.AskCostQueue, 1);
-    if (#core.AskCostQueue == 0) then
+    table.remove(core.LootQueue, 1);
+    if (#core.LootQueue == 0) then
         core.AskCostQueueRunning = nil;
     else
         ErrorDKP_LCD_AskCost();
@@ -237,7 +244,6 @@ function ErrorDKP_LCD_DropDownList_Toggle()
         ddt.frame:SetPoint("TOPRIGHT", UI.LootConfirmDialog.DdButton, "BOTTOMRIGHT", 0, 0);
     end
 end
-
 
 function ErrorDKP:AutoAddLoot(chatmsg)
     core:PrintDebug("Adding Loot")
@@ -335,10 +341,10 @@ local function CreateLootConfirmDialog()
     priceinput:SetSize(250, 32)
     priceinput:SetMultiLine(false)
     priceinput:SetScript("OnEnterPressed", function()
-        core:PrintDebug("OnEnterPressed")
+        ErrorDKP_LCD_Handler("OK")
     end)
     priceinput:SetScript("OnEscapePressed", function()
-        core:PrintDebug("OnEscapePressed")
+        ErrorDKP_LCD_Handler("CANCEL")
     end)
     priceinput:SetScript("OnTabPressed", function()
         core.UI.LootConfirmDialog.NoteInput:SetFocus()
@@ -351,10 +357,10 @@ local function CreateLootConfirmDialog()
     noteinput:SetSize(250, 32)
     noteinput:SetMultiLine(false)
     noteinput:SetScript("OnEnterPressed", function()
-        core:PrintDebug("OnEnterPressed")
+        ErrorDKP_LCD_Handler("OK")
     end)
     noteinput:SetScript("OnEscapePressed", function()
-        core:PrintDebug("OnEscapePressed")
+        ErrorDKP_LCD_Handler("CANCEL")
     end)
     noteinput:SetScript("OnTabPressed", function()
         core.UI.LootConfirmDialog.PriceInput:SetFocus()
@@ -451,6 +457,10 @@ local LCD_DropDownTableColDef = {
     {["name"] = "", ["width"] = 100},
 };
 
+function ErrorDKP:AskItemCost()
+    ErrorDKP_LCD_AskCost()
+end
+
 function ErrorDKP:CreateDropDownTable()
     core.UI.LCDDropDownTable = ScrollingTable:CreateST(LCD_DropDownTableColDef, 9, nil, nil, core.UI.LootConfirmDialog)
     local ddt = core.UI.LCDDropDownTable
@@ -462,16 +472,17 @@ function ErrorDKP:CreateDropDownTable()
     ddt:RegisterEvents({
         ["OnClick"] = function (rowFrame, cellFrame, data, cols, row, realrow, column, scrollingTable, ...)
             if (not realrow) then return true; end
-            local playerName = MRT_DKPFrame_DropDownTable:GetCell(realrow, column);
+            local playerName = core.UI.LCDDropDownTable:GetCell(realrow, column);
+            core:PrintDebug("set ",playerName, " as looter")
             if (playerName) then
-                MRT_GetDKPValueFrame.Looter = playerName;
-                MRT_GetDKPValueFrame_TextThirdLine:SetText(string.format(MRT_L.Core.DKP_Frame_LootetBy, playerName));
-                MRT_GetDKPValueFrame_DropDownList_Toggle();
+                core.UI.LootConfirmDialog.Looter = playerName;
+                core.UI.LootConfirmDialog.Textline3:SetText(string.format(_L["LCD_LOOTETBY"], playerName));
+                ErrorDKP_LCD_DropDownList_Toggle();
             end
             return true;
         end
     });
-    MRT_DKPFrame_DropDownTable.head:SetHeight(1);
+    ddt.head:SetHeight(1);
 
     return ddt
 end

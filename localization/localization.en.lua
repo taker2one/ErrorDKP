@@ -12,6 +12,12 @@ local addonName, core = ...;
             COLDKP = "DKP",
             TITLE = "DKP-List"
         },
+        LOOTHISTORYTABLE = {
+            TITLE = "Loot Historie",
+            COLITEMLINK = "Item",
+            COLLOOTER = "Looter",
+            COLDKP = "DKP"
+        },
         DKPPRICE = "DKP Price",
         MINIMAP = {
             DESCRLCLICK = "Left CLick - Open Window"
@@ -19,5 +25,6 @@ local addonName, core = ...;
         OK = "Ok",
         CANCEL = "Cancel",
         LCD_ENTERCOSTFOR = "Enter DKP cost for",
-        LCD_LOOTETBY = "Geplünter von"
+        LCD_LOOTETBY = "Geplündert von |cFFFFFFFF%s|r.",
+        DKP_ADJUST_AUTO_MSG = "%s %d DKP for %s"
     }

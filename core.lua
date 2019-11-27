@@ -28,9 +28,10 @@ core.DKPTableWorkingEntries = {} -- contains current dkp list (filtered,sorted,.
 core.ItemPriceList = {} -- From saved data
 core.WorkItemPriceList = {} 
 core.ItemInfosLoaded = {}
+core.LootLog = {}
+core.LootQueue = {}
 
 core.AskCostQueueRunning = false
-core.AskCostQueue = {}
 --
 core.IsOfficer = ""
 
@@ -108,6 +109,11 @@ function core:VersionCheck(sentvers, sender)
 
     return core.IsOfficer
   end
+
+function core:ToEQDKPTime(timestamp)
+    return date("%m/%d/%y %H:%M:%S", timestamp)
+end
+
 
 -- -----------------UI-------------------
 -- local UIConfig = CreateFrame("Frame", "ERRORDKPListFrame", UIParent, "UIPanelDialogTemplate")

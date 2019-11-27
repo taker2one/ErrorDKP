@@ -31,6 +31,10 @@ function AdjustDKP(player, dkp)
     end
 end
 
+function ErrorDKP:AutoAdjustDKP(player, dkp, itemLink)
+    core:Print(string.format(_L["DKP_ADJUST_AUTO_MSG"], player, dkp, itemLink ))
+end
+
 function DKPAdjustmentDialog_OnOk()
     local val = UI.DKPAdjustment.DkpInput:GetNumber()
     if val > 0 or val < 0 then

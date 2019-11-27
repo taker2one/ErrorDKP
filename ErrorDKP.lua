@@ -23,7 +23,7 @@ function ErrorDKP:CreateMain()
     local uiMain = core.UI.Main
 
     uiMain:SetFrameLevel(9)
-    uiMain:SetSize(1000, 590);
+    uiMain:SetSize(1190, 590); --1000
     uiMain:SetPoint("CENTER", UIParent, "CENTER", 0, 0);
     uiMain:SetMovable(true);
     uiMain:EnableMouse(true);
@@ -46,6 +46,11 @@ function ErrorDKP:CreateMain()
     -- Append Price List Table
     --
     ErrorDKP:CreatePriceListTable()
+
+    --
+    -- Append Loot History Table
+    --
+    ErrorDKP:GetLootHistoryTable()
 
     uiMain:Hide()
     return uiMain

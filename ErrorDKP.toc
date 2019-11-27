@@ -4,7 +4,7 @@
 ## Notes:  DKP and raid utility for Guild WoW-Error@Venoxis
 ## Version: 1.13.2.0
 ## DefaultState: enabled
-## SavedVariables: ErrorDKPConfig, ErrorDKPDB, ErrorDKPDKPList, ErrorDKPDataInfo, ErrorDKPPriceList, ErrorDKPLootLog
+## SavedVariables: ErrorDKPConfig, ErrorDKPDB, ErrorDKPDKPList, ErrorDKPDataInfo, ErrorDKPPriceList, ErrorDKPLootLog, ErrorDKPLootQueue
 
 
 
@@ -32,6 +32,7 @@ modules\communication.lua
 modules\lootneedsurvey.lua
 modules\dkpadjustment.lua
 modules\loottrack.lua
+modules\loothistorytable.lua
 modules\DropDownMenu\DropDownMenuTemplates.xml
 modules\DropDownMenu\DropDownMenu.lua
 

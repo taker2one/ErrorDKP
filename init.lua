@@ -74,6 +74,7 @@ local function OnInit()
     if not ErrorDKPDataInfo then ErrorDKPDataInfo = {} end
     if not ErrorDKPDKPList then ErrorDKPDKPList = {} end 
     if not ErrorDKPPriceList then ErrorDKPPriceList = {} end
+    if not ErrorDKPLootQueue then ErrorDKPLootQueue = {} end
 
     -- Check which data is the newest
     if not ErrorDKPDataInfo.DKPInfo then ErrorDKPDataInfo.DKPInfo = {} end
@@ -94,15 +95,13 @@ local function OnInit()
     core.ItemPriceList = ErrorDKPPriceList
     core.Settings = ErrorDKPConfig
     core.LootLog = ErrorDKPLootLog
+    core.LootQueue = ErrorDKPLootQueue;
 
     -- Hook ItemPriceToolTipScript
     ErrorDKP:RegisterItemPriceTooltip()
     
     -- Create MiniMapIcon
     ErrorDKP:CreateMiniMapIcon()
-    --ErrorDKP:CreateLootConfirmDialog()
-    --ErrorDKP:CreateLootNeedSurveyFrame()
-    --ErrorDKP:CreateDKPAdjustmentDialog()
     core:VersionCheck(11320, "Herbert")
 end
 
@@ -121,6 +120,8 @@ function ErrorDKP_OnEventHandler(self, event, ...)
         core:PrintDebug(event)
         OnInit()
         self:UnregisterEvent("ADDON_LOADED")
+        -- Ask if items in queue
+        ErrorDKP:AskItemCost()
     elseif event == "CHAT_MSG_LOOT" then
         --Add loot
         ErrorDKP:AutoAddLoot(...)
@@ -146,13 +147,13 @@ end
 -- Register Events
 local event = CreateFrame("Frame", "EventFrame")
 event:RegisterEvent("ADDON_LOADED")
-event:RegisterEvent("PLAYER_ENTERING_WORLD")
-event:RegisterEvent("BOSS_KILL")
+-- event:RegisterEvent("PLAYER_ENTERING_WORLD")
+-- event:RegisterEvent("BOSS_KILL")
 event:RegisterEvent("CHAT_MSG_LOOT")
-event:RegisterEvent("CHAT_MSG_WHISPER")
-event:RegisterEvent("ENCOUNTER_END")
-event:RegisterEvent("RAID_INSTANCE_WELCOME")
-event:RegisterEvent("RAID_ROSTER_UPDATE")
-event:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-event:RegisterEvent("ENCOUNTER_END")
+-- event:RegisterEvent("CHAT_MSG_WHISPER")
+-- event:RegisterEvent("ENCOUNTER_END")
+-- event:RegisterEvent("RAID_INSTANCE_WELCOME")
+-- event:RegisterEvent("RAID_ROSTER_UPDATE")
+-- event:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+-- event:RegisterEvent("ENCOUNTER_END")
 event:SetScript("OnEvent", ErrorDKP_OnEventHandler)

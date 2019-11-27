@@ -13,6 +13,12 @@ if GetLocale() == "deDE" then
             COLDKP = "DKP",
             TITLE = "DKP-Liste"
         },
+        LOOTHISTORYTABLE = {
+            TITLE = "Loot Historie",
+            COLITEMLINK = "Item",
+            COLLOOTER = "Looter",
+            COLDKP = "DKP"
+        },
         DKPPRICE = "DKP Preis",
         MINIMAP = {
             DESCRLCLICK = "Left CLick - Open Window"
@@ -20,7 +26,8 @@ if GetLocale() == "deDE" then
         OK = "Ok",
         CANCEL = "Abbrechen",
         LCD_ENTERCOSTFOR = "DKP-Preis eingeben für",
-        LCD_LOOTETBY = "Geplünter von"
+        LCD_LOOTETBY = "Looted by |cFFFFFFFF%s|r.",
+        DKP_ADJUST_AUTO_MSG = "%s %d DKP für %s"
     }
 
 end
