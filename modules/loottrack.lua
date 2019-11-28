@@ -133,12 +133,11 @@ function ErrorDKP_LCD_AskCost()
     
     for i=1, numRaidMembers do
         name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(i)
-        playerData[i] = name
+        playerData[i] = { name }
     end
     if numRaidMembers==0  then 
         core:PrintDebug("Add to dd list:", LootInfo.Looter)
         playerData[1] = { LootInfo.Looter }
-        playerData[2] = { "DaEbner" }
     end
 
     -- for i, val in ipairs(MRT_RaidLog[raidNum]["Bosskills"][MRT_NumOfLastBoss]["Players"]) do

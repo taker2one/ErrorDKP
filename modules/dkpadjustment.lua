@@ -11,6 +11,7 @@ local UI = core.UI
 local _L = core._L
 
 function AdjustDKP(player, dkp)
+    core:PrintDebug("AdjustDKP", player, dkp) 
     -- only allowed for officers
     if core:IsOfficer() then
         --Validate that player exists

@@ -19,23 +19,25 @@ function ErrorDKP:DKPTableUpdate()
   local index = 1
   for i, v in ipairs(core.DKPTable) do
     local classInfo = C_CreatureInfo.GetClassInfo(v.classId)
-    core.PrintDebug(v.classId,v["name"], v.classFilename, core.ClassColors[v.classFilename].hex)
-    local classString = string.format("|cFF%s%s|r", core.ClassColors[v.classFilename].hex)
+    local classColor = core.ClassColors[v["classFilename"]].hex
+    local classString = string.format("|cFF%s%s|r", classColor, classInfo.className)
+    local playerNameColored = string.format("|cFF%s%s|r", classColor, v["name"])
     
 
-    DKPTableData[index] = { index,  v.name, classString , v.dkp}
+    DKPTableData[index] = { index,  playerNameColored, v.name, classString , v.dkp}
     index = index + 1
   end
-  table.sort(DKPTableData, function(a, b) return (a[3] > b[3]); end);
+  table.sort(DKPTableData, function(a, b) return (a[5] > b[5]); end);
   UI.DKPTable:ClearSelection()
   UI.DKPTable:SetData(DKPTableData, true)
 end
 
 local tableDef = {
   { ["name"] = "", ["width"] = 1 },
-  { ["name"] = _L["COLNAME"], ["width"] = 150 },
+  { ["name"] = _L["COLNAME"], ["width"] = 100 },
+  { ["name"] = "", ["width"] = 1}, -- pure playername to append to other dialogs
   { ["name"] = "Class", ["width"] = 80},
-  { ["name"] = _L["COLDKP"], ["width"] = 80, ["defaultsort"] = "dsc" }
+  { ["name"] = _L["COLDKP"], ["width"] = 50, ["defaultsort"] = "dsc" }
 }
 
 function ErrorDKP:CreateDKPScrollingTable()
@@ -58,8 +60,7 @@ function ErrorDKP:CreateDKPScrollingTable()
     adjustDKPButton:SetScript("OnClick", function(self, ...)
       local selection = UI.DKPTable:GetSelection()
       if selection then
-        core:PrintDebug(UI.DKPTable:GetCell(selection, 2))
-        ErrorDKP:StartAdjustment(UI.DKPTable:GetCell(selection, 2))
+        ErrorDKP:StartAdjustment(UI.DKPTable:GetCell(selection, 3))
       end
     end)
 

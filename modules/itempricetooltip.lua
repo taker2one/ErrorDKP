@@ -6,6 +6,14 @@
 --###############################################
 local addonName, core = ...
 local ErrorDKP = core.ErrorDKP
+local _L = core._L
+
+local function addHeadLine(tooltip, text)
+  if not text or text == "" then return end
+
+  local line = NORMAL_FONT_COLOR_CODE .. text .. FONT_COLOR_CODE_CLOSE
+  tooltip:AddLine(line)
+end
 
 local function addLine(tooltip, value, description)
     if not value or value == "" then return end
@@ -55,13 +63,22 @@ local function attachItemTooltip(self)
     if id then
       --Check if item is in pricelist
       if core.ItemPriceList[id] then
+        local prio
+        if not core.ItemPriceList[id].prio and core.ItemPriceList[id].prio ~= "" then
+          local prio = core.ItemPriceList[id].prio
+        end
+        addHeadLine(self, " ")
+        addHeadLine(self, "Error DKP")
         addLine(self, core.ItemPriceList[id].price, core._L["DKPPRICE"] )
+        addLine(self, prio or _L["TOOLTIP_PRIO_NONE"], _L["TOOLTIP_PRIO_LABEL"]  )
       end
     end
 end
 
 local function onSetHyperlink(self, link)
+    
     local kind, id = string.match(link,"^(%a+):(%d+)")
+    core:PrintDebug("onSetHyperlink", link, kind)
     if kind == "item" then
         if id and core.ItemPriceList[id] then
             addLine(self, core.ItemPriceList[id].price, core._L["DKPPRICE"])
@@ -69,11 +86,14 @@ local function onSetHyperlink(self, link)
     end
 end
 hooksecurefunc(ItemRefTooltip, "SetHyperlink", onSetHyperlink)
-hooksecurefunc(GameTooltip, "SetHyperlink", onSetHyperlink)
-
-
+hooksecurefunc(GameTooltip, "SetHyperlink", onSetHyperlink) --ErrorDKPItemToolTip
 
 -- To register scripts on a central place this will be called from init.lua
 function ErrorDKP:RegisterItemPriceTooltip()
     GameTooltip:HookScript("OnTooltipSetItem", attachItemTooltip)
+    ErrorDKPItemToolTip:HookScript("OnTooltipSetItem", attachItemTooltip)
+end
+
+function ErrorDKP:OnSetHyperlink()
+  onSetHyperlink(self, link)
 end

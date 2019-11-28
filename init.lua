@@ -16,6 +16,36 @@ local ErrorDKP = core.ErrorDKP
 --
 -------------------------------------------------------------------
 
+core.Commands = {
+    ["debug"] = function(enable)
+        if enable then
+            core.Debug = true
+            core:Print("Debug output enabled")
+        else
+            core.Debug = false
+            core:Print("Debug output disabled")
+        end
+    end,
+    ["help"] = function()
+        print(" ");
+        core:Print("|cff00cc66/dkp|r")
+		-- MonDKP:Print(L["SLASHCOMMANDLIST"]..":")
+		-- MonDKP:Print("|cff00cc66/dkp|r - "..L["DKPLAUNCH"]);
+		-- MonDKP:Print("|cff00cc66/dkp ?|r - "..L["HELPINFO"]);
+		-- MonDKP:Print("|cff00cc66/dkp reset|r - "..L["DKPRESETPOS"]);
+		-- MonDKP:Print("|cff00cc66/dkp lockouts|r - "..L["DKPLOCKOUT"]);
+		-- MonDKP:Print("|cff00cc66/dkp timer|r - "..L["CREATERAIDTIMER"]);
+		-- MonDKP:Print("|cff00cc66/dkp bid|r - "..L["OPENBIDWINDOWHELP"]);
+		-- MonDKP:Print("|cff00cc66/dkp award "..L["PLAYERCOST"].."|r - "..L["DKPAWARDHELP"]);
+		-- MonDKP:Print("|cff00cc66/dkp modes|r - "..L["DKPMODESHELP"]);
+		-- MonDKP:Print("|cff00cc66/dkp export|r - "..L["DKPEXPORTHELP"]);
+		-- print(" ");
+		-- MonDKP:Print(L["WHISPERCMDSHELP"]);
+		-- MonDKP:Print("|cff00cc66!bid (or !bid <"..L["VALUE"]..">)|r - "..L["BIDHELP"]);
+		-- MonDKP:Print("|cff00cc66!dkp (or !dkp <"..L["PLAYERNAME"]..">)|r - "..L["DKPCMDHELP"]);
+	end
+}
+
 -- Slash Command Handler
 local function HandleSlashCommands(cmd)
     core:PrintDebug("HandleSlashCommand: ", cmd)
@@ -23,8 +53,34 @@ local function HandleSlashCommands(cmd)
     if( #cmd == 0 ) then
         --open list
         core.ErrorDKP:Toggle()
-    elseif( cmd == "config" ) then
+        return
     end
+
+    local args = {};
+	for _, arg in ipairs({ string.split(' ', cmd) }) do
+		if (#arg > 0) then
+			table.insert(args, arg);
+		end
+    end
+    
+    local path = core.Commands;
+	
+	for id, arg in ipairs(args) do
+		if (#arg > 0) then
+			arg = arg:lower();			
+			if (path[arg]) then
+				if (type(path[arg]) == "function") then
+					path[arg](select(id + 1, unpack(args))); 
+					return;					
+				elseif (type(path[arg]) == "table") then				
+					path = path[arg];
+				end
+			else
+				core.Commands.help();
+				return;
+			end
+		end
+	end
 end
 
 --Register slash commands
@@ -91,7 +147,6 @@ local function OnInit()
     --Apply to core
     core.DKPTable = ErrorDKPDKPList                     -- the dkp table
     core.DKPDataInfo = ErrorDKPDKPDataInfo              -- contains info about the data like last sync, last full import
-    core.DKPTableWorkingEntries = ErrorDKPDKPList
     core.ItemPriceList = ErrorDKPPriceList
     core.Settings = ErrorDKPConfig
     core.LootLog = ErrorDKPLootLog

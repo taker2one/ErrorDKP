@@ -24,7 +24,6 @@ core.PrintPrefix = "<ErrorDKP>"
 -- Variables
 core.Imports = {}
 core.DKPTable = {}
-core.DKPTableWorkingEntries = {} -- contains current dkp list (filtered,sorted,...)
 core.ItemPriceList = {} -- From saved data
 core.WorkItemPriceList = {} 
 core.ItemInfosLoaded = {}

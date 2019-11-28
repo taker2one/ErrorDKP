@@ -7,12 +7,15 @@
 local addonName, core = ...
 local UI = core.UI
 local ErrorDKP = core.ErrorDKP
+local _L = core._L
 
 local function CreateItemToolTip()
     core:PrintDebug("CreateItemToolTip")
     UI.ItemTooltip = CreateFrame("GameTooltip", "ErrorDKPItemToolTip", UIParent, "GameTooltipTemplate")
+    --hooksecurefunc(core.UI.ItemTooltip, "SetHyperlink", ErrorDKP:OnSetHyperlink )
     return UI.ItemTooltip
 end
+CreateItemToolTip()
 
 function ErrorDKP:ShowItemTooltip(newOwner, itemLink)
     local tt = UI.ItemTooltip or CreateItemToolTip()

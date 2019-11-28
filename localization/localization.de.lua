@@ -27,7 +27,10 @@ if GetLocale() == "deDE" then
         CANCEL = "Abbrechen",
         LCD_ENTERCOSTFOR = "DKP-Preis eingeben für",
         LCD_LOOTETBY = "Looted by |cFFFFFFFF%s|r.",
-        DKP_ADJUST_AUTO_MSG = "%s %d DKP für %s"
+        DKP_ADJUST_AUTO_MSG = "%s %d DKP für %s",
+        
+        TOOLTIP_PRIO_NONE = "Keine",
+        TOOLTIP_PRIO_LABEL = "Prio"
     }
 
 end
