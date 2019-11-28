@@ -44,7 +44,8 @@ local function mapImportDKPData()
     local imported = {}
     local index = 1
     for k,v in pairs(gdkp["players"]) do
-        imported[index] = { name = k, dkp = v["DKP"] }
+        local classFilename, classId = core:LocalizedClassToEng(v["class"])
+        imported[index] = { name = k, dkp = v["DKP"], classFilename = classFilename, classId = classId  }
         index = index + 1
     end
 
@@ -65,7 +66,6 @@ end
 local function OnInit()
     core:PrintDebug("Initialize")
     RegisterSlashCommands()
-
     core:Print(addonName, core.Version)
     --Load Saved Data
     if not ErrorDKPDB then ErrorDKPDB = {} end

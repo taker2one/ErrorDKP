@@ -17,8 +17,13 @@ local ScrollingTable = LibStub("ScrollingTable")
 function ErrorDKP:DKPTableUpdate()
   local DKPTableData = {}
   local index = 1
-  for k, v in pairs(core.DKPTableWorkingEntries) do
-    DKPTableData[index] = { index,  v.name, v.dkp}
+  for i, v in ipairs(core.DKPTable) do
+    local classInfo = C_CreatureInfo.GetClassInfo(v.classId)
+    core.PrintDebug(v.classId,v["name"], v.classFilename, core.ClassColors[v.classFilename].hex)
+    local classString = string.format("|cFF%s%s|r", core.ClassColors[v.classFilename].hex)
+    
+
+    DKPTableData[index] = { index,  v.name, classString , v.dkp}
     index = index + 1
   end
   table.sort(DKPTableData, function(a, b) return (a[3] > b[3]); end);
@@ -29,6 +34,7 @@ end
 local tableDef = {
   { ["name"] = "", ["width"] = 1 },
   { ["name"] = _L["COLNAME"], ["width"] = 150 },
+  { ["name"] = "Class", ["width"] = 80},
   { ["name"] = _L["COLDKP"], ["width"] = 80, ["defaultsort"] = "dsc" }
 }
 

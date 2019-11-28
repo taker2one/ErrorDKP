@@ -16,6 +16,7 @@ embeds.xml
 
 # core module
 core.lua
+constants.lua
 imports\pricelist.lua
 imports\dkplist.lua
 
@@ -24,6 +25,7 @@ init.lua
 ErrorDKP.lua
 
 modules\config.lua
+modules\importtranslator.lua
 modules\itemtooltip.lua
 modules\dkptable.lua
 modules\pricelisttable.lua
