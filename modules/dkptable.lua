@@ -8,7 +8,8 @@
 local addonName, core = ...;
 local ErrorDKP = core.ErrorDKP;
 local UI = core.UI;
-local _L = core._L.DKPLISTTABLE
+local _L = core._L
+local _LS = _L.DKPLISTTABLE
 
 local ScrollingTable = LibStub("ScrollingTable")
 
@@ -36,10 +37,10 @@ end
 
 local tableDef = {
   { ["name"] = "", ["width"] = 1 },
-  { ["name"] = _L["COLNAME"], ["width"] = 100 },
+  { ["name"] = _LS["COLNAME"], ["width"] = 100 },
   { ["name"] = "", ["width"] = 1}, -- pure playername to append to other dialogs
-  { ["name"] = "Class", ["width"] = 80},
-  { ["name"] = _L["COLDKP"], ["width"] = 50, ["defaultsort"] = "dsc" }
+  { ["name"] = _LS["COLCLASS"], ["width"] = 80},
+  { ["name"] = _LS["COLDKP"], ["width"] = 50, ["defaultsort"] = "dsc" }
 }
 
 function ErrorDKP:CreateDKPScrollingTable()
@@ -51,7 +52,7 @@ function ErrorDKP:CreateDKPScrollingTable()
     -- Title
     local title = UI.DKPTable.frame:CreateFontString("$parent_title")
     title:SetFontObject("GameFontNormal")
-    title:SetText(_L["TITLE"])
+    title:SetText(_LS["TITLE"])
     title:SetPoint("TOPLEFT", UI.DKPTable.frame, "TOPLEFT", 0, 30)
 
 
@@ -66,7 +67,7 @@ function ErrorDKP:CreateDKPScrollingTable()
       end
     end)
 
-    if not core:IsOfficer() then
+    if not core:CheckSelfTrusted() then
       adjustDKPButton:Hide()
     end
 
@@ -76,53 +77,10 @@ function ErrorDKP:CreateDKPScrollingTable()
     ErrorDKP:DKPTableUpdate()
 end
 
--- function ErrorDKP:CreateDKPTable()
---     UI.DKPTable = CreateFrame("ScrollFrame", "ErrorDKPTableScrollFrame", UI.Main, "UIPanelScrollFrameTemplate")
---     local dkptable = UI.DKPTable
---     local tableSettings = core.ISettings.DKPTable
-
---     --dkptable:SetSize(tableSettings.Width, tableSettings.RowHeight*tableSettings.RowCount);
---     dkptable:SetPoint("TOPLEFT", ErrorDKPMainDialogBG, "TOPLEFT", 4, -8)
---     dkptable:SetPoint("BOTTOMRIGHT", ErrorDKPMainDialogBG, "BOTTOMRIGHT", -3, 4)    
---     dkptable:SetClipsChildren(false)
-
---     --Scrollchild
---     local child = CreateFrame("Frame", nil, dkptable)
---     child:SetSize(tableSettings.Width, tableSettings.RowHeight*tableSettings.RowCount)
-    
---     child.bg = child:CreateTexture(nil, "BACKGROUND")
---     child.bg:SetAllPoints(true)
---     child.bg:SetColorTexture(0.2,0.6,0,0.8);
---     dkptable:SetScrollChild(child)
-
---     --dkptable.ScrollBar = 
-
---     dkptable.Rows = {}
---     for i=1, tableSettings.RowCount do
---         dkptable.Rows[i] = CreateRow(dkptable, i, tableSettings.Width, tableSettings.RowHeight)
---         if i==1 then
---             dkptable.Rows[i]:SetPoint("TOPLEFT", dkptable, "TOPLEFT", 0, -2)
---         else  
---             dkptable.Rows[i]:SetPoint("TOPLEFT", dkptable.Rows[i-1], "BOTTOMLEFT")
---         end
---       end
---       dkptable:SetScript("OnVerticalScroll", function(self, offset)
---        core.PrintDebug("OnVerticalScroll", offset)
---        core.PrintDebug(self:GetVerticalScroll())
---        --FauxScrollFrame_OnVerticalScroll(self, offset, core.TableRowHeight, DKPTable_Update)
---       end)
-
---     -- UIConfig.ScrollFrame:SetPoint("TOPLEFT", ERRORDKPListFrameDialogBG, "TOPLEFT", 4, -8)
---     -- UIConfig.ScrollFrame:SetPoint("BOTTOMRIGHT", ERRORDKPListFrameDialogBG, "BOTTOMRIGHT", -3, 4)
---     -- 
-
---     -- -- Scroll child
---     -- local child = CreateFrame("Frame", nil, UIConfig.ScrollFrame)
---     -- child:SetSize(308,500)
---     -- --UIConfig.ScrollFrame.Scroll
---     -- UIConfig.ScrollFrame:SetScrollChild(child)
-
---     -- UIConfig.ScrollFrame.ScrollBar:ClearAllPoints();
---     -- UIConfig.ScrollFrame.ScrollBar:SetPoint("TOPLEFT", UIConfig.ScrollFrame, "TOPRIGHT", -12,-18)
---     -- UIConfig.ScrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", UIConfig.ScrollFrame, "BOTTOMRIGHT", -7,18)
--- end
+function ErrorDKP:BroadcastDKPTable()
+  if core:CheckSelfTrusted() then
+    core.Sync:Send("ErrDKPDKPSync", {ATS=core:GetDKPDataTimestamp(), DataSet=core.DKPTable })
+  else
+    core:Print(_L["MSG_NOT_ALLOWED"])
+  end
+end

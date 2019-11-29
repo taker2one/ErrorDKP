@@ -20,7 +20,7 @@ end
 function AdjustDKP(player, dkp)
     core:PrintDebug("AdjustDKP", player, dkp) 
     -- only allowed for officers
-    if core:IsOfficer() then
+    if core:CheckSelfTrusted() then
         --Validate that player exists
         local entry, oldTimestamp, newTimestamp;
         for i, v in ipairs(core.DKPTable) do
@@ -34,7 +34,7 @@ function AdjustDKP(player, dkp)
         end
         if entry then
             core:PrintDebug("send: ", oldTimestamp, newTimestamp)
-            core.Sync:Send("ErrDKPPAdj", { PTS = oldTimestamp, ATS = newTimestamp, DataSet = entry, Details = { DKP = dkp } })
+            core.Sync:Send("ErrDKPAdjP", { PTS = oldTimestamp, ATS = newTimestamp, DataSet = entry, Details = { DKP = dkp } })
             ErrorDKP:DKPTableUpdate()
         else 
             core:Print(string.format(_L["MSG_PLAYER_NOT_FOUND_DKP"], player)) 
@@ -43,7 +43,7 @@ function AdjustDKP(player, dkp)
 end
 
 function ErrorDKP:AutoAdjustDKP(player, dkp, itemLink)
-    if core:IsOfficer() then
+    if core:CheckSelfTrusted() then
         --Validate that player exists
         local entry, oldTimestamp, newTimestamp;
         for i, v in ipairs(core.DKPTable) do
@@ -56,8 +56,8 @@ function ErrorDKP:AutoAdjustDKP(player, dkp, itemLink)
             end
         end
         if entry then
-            core.Sync:Send("ErrDKPPAdj", { PTS = oldTimestamp, ATS = newTimestamp, DataSet = entry, Details = { DKP = dkp, ItemLink = itemLink }})
-            core:Print(string.format(_L["DKP_ADJUST_AUTO_MSG"], player, dkp, itemLink ))
+            core.Sync:Send("ErrDKPAdjPA", { PTS = oldTimestamp, ATS = newTimestamp, DataSet = entry, Details = { DKP = dkp, ItemLink = itemLink }})
+            core:Print(string.format(_L["MSG_DKP_ADJUST_AUTO"], player, dkp, itemLink ))
             ErrorDKP:DKPTableUpdate()
         else 
             core:Print(string.format(_L["MSG_PLAYER_NOT_FOUND_DKP"], player)) 
@@ -73,7 +73,7 @@ function DKPAdjustmentDialog_OnOk()
         AdjustDKP(player, val)
         UI.DKPAdjustment:Hide()
     else
-        core:PrintDebug("Input is not a nuber")
+        core:PrintDebug("Input is not a number")
     end
 end
 

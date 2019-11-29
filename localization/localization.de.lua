@@ -3,7 +3,7 @@ if GetLocale() == "deDE" then
     core._L = {
         PRICELISTTABLE = {
             COLICON = "Icon",
-            COLNAME = "Name",
+            COLNAME = "Item",
             COLPRICE = "Preis",
             COLPRIO = "Priorität",
             TITLE = "Item-Preisliste"
@@ -11,6 +11,7 @@ if GetLocale() == "deDE" then
         DKPLISTTABLE = {
             COLNAME = "Name",
             COLDKP = "DKP",
+            COLCLASS = "Klasse",
             TITLE = "DKP-Liste"
         },
         LOOTHISTORYTABLE = {
@@ -27,14 +28,16 @@ if GetLocale() == "deDE" then
         CANCEL = "Abbrechen",
         LCD_ENTERCOSTFOR = "DKP-Preis eingeben für",
         LCD_LOOTETBY = "Looted by |cFFFFFFFF%s|r.",
-        DKP_ADJUST_AUTO_MSG = "%s %d DKP für %s",
         
         TOOLTIP_PRIO_NONE = "Keine",
         TOOLTIP_PRIO_LABEL = "Prio",
 
         MSG_NEW_VERSION_AVAILABLE = "Eine neuere Version von |cff90EE90ErrorDKP|r ist verfügbar. Gehe auf |cff90EE90wow-error.at|r und hol sie dir.",
         MSG_DKPTABLE_OUTOFDATE = "Deine DKP Liste ist nicht aktuell, Update-Anfrage wurde an Offiziere gesendet.",
-        MSG_PLAYER_NOT_FOUND_DKP = "%s nicht in der Liste gedunden, aktualisieren nicht möglich."
+        MSG_PLAYER_NOT_FOUND_DKP = "%s nicht in der Liste gedunden, aktualisieren nicht möglich.",
+        MSG_DKP_ADJUST_AUTO = "%s %d DKP für %s",
+        MSG_DKP_ADJUST_MAN = "Manuelle Anpassung: %s %d DKP",
+        MSG_NOT_ALLOWED = "Das is nicht erlaubt, du bist kein Offizier."
     }
 
 end

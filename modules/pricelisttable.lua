@@ -8,7 +8,7 @@
 local addonName, core = ...
 local ErrorDKP = core.ErrorDKP
 local UI = core.UI
-local _L = core._L.PRICELISTTABLE
+local _LS = core._L.PRICELISTTABLE
 
 local pendingItemRequests = {}
 
@@ -16,7 +16,7 @@ local ScrollingTable = LibStub("ScrollingTable")
 
 local ItemPriceListTableColDef = {
     { -- coloumn for Item Icon - need to store ID
-        ["name"] = "Icon", 
+        ["name"] = _LS["COLNAME"], 
         ["width"] = 30,
         ["DoCellUpdate"] = function(rowFrame, cellFrame, data, cols, row, realrow, column, fShow, self, ...)
             -- icon handling
@@ -43,9 +43,9 @@ local ItemPriceListTableColDef = {
             end)
         end,
     },
-    {["name"] = _L["COLNAME"], ["width"] = 179},
-    {["name"] = _L["COLPRICE"], ["width"] = 30},
-    {["name"] = _L["COLPRIO"], ["width"] = 150},
+    {["name"] = "", ["width"] = 179},
+    {["name"] = _LS["COLPRICE"], ["width"] = 30},
+    {["name"] = _LS["COLPRIO"], ["width"] = 150},
     {["name"] = "", ["width"] = 1} -- invisible column for itemString (needed for tooltip)
 };
 
@@ -115,7 +115,7 @@ function ErrorDKP:CreatePriceListTable()
     -- Title
     local title = UI.PriceListTable.frame:CreateFontString("test123")
     title:SetFontObject("GameFontNormal")
-    title:SetText(_L["TITLE"])
+    title:SetText(_LS["TITLE"])
     title:SetPoint("TOPLEFT", UI.PriceListTable.frame, "TOPLEFT", 0, 30)
 
     UI.PriceListTable.frame:RegisterEvent("ITEM_DATA_LOAD_RESULT")

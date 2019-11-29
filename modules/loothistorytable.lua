@@ -8,7 +8,8 @@
 local addonName, core = ...
 local ErrorDKP = core.ErrorDKP
 local UI = core.UI
-local _L = core._L.LOOTHISTORYTABLE
+local _L = core._L
+local _LS = _L.LOOTHISTORYTABLE
 
 local pendingItemRequests = {}
 
@@ -16,7 +17,7 @@ local ScrollingTable = LibStub("ScrollingTable")
 
 local LootHistoryTableColDef = {
     { -- coloumn for Item Icon - need to store ID
-        ["name"] = "Item", 
+        ["name"] = _LS["COLITEMLINK"], 
         ["width"] = 30,
         ["DoCellUpdate"] = function(rowFrame, cellFrame, data, cols, row, realrow, column, fShow, self, ...)
             -- icon handling
@@ -44,12 +45,14 @@ local LootHistoryTableColDef = {
         end,
     },
     {["name"] = "", ["width"] = 179},
-    {["name"] = _L["COLLOOTER"], ["width"] = 100},
-    {["name"] = _L["COLDKP"], ["width"] = 50},
+    {["name"] = _LS["COLLOOTER"], ["width"] = 100},
+    {["name"] = _LS["COLDKP"], ["width"] = 50},
     {["name"] = "", ["width"] = 1} -- invisible column for itemString (needed for tooltip)
 };
 
-local function TableUpdate()
+function ErrorDKP:LootHistoryTableUpdate()
+    if not UI.LootHistoryTable then return end
+
     local TableData = {};
     local index = 1
     for i,v in ipairs(core.LootLog) do
@@ -91,7 +94,7 @@ local function Table_OnEvent(self, event, itemId, success)
                 if itemIdString == v.itemId then
                     core:PrintDebug(event, itemId, success)
                     if #pendingItemRequests == 1 then
-                        TableUpdate()
+                        ErrorDKP:LootHistoryTableUpdate()
                     end
                     table.remove(pendingItemRequests, i)
                 end
@@ -112,12 +115,12 @@ local function CreateLootHistoryTable()
     -- Title
     local title = t.frame:CreateFontString("test123")
     title:SetFontObject("GameFontNormal")
-    title:SetText(_L["TITLE"])
+    title:SetText(_LS["TITLE"])
     title:SetPoint("TOPLEFT", t.frame, "TOPLEFT", 0, 30)
 
     t.frame:RegisterEvent("ITEM_DATA_LOAD_RESULT")
     t.frame:SetScript("OnEvent", Table_OnEvent)
-    TableUpdate()
+    ErrorDKP:LootHistoryTableUpdate()
     return t
 end
 
@@ -137,5 +140,13 @@ function ErrorDKP:AddItemToHistory(itemLink, itemId, looter, dkp, lootTime)
     while #core.LootLog > 50 do
         table.remove(core.LootLog, #core.LootLog)
     end
-    if UI.LootHistoryTable then TableUpdate() end
+    if UI.LootHistoryTable then ErrorDKP:LootHistoryTableUpdate() end
+end
+
+function ErrorDKP:BroadcastLootTable()
+    if core:CheckSelfTrusted() then
+        core.Sync:Send("ErrDKPLootSync", {ATS=core:GetLootDataTimestamp(), DataSet=core.LootLog })
+    else
+        core:Print(_L["MSG_NOT_ALLOWED"])
+    end
 end

@@ -26,6 +26,12 @@ core.Commands = {
             core:Print("Debug output disabled")
         end
     end,
+    ["broadcast"] = function()
+        ErrorDKP:BroadcastDKPTable()
+    end,
+    ["bl"] = function()
+        ErrorDKP:BroadcastLootTable()
+    end,
     ["help"] = function()
         print(" ");
         core:Print("|cff00cc66/dkp|r")
@@ -146,6 +152,8 @@ local function OnInit()
         ErrorDKPDataInfo.PriceListInfo["timestamp"] = core.Imports.ItemPriceListInfo["timestamp"]
         ErrorDKPDataInfo.PriceListInfo["version"] = core.Imports.ItemPriceListInfo["version"]
     end
+    -- Same for loothistory
+    if not ErrorDKPDataInfo.LootInfo then ErrorDKPDataInfo.LootInfo = {} end
 
     --Apply to core
     core.DKPTable = ErrorDKPDKPList                     -- the dkp table

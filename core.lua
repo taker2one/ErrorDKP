@@ -9,6 +9,7 @@ local addonName, core = ...;
 
 core.ErrorDKP = {}
 local ErrorDKP = core.ErrorDKP
+local _C = core.CONSTANTS
 
 
 -- Version
@@ -34,7 +35,13 @@ core.LootQueue = {}
 core.LastUpdateAvailableMsg = 0
 core.AskCostQueueRunning = false
 --
-core.IsOfficer = ""
+core.IsTrusted = ""
+core.TrustedPlayers = {
+  "Doktorwho",
+  "Rassputin",
+  "Repa",
+  "Dichterin"
+}
 
 core.ClassColors = {
 	["DRUID"] = { r = 1, g = 0.49, b = 0.04, hex = "FF7D0A" },
@@ -55,7 +62,7 @@ core.ISettings = {
         RowHeight = 18,
         RowCount = 27
     },
-    ItemTracking_MinItemQualityToLog = 0,
+    ItemTracking_MinItemQualityToLog = _C.ITEMRARITY.COMMON,
     ItemTracking_IgnoreEnchantingMats = true
 }
 
@@ -79,33 +86,47 @@ function core:Print(...)
 end
 
 
-function core:IsOfficer()      
-    if core.IsOfficer == "" then    
-        if MonDKP:GetGuildRankIndex(UnitName("player")) == 1 then       -- automatically gives permissions above all settings if player is guild leader
-            core.IsOfficer = true
-            MonDKP.ConfigTab3.WhitelistContainer:Show()
-            return;
-        end
-    if IsInGuild() then
-        if #MonDKP_Whitelist > 0 then
-          core.IsOfficer = false;
-          for i=1, #MonDKP_Whitelist do
-            if MonDKP_Whitelist[i] == UnitName("player") then
-              core.IsOfficer = true;
-            end
-          end
-        else
-          local curPlayerRank = MonDKP:GetGuildRankIndex(UnitName("player"))
-          if curPlayerRank then
-            core.IsOfficer = C_GuildInfo.GuildControlGetRankFlags(curPlayerRank)[12]
-          end
-        end
-      else
-        core.IsOfficer = false;
+function core:GetGuildRankIndex(player)
+  local name, rank;
+  local guildSize,_,_ = GetNumGuildMembers();
+
+  if IsInGuild() then
+    for i=1, tonumber(guildSize) do
+      name,_,rank = GetGuildRosterInfo(i)
+      name = strsub(name, 1, string.find(name, "-")-1)
+      if name == player then
+        return rank+1;
       end
     end
+    return false;
+  end
+end
 
-    return core.IsOfficer
+function core:CheckSelfTrusted()
+    if core.IsTrusted == "" then
+        core:PrintDebug("Check if player is on trusted list")
+        core.IsTrusted = core:CheckTrusted(UnitName("player"))
+    end
+    return core.IsTrusted
+end
+
+function core:CheckTrusted(player)
+    for i=1, #core.TrustedPlayers do
+        if core.TrustedPlayers[i] == player then
+            return true
+        end
+    end
+    return nil
+end
+
+function core:CheckMasterLooter()
+    if IsInRaid() then
+      local lootmethod, masterlooterPartyID, masterlooterRaidID = GetLootMethod()
+      if lootmethod == "master" and masterlooterPartyID == 0 then
+          return true
+      end
+    end
+    return nil
 end
 
 function core:ToEQDKPTime(timestamp)
@@ -124,6 +145,14 @@ end
 -- this is used after received dkp update message
 function core:SetDKPDataTimestamp(timestamp)
   core.DKPDataInfo["DKPInfo"]["timestamp"] = timestamp
+end
+
+function core:GetLootDataTimestamp()
+  return core.DKPDataInfo["LootInfo"]["timestamp"]
+end
+
+function core:SetLootDataTimestamp(timestamp)
+  core.DKPDataInfo["LootInfo"]["timestamp"] = timestamp
 end
 
 -- function core:UpdateTimestamps()		-- updates seeds on leaders note as well as all 3 tables

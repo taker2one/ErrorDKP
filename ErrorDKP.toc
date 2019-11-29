@@ -14,9 +14,9 @@ localization\localization.de.lua
 # First load libs
 embeds.xml
 
+constants.lua
 # core module
 core.lua
-constants.lua
 imports\pricelist.lua
 imports\dkplist.lua
 

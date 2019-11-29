@@ -8,7 +8,7 @@ multiTable = {
 }
 DKPInfo = {
 	["date"] = "28.11.19 16:31:32",
-	["timestamp"] = "1575038960",
+	["timestamp"] = "1575053196",
 	["process_dkp_ver"] = "3.0",
 	["total_players"] = 51,
 	["total_items"] = 81,
@@ -27,6 +27,16 @@ gdkp = {
 			}
 		,
 		["Lightrider"] = {
+			["DKP"] = -82,
+			["dkp_earned"] = 114.59,
+			["dkp_spend"] = 135.0,
+			["dkp_adjust"] = 0,
+			["dkp_current"] = -82.46,
+			["class"] = "Krieger",
+			["rcount"] = 0,
+			}
+		,
+		["Dichterin"] = {
 			["DKP"] = -82,
 			["dkp_earned"] = 114.59,
 			["dkp_spend"] = 135.0,
