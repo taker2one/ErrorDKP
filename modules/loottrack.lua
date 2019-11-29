@@ -436,16 +436,16 @@ local function CreateLootConfirmDialog()
     ddButton:SetHighlightTexture(ddButton.highlightTexture)
 
     --for tooltip
-    local ttarea = CreateFrame("FRAME", nil, IUParent)
+    local ttarea = CreateFrame("FRAME", nil, f)
     UI.LootConfirmDialog.ttarea = ttarea
     ttarea:SetSize(100,12)
     ttarea:EnableMouse(true)
     ttarea:SetPoint("CENTER", textline2, "CENTER")
-    ttarea:SetScript("OnEnter", function()
-        core:PrintDebug("ttarea onenter")
+    ttarea:SetScript("OnEnter", function(self)
+        ErrorDKP:ShowItemTooltip(self, core.UI.LootConfirmDialog.Textline2:GetText())
     end)
     ttarea:SetScript("OnLeave", function()
-        core:PrintDebug("ttarea onleave")
+        ErrorDKP:HideItemTooltip()
     end)
 
     return f

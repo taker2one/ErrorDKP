@@ -110,13 +110,14 @@ end
 
 local function GetNewestData(dkpdb, dkpinfo, importinfo)
     if #dkpdb == 0 or not dkpinfo["timestamp"] or( importinfo["timestamp"] and tonumber(importinfo["timestamp"]) > tonumber(dkpinfo["timestamp"]) ) then
+        core:PrintDebug("Import eqdkpdata")
         dkpdb = mapImportDKPData()
         dkpinfo["timestamp"] = importinfo["timestamp"]
 
         return dkpdb, dkpinfo
     end
 
-    return dkpdb                                                                                                                                                                                                                 
+    return dkpdb, dkpinfo                                                                                                                                                                                                            
 end
 
 local function OnInit()
@@ -133,9 +134,11 @@ local function OnInit()
     if not ErrorDKPLootQueue then ErrorDKPLootQueue = {} end
 
     -- Check which data is the newest
-    if not ErrorDKPDataInfo.DKPInfo then ErrorDKPDataInfo.DKPInfo = {} end
-    ErrorDKPDKPList, ErrorDKPDataInfo.DkpInfo = GetNewestData(ErrorDKPDKPList, ErrorDKPDataInfo.DKPInfo, DKPInfo) --DKP is global from the jdkp export
-
+    if not ErrorDKPDataInfo.DKPInfo then 
+        ErrorDKPDataInfo.DKPInfo = {} 
+        core:PrintDebug("No ErrorDKPDataInfo.DKPInfo, create it")
+    end
+    ErrorDKPDKPList, ErrorDKPDataInfo.DKPInfo = GetNewestData(ErrorDKPDKPList, ErrorDKPDataInfo.DKPInfo, DKPInfo) --DKP is global from the jdkp export
     -- Same for itemprices
     if not ErrorDKPDataInfo.PriceListInfo then ErrorDKPDataInfo.PriceListInfo = {} end
     if #ErrorDKPPriceList == 0 or (ErrorDKPDataInfo.PriceListInfo["timestamp"] < core.Imports.ItemPriceListInfo) then
@@ -146,7 +149,7 @@ local function OnInit()
 
     --Apply to core
     core.DKPTable = ErrorDKPDKPList                     -- the dkp table
-    core.DKPDataInfo = ErrorDKPDKPDataInfo              -- contains info about the data like last sync, last full import
+    core.DKPDataInfo = ErrorDKPDataInfo              -- contains info about the data like last sync, last full import
     core.ItemPriceList = ErrorDKPPriceList
     core.Settings = ErrorDKPConfig
     core.LootLog = ErrorDKPLootLog
@@ -157,7 +160,6 @@ local function OnInit()
     
     -- Create MiniMapIcon
     ErrorDKP:CreateMiniMapIcon()
-    core:VersionCheck(11320, "Herbert")
 end
 
 
@@ -177,6 +179,11 @@ function ErrorDKP_OnEventHandler(self, event, ...)
         self:UnregisterEvent("ADDON_LOADED")
         -- Ask if items in queue
         ErrorDKP:AskItemCost()
+    elseif event == "PLAYER_ENTERING_WORLD" then
+        self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+        if IsInGuild() then
+            core.Sync:Send("ErrDKPBuildCheck", tostring(core.Build))
+        end
     elseif event == "CHAT_MSG_LOOT" then
         --Add loot
         ErrorDKP:AutoAddLoot(...)
@@ -202,7 +209,7 @@ end
 -- Register Events
 local event = CreateFrame("Frame", "EventFrame")
 event:RegisterEvent("ADDON_LOADED")
--- event:RegisterEvent("PLAYER_ENTERING_WORLD")
+event:RegisterEvent("PLAYER_ENTERING_WORLD")
 -- event:RegisterEvent("BOSS_KILL")
 event:RegisterEvent("CHAT_MSG_LOOT")
 -- event:RegisterEvent("CHAT_MSG_WHISPER")

@@ -134,8 +134,8 @@ function ErrorDKP:AddItemToHistory(itemLink, itemId, looter, dkp, lootTime)
         ["Dkp"] = dkp,
         ["Time"] = lootTime
     })
-    while #core.LootLog > 3 do
-        table.remove(core.LootLog, 4)
+    while #core.LootLog > 50 do
+        table.remove(core.LootLog, #core.LootLog)
     end
     if UI.LootHistoryTable then TableUpdate() end
 end

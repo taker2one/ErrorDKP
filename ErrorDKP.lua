@@ -30,6 +30,15 @@ function ErrorDKP:CreateMain()
     uiMain:RegisterForDrag("LeftButton");
     uiMain:SetScript("OnDragStart", uiMain.StartMoving);
     uiMain:SetScript("OnDragStop", uiMain.StopMovingOrSizing);
+    uiMain:SetScript("OnLoad", function(self) 
+        tinsert(UISpecialFrames, ErrorDKPMain:GetName())  
+    end)
+    uiMain:SetScript("OnShow", function() 
+        PlaySound(567440) 
+    end)
+    uiMain:SetScript("OnHide", function() 
+        PlaySound(567496)
+    end)
 
     -- Add Title
     uiMain.Title:ClearAllPoints()

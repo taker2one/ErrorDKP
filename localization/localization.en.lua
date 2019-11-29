@@ -13,7 +13,7 @@ local addonName, core = ...;
             TITLE = "DKP-List"
         },
         LOOTHISTORYTABLE = {
-            TITLE = "Loot Historie",
+            TITLE = "Loot History",
             COLITEMLINK = "Item",
             COLLOOTER = "Looter",
             COLDKP = "DKP"
@@ -29,5 +29,9 @@ local addonName, core = ...;
         DKP_ADJUST_AUTO_MSG = "%s %d DKP for %s",
         
         TOOLTIP_PRIO_NONE = "None",
-        TOOLTIP_PRIO_LABEL = "Prio"
+        TOOLTIP_PRIO_LABEL = "Prio",
+
+        MSG_NEW_VERSION_AVAILABLE = "A newer version of |cff90EE90ErrorDKP|r is available. Visit |cff90EE90wow-error.at|r to download.",
+        MSG_DKPTABLE_OUTOFDATE = "Your dkp list ist out of date, a update request was sent to all officers.",
+        MSG_PLAYER_NOT_FOUND_DKP = "%s not found in list, update not possible."
     }

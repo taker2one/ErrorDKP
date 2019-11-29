@@ -15,6 +15,8 @@ local ScrollingTable = LibStub("ScrollingTable")
 
 
 function ErrorDKP:DKPTableUpdate()
+  if not UI.DKPTable then return end -- UI not created yet, no need to update table
+
   local DKPTableData = {}
   local index = 1
   for i, v in ipairs(core.DKPTable) do

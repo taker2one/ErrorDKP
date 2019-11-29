@@ -78,7 +78,7 @@ end
 local function onSetHyperlink(self, link)
     
     local kind, id = string.match(link,"^(%a+):(%d+)")
-    core:PrintDebug("onSetHyperlink", link, kind)
+    --core:PrintDebug("onSetHyperlink", link, kind)
     if kind == "item" then
         if id and core.ItemPriceList[id] then
             addLine(self, core.ItemPriceList[id].price, core._L["DKPPRICE"])

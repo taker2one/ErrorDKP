@@ -10,30 +10,59 @@ local ErrorDKP = core.ErrorDKP
 local UI = core.UI
 local _L = core._L
 
+local function UpdateDataTimestamp()
+    core.DKPDataInfo["DKPInfo"]["timestamp"] = core:GenerateTimestamp()
+    return core.DKPDataInfo["DKPInfo"]["timestamp"]
+end
+
+
+
 function AdjustDKP(player, dkp)
     core:PrintDebug("AdjustDKP", player, dkp) 
     -- only allowed for officers
     if core:IsOfficer() then
         --Validate that player exists
-        local entry;
+        local entry, oldTimestamp, newTimestamp;
         for i, v in ipairs(core.DKPTable) do
             if v["name"] == player then
                 v["dkp"] = v["dkp"] + dkp
                 entry = v
+                oldTimestamp = core:GetDKPDataTimestamp()
+                newTimestamp = UpdateDataTimestamp()
                 break
             end
         end
         if entry then
-            core.Sync:Send("ErrDKPPAdj", entry)
+            core:PrintDebug("send: ", oldTimestamp, newTimestamp)
+            core.Sync:Send("ErrDKPPAdj", { PTS = oldTimestamp, ATS = newTimestamp, DataSet = entry, Details = { DKP = dkp } })
             ErrorDKP:DKPTableUpdate()
         else 
-            core:PrintDebug("EntryNotFound", player) 
+            core:Print(string.format(_L["MSG_PLAYER_NOT_FOUND_DKP"], player)) 
         end
     end
 end
 
 function ErrorDKP:AutoAdjustDKP(player, dkp, itemLink)
-    core:Print(string.format(_L["DKP_ADJUST_AUTO_MSG"], player, dkp, itemLink ))
+    if core:IsOfficer() then
+        --Validate that player exists
+        local entry, oldTimestamp, newTimestamp;
+        for i, v in ipairs(core.DKPTable) do
+            if v["name"] == player then
+                v["dkp"] = v["dkp"] + dkp
+                entry = v
+                oldTimestamp = core:GetDKPDataTimestamp()
+                newTimestamp = UpdateDataTimestamp()
+                break
+            end
+        end
+        if entry then
+            core.Sync:Send("ErrDKPPAdj", { PTS = oldTimestamp, ATS = newTimestamp, DataSet = entry, Details = { DKP = dkp, ItemLink = itemLink }})
+            core:Print(string.format(_L["DKP_ADJUST_AUTO_MSG"], player, dkp, itemLink ))
+            ErrorDKP:DKPTableUpdate()
+        else 
+            core:Print(string.format(_L["MSG_PLAYER_NOT_FOUND_DKP"], player)) 
+        end
+    end
 end
 
 function DKPAdjustmentDialog_OnOk()
