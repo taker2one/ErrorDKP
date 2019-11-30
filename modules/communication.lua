@@ -40,6 +40,7 @@ function core.Sync:OnEnable()
     core.Sync:RegisterComm("ErrDKPPriceList")       -- Price List Broadcast
     core.Sync:RegisterComm("ErrDKPAdjP")            -- Adjust DKP Points of a player
     --core.Sync:RegisterComm("ErrDKPAdjPA")           -- Adjust DKP Points caused by lootentry, also containes the historyentry
+    core.Sync:RegisterComm("ErrDKPAddLoot")         -- Add Loot to history
     core.Sync:RegisterComm("ErrDKPAdjPAWI")         -- Adjust DKP Points caused by lootentry, also containes the historyentry
     core.Sync:RegisterComm("ErrDKPTableCheck")      -- Check for any updated tables
     core.Sync:RegisterComm("ErrDKPBuildCheck")      -- Inform about available update
@@ -67,7 +68,7 @@ function core.Sync:OnCommReceived(prefix, message, channel, sender)
             core.Sync:Send("ErrDKPBuildCheck", tostring(core.Build))
         end
         return
-    elseif prefix == "ErrDKPAdjP" --and sender ~= UnitName("player") 
+    elseif prefix == "ErrDKPAdjP" and sender ~= UnitName("player") 
     then
         -- Data is serialized { PTS, ATS, Data }
         local success, deserialized = Serializer:Deserialize(message)
@@ -80,7 +81,7 @@ function core.Sync:OnCommReceived(prefix, message, channel, sender)
                 core:Print(_L["MSG_DKPTABLE_OUTOFDATE"])
                 local officer = core:GetOnlineOfficer()
                 if officer then
-                    core.Sync:SendTo("ErrDKPSyncReq", "DKP", officer)
+                    core.Sync:SendTo("ErrDKPSyncReq", "FULL", officer)
                 else
                     core:Print("There is currently no online officer")
                 end
@@ -108,7 +109,7 @@ function core.Sync:OnCommReceived(prefix, message, channel, sender)
         else
             core:Print("Error while deserializing data from message: ", prefix)
         end
-    elseif prefix == "ErrDKPAdjPAWI" --and sender ~= UnitName("player") 
+    elseif prefix == "ErrDKPAdjPAWI" and sender ~= UnitName("player") 
     then
         -- Data is serialized { PTS, ATS, Data, Item }
         local success, deserialized = Serializer:Deserialize(message)
@@ -121,7 +122,7 @@ function core.Sync:OnCommReceived(prefix, message, channel, sender)
                 core:Print(_L["MSG_DKPTABLE_OUTOFDATE"])
                 local officer = core:GetOnlineOfficer()
                 if officer then
-                    core.Sync:SendTo("ErrDKPSyncReq", "DKP", officer)
+                    core.Sync:SendTo("ErrDKPSyncReq", "FULL", officer)
                 else
                     core:Print("There is currently no online officer")
                 end
@@ -145,12 +146,32 @@ function core.Sync:OnCommReceived(prefix, message, channel, sender)
             core:SetLootDataTimestamp(deserialized.IATS)
 
            
-            core:Print(string.format(_L["MSG_DKP_ADJUST_AUTO"], deserialized.DataSet["name"], deserialized.Details["DKP"], deserialized.Item["ItemLink"]))
+            core:Print(string.format(_L["MSG_DKP_ADJUST_AUTO"], deserialized.DataSet["name"], "-"..deserialized.Item["Dkp"], deserialized.Item["ItemLink"]))
             ErrorDKP:DKPTableUpdate()
+            ErrorDKP:LootHistoryTableUpdate()
         else
             core:Print("Error while deserializing data from message: ", prefix)
         end
-    elseif prefix == "ErrDKPDKPSync" then
+    elseif prefix == "ErrDKPAddLoot" 
+    --and sender ~= UnitName("player")
+    then
+        -- Data is serialized { PTS, ATS, Data, Item }
+        local success, deserialized = Serializer:Deserialize(message)
+        if success then
+            table.insert(core.LootLog, deserialized.Item)
+            core:SetLootDataTimestamp(deserialized.IATS)
+            ErrorDKP:LootHistoryTableUpdate()
+
+            if deserialized.Item.Looter == "disenchanted" then
+                core:Print(string.format(_L["MSG_LOOT_DISENCHANTED"], deserialized.Item.ItemLink))
+            else
+                core:Print(string.format(_L["MSG_LOOT_ADDED"], deserialized.Item.ItemLink))
+            end
+        else
+            core:Print("Error while deserializing data from message: ", prefix)
+        end
+    elseif prefix == "ErrDKPDKPSync" and sender ~= UnitName("player")  
+    then
         if VerifySender(sender) then
             local success, deserialized = Serializer:Deserialize(message)
             if success then
@@ -159,13 +180,14 @@ function core.Sync:OnCommReceived(prefix, message, channel, sender)
                     table.insert(core.DKPTable, v)
                 end
                 core:SetDKPDataTimestamp(deserialized.ATS)
-                core:PrintDebug("Sync finished")
+                core:Print(string.format(_L["MSG_SYNC_FINISHED"], "DKP", sender))
             else
                 core:Print("Error while deserializing data from message: ", prefix)
             end
             ErrorDKP:DKPTableUpdate()
         end
-    elseif prefix == "ErrDKPLootSync" then
+    elseif prefix == "ErrDKPLootSync" and sender ~= UnitName("player")  
+    then
         if VerifySender(sender) then
             local success, deserialized = Serializer:Deserialize(message)
             if success then
@@ -176,13 +198,13 @@ function core.Sync:OnCommReceived(prefix, message, channel, sender)
                     end
                 end
                 core:SetLootDataTimestamp(deserialized.ATS)
-                core:PrintDebug("Sync LootTable finished")
+                core:Print(string.format(_L["MSG_SYNC_FINISHED"], "Loot", sender))
             else
                 core:Print("Error while deserializing data from message: ", prefix)
             end
             ErrorDKP:LootHistoryTableUpdate()
         end
-    elseif prefix == "ErrDKPSyncReq" then
+    elseif prefix == "ErrDKPSyncReq" and sender ~= UnitName("player")  then
         if message == "DKP" then
             core:Print(_L["MSG_BROADCAST_DKP_REQ"], sender)
             ErrorDKP:BroadcastDKPTable()

@@ -22,12 +22,12 @@ if GetLocale() == "deDE" then
         },
         DKPPRICE = "DKP Preis",
         MINIMAP = {
-            DESCRLCLICK = "Left CLick - Open Window"
+            DESCRLCLICK = "Linke Maustaste - Öffne Fenster"
         },
         OK = "Ok",
         CANCEL = "Abbrechen",
         LCD_ENTERCOSTFOR = "DKP-Preis eingeben für",
-        LCD_LOOTETBY = "Looted by |cFFFFFFFF%s|r.",
+        LCD_LOOTETBY = "Geplündert von |cFFFFFFFF%s|r.",
         
         TOOLTIP_PRIO_NONE = "Keine",
         TOOLTIP_PRIO_LABEL = "Prio",
@@ -41,6 +41,9 @@ if GetLocale() == "deDE" then
         MSG_BROADCAST_DKP_REQ = "Veteile DKP Table auf Anfrage von ",
         MSG_BROADCAST_LOOT_REQ = "Verteile Loot-Tabelle auf Anfrage von ",
         MSG_BROADCAST_FULL_REQ = "Veteile sämtliche Date auf Anfrage von ",
+        MSG_SYNC_FINISHED = "Vollständiges %s update von %s erhalten.",
+        MSG_LOOT_ADDED = "%s zur Loot-Historie hinzugefügt.",
+        MSG_LOOT_DISENCHANTED = "%s wurde entzaubert.",
 
         HELP_EDKP = "Öffnet das ErrorDKP Fenster.",
         HELP_HELP = "Gibt die aktuelle Hilfeliste aus.",

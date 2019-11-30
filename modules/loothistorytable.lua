@@ -50,6 +50,11 @@ local LootHistoryTableColDef = {
     {["name"] = "", ["width"] = 1} -- invisible column for itemString (needed for tooltip)
 };
 
+local function UpdateDataTimestamp()
+    core.DKPDataInfo["LootInfo"]["timestamp"] = core:GenerateTimestamp()
+    return core.DKPDataInfo["LootInfo"]["timestamp"]
+end
+
 function ErrorDKP:LootHistoryTableUpdate()
     if not UI.LootHistoryTable then return end
 
@@ -129,7 +134,9 @@ function ErrorDKP:GetLootHistoryTable()
     return t
 end
 
-function ErrorDKP:AddItemToHistory(itemLink, itemId, looter, dkp, lootTime)
+function ErrorDKP:AddItemToHistory(itemLink, itemId, looter, dkp, lootTime, broadcast)
+    local historyEntry, oldTimestamp, newTimestamp;
+    oldTimestamp = core:GetLootDataTimestamp()
     local historyEntry = {
         ["ItemId"] = itemId,
         ["ItemLink"] = itemLink,
@@ -141,7 +148,16 @@ function ErrorDKP:AddItemToHistory(itemLink, itemId, looter, dkp, lootTime)
     while #core.LootLog > 50 do
         table.remove(core.LootLog, #core.LootLog)
     end
+    newTimestamp = UpdateDataTimestamp()
     if UI.LootHistoryTable then ErrorDKP:LootHistoryTableUpdate() end
+    if broadcast then
+        core.Sync:Send("ErrDKPAddLoot", { PTS = oldTimestamp, ATS = newTimestamp, Item = historyEntry })
+        if historyEntry.Looter == "disenchanted" then 
+            core:Print(string.format(_L["MSG_LOOT_DISENCHANTED"], historyEntry.ItemLink))
+        else
+            core:Print(string.format(_L["MSG_LOOT_ADDED"], historyEntry.ItemLink))
+        end
+    end
     return historyEntry
 end
 

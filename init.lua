@@ -112,7 +112,7 @@ local function mapImportDKPData()
     local index = 1
     for k,v in pairs(gdkp["players"]) do
         local classFilename, classId = core:LocalizedClassToEng(v["class"])
-        imported[index] = { name = k, dkp = v["DKP"], classFilename = classFilename, classId = classId  }
+        imported[index] = { name = k, dkp = v["dkp_current"], classFilename = classFilename, classId = classId  }
         index = index + 1
     end
 

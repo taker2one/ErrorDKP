@@ -33,56 +33,6 @@ local function DecomposeItemLink(link)
     return itemName, itemLink, itemId, itemString, itemRarity, itemColor, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice, itemClassID, itemSubClassID;
 end
 
----------------------------
---  loot cost functions  --
----------------------------
--- basic idea: add looted items to a little queue and ask cost for each item in the queue 
---             this should avoid missing dialogs for fast looted items
--- note: standard dkpvalue is already 0
-local function ErrorDKP_LCD_AddToItemCostQueue(LootInfo)
-    tinsert(core.LootQueue, LootInfo);
-    if (core.AskCostQueueRunning) then return; end
-    core.AskCostQueueRunning = true;
-    ErrorDKP_LCD_AskCost();
-end
-
-local function ErrorDKPAutoAddLootItem(playerName, itemLink, itemCount)
-	if (not playerName) then return; end
-	if (not itemLink) then return; end
-	if (not itemCount) then return; end
-    core:PrintDebug("ErrorDKPAutoAddLootItem called - playerName: "..playerName.." - itemLink: "..itemLink.." - itemCount: "..itemCount);
-    local itemName, _, itemId, itemString, itemRarity, itemColor, itemLevel, _, itemType, itemSubType, _, _, _, _, itemClassID, itemSubClassID = DecomposeItemLink(itemLink);
-    if (not itemName == nil) then core:PrintDebug("Panic! Item information lookup failed horribly. Source: ErrorDKPAutoAddLootItem()"); return; end
-    -- check options, if this item should be tracked
-    if (core.ISettings.ItemTracking_MinItemQualityToLog > itemRarity) then core:PrintDebug("Item not tracked - quality is too low."); return; end
-    if (core.ISettings["ItemTracking_IgnoreEnchantingMats"] and itemClassID == 7 and itemSubClassID == 12) then core:PrintDebug("Item not tracked - it is a enchanting material and the corresponding ignore option is on."); return; end
-    --if (MRT_IgnoredItemIDList[itemId]) then core:PrintDebug("Item not tracked - ItemID is listed on the ignore list"); return; end
-    
-    local dkpValue = 0;
-    local lootAction = nil;
-    local itemNote = nil;
-    local supressCostDialog = nil;
-    local gp1, gp2 = nil, nil;
-  
-    -- TODO: DKP Price from Pricelist
-
-    -- if code reach this point, we should have valid item information, an active raid and at least one boss kill entry - make a table!
-    local LootInfo = {
-        ["ItemLink"] = itemLink,
-        ["ItemString"] = itemString,
-        ["ItemId"] = itemId,
-        ["ItemName"] = itemName,
-        ["ItemColor"] = itemColor,
-        ["ItemCount"] = itemCount,
-        ["Looter"] = playerName,
-        ["DKPValue"] = dkpValue,
-        ["Time"] = time(),
-        ["Note"] = itemNote,
-    };
-    -- ask the player for item cost
-    ErrorDKP_LCD_AddToItemCostQueue(LootInfo);
-end
-
 -- process first queue entry
 local function ErrorDKP_LCD_AskCost()
     -- if there are no entries in the queue, then return
@@ -155,6 +105,56 @@ local function ErrorDKP_LCD_AskCost()
     ErrorDKP:GetLootConfirmDialog():Show();  
 end
 
+---------------------------
+--  loot cost functions  --
+---------------------------
+-- basic idea: add looted items to a little queue and ask cost for each item in the queue 
+--             this should avoid missing dialogs for fast looted items
+-- note: standard dkpvalue is already 0
+local function ErrorDKP_LCD_AddToItemCostQueue(LootInfo)
+    tinsert(core.LootQueue, LootInfo);
+    if (core.AskCostQueueRunning) then return; end
+    core.AskCostQueueRunning = true;
+    ErrorDKP_LCD_AskCost();
+end
+
+local function ErrorDKPAutoAddLootItem(playerName, itemLink, itemCount)
+	if (not playerName) then return; end
+	if (not itemLink) then return; end
+	if (not itemCount) then return; end
+    core:PrintDebug("ErrorDKPAutoAddLootItem called - playerName: "..playerName.." - itemLink: "..itemLink.." - itemCount: "..itemCount);
+    local itemName, _, itemId, itemString, itemRarity, itemColor, itemLevel, _, itemType, itemSubType, _, _, _, _, itemClassID, itemSubClassID = DecomposeItemLink(itemLink);
+    if (not itemName == nil) then core:PrintDebug("Panic! Item information lookup failed horribly. Source: ErrorDKPAutoAddLootItem()"); return; end
+    -- check options, if this item should be tracked
+    if (core.ISettings.ItemTracking_MinItemQualityToLog > itemRarity) then core:PrintDebug("Item not tracked - quality is too low."); return; end
+    if (core.ISettings["ItemTracking_IgnoreEnchantingMats"] and itemClassID == 7 and itemSubClassID == 12) then core:PrintDebug("Item not tracked - it is a enchanting material and the corresponding ignore option is on."); return; end
+    --if (MRT_IgnoredItemIDList[itemId]) then core:PrintDebug("Item not tracked - ItemID is listed on the ignore list"); return; end
+    
+    local dkpValue = 0;
+    local lootAction = nil;
+    local itemNote = nil;
+    local supressCostDialog = nil;
+    local gp1, gp2 = nil, nil;
+  
+    -- TODO: DKP Price from Pricelist
+
+    -- if code reach this point, we should have valid item information, an active raid and at least one boss kill entry - make a table!
+    local LootInfo = {
+        ["ItemLink"] = itemLink,
+        ["ItemString"] = itemString,
+        ["ItemId"] = itemId,
+        ["ItemName"] = itemName,
+        ["ItemColor"] = itemColor,
+        ["ItemCount"] = itemCount,
+        ["Looter"] = playerName,
+        ["DKPValue"] = dkpValue,
+        ["Time"] = time(),
+        ["Note"] = itemNote,
+    };
+    -- ask the player for item cost
+    ErrorDKP_LCD_AddToItemCostQueue(LootInfo);
+end
+
 local function ErrorDKP_LCD_Handler(button)
     core:PrintDebug("LCDFrame: "..button.." pressed.");
     -- if OK was pressed, check input data
@@ -162,7 +162,7 @@ local function ErrorDKP_LCD_Handler(button)
     local dkpValue = nil;
     local lootNote = UI.LootConfirmDialog.NoteText:GetText();
 
-    if (button == "OK") then
+    if (button == "OK" or button == "BANK") then
         if (UI.LootConfirmDialog.PriceInput:GetText() == "") then
             dkpValue = 0;
         else
@@ -180,15 +180,16 @@ local function ErrorDKP_LCD_Handler(button)
     local looter = UI.LootConfirmDialog.Looter
     if (button == "OK") then
         --Add to loot
-        ErrorDKP:AddToLootHistory(LootInfo.ItemLink, LootInfo.ItemId , looter, dkpValue)
-        ErrorDKP:AutoAdjustDKP(looter, -dkpValue, LootInfo.ItemLink)
+        local historyEntry = ErrorDKP:AddToLootHistory(LootInfo.ItemLink, LootInfo.ItemId , looter, dkpValue)
+        ErrorDKP:AdjustDKPWithItem(looter, -dkpValue, historyEntry)
     elseif (button == "Cancel") then
     elseif (button == "Delete") then
-    elseif (button == "Bank") then
+    elseif (button == "BANK") then
         local historyEntry = ErrorDKP:AddToLootHistory(LootInfo.ItemLink, LootInfo.ItemId, "Errorbank", dkpValue)
-        ErrorDKP:AdjustDKPWithItem(looter, -dkpValue, historyEntry)
-    elseif (button == "Disenchanted") then
-        ErrorDKP:AddToLootHistory(LootInfo.ItemLink, LootInfo.ItemId, "disenchanted", 0)
+        ErrorDKP:AdjustDKPWithItem("Errorbank", -dkpValue, historyEntry)
+    elseif (button == "DISENCHANTED") then
+        core:PrintDebug("ErrorDKP_LCD_Handler: DISENCHANTED")
+        ErrorDKP:AddToLootHistory(LootInfo.ItemLink, LootInfo.ItemId, "disenchanted", 0, true)
     end
   
     -- done with handling item - proceed to next one
@@ -342,16 +343,15 @@ local function CreateLootConfirmDialog()
     UI.LootConfirmDialog.DissButton = dissButton
     dissButton:SetSize(95,22)
     dissButton:SetPoint("LEFT", bankButton, "RIGHT", 15, 0)
-    dissButton:SetText("Disentchanted")
+    dissButton:SetText("Disenchanted")
     dissButton:SetScript("OnClick", function()
-         ErrorDKP_LCD_Handler("DISENTCHANTED") 
+         ErrorDKP_LCD_Handler("DISENCHANTED") 
     end)
 
     local ddButton = CreateFrame("Button", nil, f)
     UI.LootConfirmDialog.DdButton = ddButton
     ddButton:SetSize(16,16)
     ddButton:SetPoint("LEFT", textline3, "RIGHT")
-    --ddButton:SetText("Disentchanted")
     ddButton:SetScript("OnClick", ErrorDKP_LCD_DropDownList_Toggle)
     ddButton:CreateTexture()
     ddButton.normalTexture = ddButton:CreateTexture(nil)
@@ -387,8 +387,8 @@ local function CreateLootConfirmDialog()
     return f
 end
 
-function ErrorDKP:AddToLootHistory(itemLink, itemId, looter, dkp)
-    ErrorDKP:AddItemToHistory(itemLink, itemId, looter, dkp, time())
+function ErrorDKP:AddToLootHistory(itemLink, itemId, looter, dkp, broadcast)
+    return ErrorDKP:AddItemToHistory(itemLink, itemId, looter, dkp, time(), broadcast)
 end
 
 function ErrorDKP:AutoAddLoot(chatmsg)

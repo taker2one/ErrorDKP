@@ -21,12 +21,12 @@ local addonName, core = ...;
         },
         DKPPRICE = "DKP Price",
         MINIMAP = {
-            DESCRLCLICK = "Left CLick - Open Window"
+            DESCRLCLICK = "Left Click - Open Window"
         },
         OK = "Ok",
         CANCEL = "Cancel",
         LCD_ENTERCOSTFOR = "Enter DKP cost for",
-        LCD_LOOTETBY = "Geplündert von |cFFFFFFFF%s|r.",
+        LCD_LOOTETBY = "Looted by |cFFFFFFFF%s|r.",
         
         
         TOOLTIP_PRIO_NONE = "None",
@@ -41,6 +41,9 @@ local addonName, core = ...;
         MSG_BROADCAST_DKP_REQ = "Broadcasting DKP-Table after request from ",
         MSG_BROADCAST_LOOT_REQ = "Broadcasting Loot-Table after request from ",
         MSG_BROADCAST_FULL_REQ = "Broadcasting all Data after request from ",
+        MSG_SYNC_FINISHED = "Got full %s update from %s.",
+        MSG_LOOT_ADDED = "%s added to loot history.",
+        MSG_LOOT_DISENCHANTED = "%s got disenchanted.",
 
         HELP_EDKP = "Opens ErrorDKP window.",
         HELP_HELP = "Prints cuurent help list.",

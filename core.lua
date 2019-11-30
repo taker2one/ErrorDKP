@@ -74,7 +74,7 @@ core.Settings = {
 core.UI = {}
 
 -- Debug
-core.Debug = true
+core.Debug = false
 function core:PrintDebug(...)
     if core.Debug then
         print("|cff90EE90<ErrorDKP-Dbg>|r", ...)
@@ -121,12 +121,12 @@ function core:CheckTrusted(player)
 end
 
 function core:CheckMasterLooter()
-    if IsInRaid() then
+    --if IsInRaid() then
       local lootmethod, masterlooterPartyID, masterlooterRaidID = GetLootMethod()
       if lootmethod == "master" and masterlooterPartyID == 0 then
           return true
       end
-    end
+    --end
     return nil
 end
 
