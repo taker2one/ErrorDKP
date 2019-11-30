@@ -168,6 +168,8 @@ local function OnInit()
     
     -- Create MiniMapIcon
     ErrorDKP:CreateMiniMapIcon()
+
+    --ErrorDKP:GetLootSurveyDialog()
 end
 
 
@@ -206,11 +208,12 @@ function ErrorDKP_OnEventHandler(self, event, ...)
         --mrt:BossKillHandler(encounterID, name);  
     elseif (event == "PARTY_LOOT_METHOD_CHANGED") then
         -- check if mastlooter an enable modules
+        core:PrintDebug("RAID_ROSTER_UPDATE", ...)
+        core.IsMLooter = core:CheckMasterLooter()
     elseif (event == "RAID_ROSTER_UPDATE") then
         -- track attendance
         -- members goes offline triggers this?
         core:PrintDebug("RAID_ROSTER_UPDATE", ...)
-
     end
 end
 
@@ -223,7 +226,11 @@ event:RegisterEvent("CHAT_MSG_LOOT")
 -- event:RegisterEvent("CHAT_MSG_WHISPER")
 -- event:RegisterEvent("ENCOUNTER_END")
 -- event:RegisterEvent("RAID_INSTANCE_WELCOME")
--- event:RegisterEvent("RAID_ROSTER_UPDATE")
+event:RegisterEvent("RAID_ROSTER_UPDATE")
+event:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
 -- event:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 -- event:RegisterEvent("ENCOUNTER_END")
 event:SetScript("OnEvent", ErrorDKP_OnEventHandler)
+--LOOT_CLOSED --Firest before lat chat loot event
+--LOOT_OPENED
+--LOOT_SLOT_CLEARED Fired when loot is removed from a corpse

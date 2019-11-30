@@ -36,6 +36,7 @@ core.LastUpdateAvailableMsg = 0
 core.AskCostQueueRunning = false
 --
 core.IsTrusted = ""
+core.IsMLooter = nil
 core.TrustedPlayers = {
   "Doktorwho",
   "Rassputin",
