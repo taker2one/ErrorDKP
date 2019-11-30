@@ -63,7 +63,7 @@ core.ISettings = {
         RowHeight = 18,
         RowCount = 27
     },
-    ItemTracking_MinItemQualityToLog = _C.ITEMRARITY.COMMON,
+    ItemTracking_MinItemQualityToLog = _C.ITEMRARITY.EPIC,
     ItemTracking_IgnoreEnchantingMats = true
 }
 

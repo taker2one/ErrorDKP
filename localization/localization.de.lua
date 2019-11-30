@@ -40,7 +40,11 @@ if GetLocale() == "deDE" then
         MSG_NOT_ALLOWED = "Das is nicht erlaubt, du bist kein Offizier.",
         MSG_BROADCAST_DKP_REQ = "Veteile DKP Table auf Anfrage von ",
         MSG_BROADCAST_LOOT_REQ = "Verteile Loot-Tabelle auf Anfrage von ",
-        MSG_BROADCAST_FULL_REQ = "Veteile sämtliche Date auf Anfrage von "
+        MSG_BROADCAST_FULL_REQ = "Veteile sämtliche Date auf Anfrage von ",
+
+        HELP_EDKP = "Öffnet das ErrorDKP Fenster.",
+        HELP_HELP = "Gibt die aktuelle Hilfeliste aus.",
+        HELP_BROADCAST = "Braodcast der Daten an alle Gildenmitglieder."
     }
 
 end

@@ -37,7 +37,12 @@ end
 
 local menu = {
       { text = "Select an Option", isTitle = true, notCheckable = true},
-      { text = "Adjust DKP", notCheckable = true, func = function() core:PrintDebug("You've chosen option 1"); end }
+      { text = "Adjust DKP", notCheckable = true, func = function() 
+        local selection = UI.DKPTable:GetSelection()
+        if selection then
+          ErrorDKP:StartAdjustment(UI.DKPTable:GetCell(selection, 3))
+        end
+      end }
   }
 
 local tableDef = {
@@ -86,8 +91,12 @@ function ErrorDKP:CreateDKPScrollingTable()
       ["OnMouseDown"] = function (rowFrame, cellFrame, data, cols, row, realrow, column, scrollingTable, ...)
           local button = ...
           if button == "RightButton" then
-              core:PrintDebug("DKPTable RightButton clicked"),
-              
+              core:PrintDebug("DKPTable RightButton clicked")
+              scrollingTable:SetSelection(realrow)
+              -- There is currently ony one entry so do it the easy way and hide whole menu
+              if core:CheckSelfTrusted() then
+                  ErrorDKP:ConextMenu(menu)
+              end
           end
   
           --[[ return true to have your event override the default one

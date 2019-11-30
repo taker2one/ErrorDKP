@@ -34,6 +34,11 @@ local minimapShapes = {
 	["TRICORNER-BOTTOMRIGHT"] = {true, true, true, false},
 }
 
+local menu = {
+    { text = "Select an Option", isTitle = true, notCheckable = true},
+    { text = "Adjust DKP", notCheckable = true, func = function() core:PrintDebug("MinimapRight"); end }
+}
+
 local function IconMoveButton(self)
 	if self.dragMode == "free" then
 		local centerX, centerY = Minimap:GetCenter()
@@ -72,11 +77,7 @@ end
 local function MiniMapIconOnClick(self, button)
     if button == "RightButton" then
         core:PrintDebug("MiniMapIconOnClick", button)
-		--for _,func in pairs(ExRT.MiniMapMenu) do
-		--	func:miniMapMenu()
-		--end
-		--ExRT.Options:UpdateModulesList()
-		--EasyMenu(ExRT.F.menuTable, ExRT.Options.MiniMapDropdown, "cursor", 10 , -15, "MENU")
+        ErrorDKP:ConextMenu(menu,10,-15)
     elseif button == "LeftButton" then
         core:PrintDebug("MiniMapIconOnClick", button)
 		ErrorDKP:Toggle()

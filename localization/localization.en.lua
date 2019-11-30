@@ -40,5 +40,9 @@ local addonName, core = ...;
         MSG_NOT_ALLOWED = "This is not allowed, you are not an Officer",
         MSG_BROADCAST_DKP_REQ = "Broadcasting DKP-Table after request from ",
         MSG_BROADCAST_LOOT_REQ = "Broadcasting Loot-Table after request from ",
-        MSG_BROADCAST_FULL_REQ = "Broadcasting all Data after request from "
+        MSG_BROADCAST_FULL_REQ = "Broadcasting all Data after request from ",
+
+        HELP_EDKP = "Opens ErrorDKP window.",
+        HELP_HELP = "Prints cuurent help list.",
+        HELP_BROADCAST = "Initiate a table broadcast."
     }

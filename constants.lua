@@ -32,4 +32,10 @@ c.CLASSID_EQDKP = {
     ["10"] = "WARRIOR"
 }
 
+-- ignored items
+c.IGNORED_ITEMS = {  
+    -- Shards
+    [20725] = true,     -- Nexus Crystal
+}
+
 core.CONSTANTS = c

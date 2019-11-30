@@ -392,6 +392,11 @@ function ErrorDKP:AddToLootHistory(itemLink, itemId, looter, dkp)
 end
 
 function ErrorDKP:AutoAddLoot(chatmsg)
+    if core.IsMLooter ~= true then
+        -- only Masterlooter tracks items
+        core:PrintDebug("AutoAddLoot ignored cause you are not the MasterLooter")
+        return
+    end
     core:PrintDebug("Adding Loot")
     -- patterns LOOT_ITEM / LOOT_ITEM_SELF are also valid for LOOT_ITEM_MULTIPLE / LOOT_ITEM_SELF_MULTIPLE - but not the other way around - try these first
     -- first try: somebody else received multiple loot (most parameters)

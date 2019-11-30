@@ -8,6 +8,7 @@
 
 local addonName, core = ...
 local ErrorDKP = core.ErrorDKP
+local _L = core._L
 
 
 -------------------------------------------------------------------
@@ -34,7 +35,11 @@ core.Commands = {
     end,
     ["help"] = function()
         print(" ");
-        core:Print("|cff00cc66/dkp|r")
+        core:Print("|cff00cc66/edkp|r - ".._L["HELP_EDKP"])
+        core:Print("|cff00cc66/edkp help|r - ".._L["HELP_HELP"])
+        if core:CheckSelfTrusted() then
+            core:Print("|cff00cc66/edkp broadcast|r - ".._L["HELP_BROADCAST"])
+        end
 		-- MonDKP:Print(L["SLASHCOMMANDLIST"]..":")
 		-- MonDKP:Print("|cff00cc66/dkp|r - "..L["DKPLAUNCH"]);
 		-- MonDKP:Print("|cff00cc66/dkp ?|r - "..L["HELPINFO"]);
@@ -188,6 +193,7 @@ function ErrorDKP_OnEventHandler(self, event, ...)
         OnInit()
         self:UnregisterEvent("ADDON_LOADED")
         -- Ask if items in queue
+        core.IsMLooter = core:CheckMasterLooter()
         ErrorDKP:AskItemCost()
     elseif event == "PLAYER_ENTERING_WORLD" then
         self:UnregisterEvent("PLAYER_ENTERING_WORLD")
@@ -208,12 +214,13 @@ function ErrorDKP_OnEventHandler(self, event, ...)
         --mrt:BossKillHandler(encounterID, name);  
     elseif (event == "PARTY_LOOT_METHOD_CHANGED") then
         -- check if mastlooter an enable modules
-        core:PrintDebug("RAID_ROSTER_UPDATE", ...)
+        core:PrintDebug("PARTY_LOOT_METHOD_CHANGED", ...)
         core.IsMLooter = core:CheckMasterLooter()
     elseif (event == "RAID_ROSTER_UPDATE") then
         -- track attendance
         -- members goes offline triggers this?
         core:PrintDebug("RAID_ROSTER_UPDATE", ...)
+        core.IsMLooter = core:CheckMasterLooter()
     end
 end
 

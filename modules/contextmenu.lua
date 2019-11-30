@@ -18,9 +18,12 @@ function ErrorDKP:GetContextMenu()
     return menu
 end
 
-function ErrorDKP:ConextMenu(menu)
+function ErrorDKP:ConextMenu(menu, xoffset, yoffset)
     menuFrame = ErrorDKP:GetContextMenu()
-    EasyMenu(menu, menuFrame, "cursor", 0 , 0, "MENU")
+    local x = xoffset or 0
+    local y = yoffset or 0
+
+    EasyMenu(menu, menuFrame, "cursor", xoffset , yoffset, "MENU")  
 end
 
 -- Example menu
