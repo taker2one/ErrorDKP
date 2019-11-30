@@ -35,6 +35,8 @@ modules\lootneedsurvey.lua
 modules\dkpadjustment.lua
 modules\loottrack.lua
 modules\loothistorytable.lua
+modules\export.lua
+modules\contextmenu.lua
 modules\DropDownMenu\DropDownMenuTemplates.xml
 modules\DropDownMenu\DropDownMenu.lua
 

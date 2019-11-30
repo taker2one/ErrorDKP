@@ -35,9 +35,23 @@ function ErrorDKP:DKPTableUpdate()
   UI.DKPTable:SetData(DKPTableData, true)
 end
 
+local menu = {
+      { text = "Select an Option", isTitle = true, notCheckable = true},
+      { text = "Adjust DKP", notCheckable = true, func = function() core:PrintDebug("You've chosen option 1"); end }
+  }
+
 local tableDef = {
   { ["name"] = "", ["width"] = 1 },
-  { ["name"] = _LS["COLNAME"], ["width"] = 100 },
+  { ["name"] = _LS["COLNAME"], ["width"] = 100,
+  -- ["DoCellUpdate"] = function(rowFrame, cellFrame, data, cols, row, realrow, column, fShow, self, ...)
+  --   cellFrame:SetScript("OnMouseUp", function(self, button)
+  --       if button == 'RightButton' then 
+  --             core:PrintDebug(RightButton)
+  --             ErrorDKP:ConextMenu(menu)
+  --       end
+  --   end)
+  -- end,
+  },
   { ["name"] = "", ["width"] = 1}, -- pure playername to append to other dialogs
   { ["name"] = _LS["COLCLASS"], ["width"] = 80},
   { ["name"] = _LS["COLDKP"], ["width"] = 50, ["defaultsort"] = "dsc" }
