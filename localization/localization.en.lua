@@ -37,5 +37,8 @@ local addonName, core = ...;
         MSG_PLAYER_NOT_FOUND_DKP = "%s not found in list, update not possible.",
         MSG_DKP_ADJUST_AUTO = "%s %d DKP for %s",
         MSG_DKP_ADJUST_MAN = "Manual adjustment: %s %d DKP",
-        MSG_NOT_ALLOWED = "This is not allowed, you are not an Officer"
+        MSG_NOT_ALLOWED = "This is not allowed, you are not an Officer",
+        MSG_BROADCAST_DKP_REQ = "Broadcasting DKP-Table after request from ",
+        MSG_BROADCAST_LOOT_REQ = "Broadcasting Loot-Table after request from ",
+        MSG_BROADCAST_FULL_REQ = "Broadcasting all Data after request from "
     }

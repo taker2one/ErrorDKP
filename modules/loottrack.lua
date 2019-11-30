@@ -13,6 +13,12 @@ local _L = core._L
 local deformat = LibStub("LibDeformat-3.0")
 local ScrollingTable = LibStub("ScrollingTable")
 
+-- Table definition for the drop down menu for the DKPFrame
+local LCD_DropDownTableColDef = {
+    {["name"] = "", ["width"] = 100},
+};
+
+
 local function DecomposeItemLink(link)
     core:PrintDebug("DecomposeItemLink", link)
     local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice, itemClassID, itemSubClassID = GetItemInfo(link);
@@ -58,12 +64,8 @@ local function ErrorDKPAutoAddLootItem(playerName, itemLink, itemCount)
     local supressCostDialog = nil;
     local gp1, gp2 = nil, nil;
   
-    -- TODO: DKP Price from Pricelist3
+    -- TODO: DKP Price from Pricelist
 
-    -- Quick&Dirty for trash drops before first boss kill
-    if (MRT_NumOfLastBoss == nil) then 
-        MRT_AddBosskill(MRT_L.Core["Trash Mob"], "N");
-    end
     -- if code reach this point, we should have valid item information, an active raid and at least one boss kill entry - make a table!
     local LootInfo = {
         ["ItemLink"] = itemLink,
@@ -74,44 +76,15 @@ local function ErrorDKPAutoAddLootItem(playerName, itemLink, itemCount)
         ["ItemCount"] = itemCount,
         ["Looter"] = playerName,
         ["DKPValue"] = dkpValue,
-        ["BossNumber"] = MRT_NumOfLastBoss,
-        ["Time"] = MRT_GetCurrentTime(),
+        ["Time"] = time(),
         ["Note"] = itemNote,
     };
-    --tinsert(MRT_RaidLog[MRT_NumOfCurrentRaid]["Loot"], LootInfo);
-    -- get current loot mode
-    -- local isPersonal = select(1, GetLootMethod()) == "personalloot"
-    -- -- check if we should ask the player for item cost
-    -- if (supressCostDialog or (not MRT_Options["Tracking_AskForDKPValue"]) or (isPersonal and not MRT_Options["Tracking_AskForDKPValuePersonal"])) then 
-    --     -- notify registered, external functions
-    --     local itemNum = #MRT_RaidLog[MRT_NumOfCurrentRaid]["Loot"];
-    --     if (#MRT_ExternalLootNotifier > 0) then
-    --         local itemInfo = {};
-    --         for key, val in pairs(MRT_RaidLog[MRT_NumOfCurrentRaid]["Loot"][itemNum]) do
-    --             itemInfo[key] = val;
-    --         end
-    --         if (itemInfo.Looter == "bank") then
-    --             itemInfo.Action = MRT_LOOTACTION_BANK;
-    --         elseif (itemInfo.Looter == "disenchanted") then
-    --             itemInfo.Action = MRT_LOOTACTION_DISENCHANT;
-    --         elseif (itemInfo.Looter == "_deleted_") then
-    --             itemInfo.Action = MRT_LOOTACTION_DELETE;
-    --         else
-    --             itemInfo.Action = MRT_LOOTACTION_NORMAL;
-    --         end
-    --         for i, val in ipairs(MRT_ExternalLootNotifier) do
-    --             pcall(val, itemInfo, MRT_NOTIFYSOURCE_ADD_SILENT, MRT_NumOfCurrentRaid, itemNum);
-    --         end
-    --     end
-    --     return; 
-    -- end
-    -- if (MRT_Options["Tracking_MinItemQualityToGetDKPValue"] > MRT_ItemColorValues[itemColor]) then return; end
     -- ask the player for item cost
     ErrorDKP_LCD_AddToItemCostQueue(LootInfo);
 end
 
 -- process first queue entry
-function ErrorDKP_LCD_AskCost()
+local function ErrorDKP_LCD_AskCost()
     -- if there are no entries in the queue, then return
     if (#core.LootQueue == 0) then
         core.AskCostQueueRunning = nil;
@@ -182,12 +155,8 @@ function ErrorDKP_LCD_AskCost()
     ErrorDKP:GetLootConfirmDialog():Show();  
 end
 
-function ErrorDKP:AddToLootHistory(itemLink, itemId, looter, dkp)
-    ErrorDKP:AddItemToHistory(itemLink, itemId, looter, dkp, time())
-end
-
-function ErrorDKP_LCD_Handler(button)
-    core:PrintDebug("DKPFrame: "..button.." pressed.");
+local function ErrorDKP_LCD_Handler(button)
+    core:PrintDebug("LCDFrame: "..button.." pressed.");
     -- if OK was pressed, check input data
     local LootInfo = core.LootQueue[1]
     local dkpValue = nil;
@@ -208,19 +177,16 @@ function ErrorDKP_LCD_Handler(button)
     -- hide frame
     UI.LootConfirmDialog:Hide();
 
-    -- local raidNum = MRT_AskCostQueue[1]["RaidNum"];
-    -- local itemNum = MRT_AskCostQueue[1]["ItemNum"];
     local looter = UI.LootConfirmDialog.Looter
-    --local item = UI.LootConfirmDialog.Textline2:GetText()
     if (button == "OK") then
         --Add to loot
         ErrorDKP:AddToLootHistory(LootInfo.ItemLink, LootInfo.ItemId , looter, dkpValue)
         ErrorDKP:AutoAdjustDKP(looter, -dkpValue, LootInfo.ItemLink)
     elseif (button == "Cancel") then
     elseif (button == "Delete") then
-
     elseif (button == "Bank") then
-        ErrorDKP:AddToLootHistory(LootInfo.ItemLink, LootInfo.ItemId, "Errorbank", dkpValue)
+        local historyEntry = ErrorDKP:AddToLootHistory(LootInfo.ItemLink, LootInfo.ItemId, "Errorbank", dkpValue)
+        ErrorDKP:AdjustDKPWithItem(looter, -dkpValue, historyEntry)
     elseif (button == "Disenchanted") then
         ErrorDKP:AddToLootHistory(LootInfo.ItemLink, LootInfo.ItemId, "disenchanted", 0)
     end
@@ -234,7 +200,7 @@ function ErrorDKP_LCD_Handler(button)
     end    
 end
 
-function ErrorDKP_LCD_DropDownList_Toggle()
+local function ErrorDKP_LCD_DropDownList_Toggle()
     local ddt = core.UI.LCDDropDownTable or ErrorDKP:CreateDropDownTable()
     if (ddt.frame:IsShown()) then
         ddt.frame:Hide();
@@ -243,36 +209,6 @@ function ErrorDKP_LCD_DropDownList_Toggle()
         ddt.frame:SetPoint("TOPRIGHT", UI.LootConfirmDialog.DdButton, "BOTTOMRIGHT", 0, 0);
     end
 end
-
-function ErrorDKP:AutoAddLoot(chatmsg)
-    core:PrintDebug("Adding Loot")
-    -- patterns LOOT_ITEM / LOOT_ITEM_SELF are also valid for LOOT_ITEM_MULTIPLE / LOOT_ITEM_SELF_MULTIPLE - but not the other way around - try these first
-    -- first try: somebody else received multiple loot (most parameters)
-    local playerName, itemLink, itemCount = deformat(chatmsg, LOOT_ITEM_MULTIPLE);
-    -- next try: somebody else received single loot
-    if (playerName == nil) then
-        itemCount = 1;
-        playerName, itemLink = deformat(chatmsg, LOOT_ITEM);
-    end
-    -- if player == nil, then next try: player received multiple loot
-    if (playerName == nil) then
-        playerName = UnitName("player");
-        itemLink, itemCount = deformat(chatmsg, LOOT_ITEM_SELF_MULTIPLE);
-    end
-    -- if itemLink == nil, then last try: player received single loot
-    if (itemLink == nil) then
-        itemCount = 1;
-        itemLink = deformat(chatmsg, LOOT_ITEM_SELF);
-    end
-    -- if itemLink == nil, then there was neither a LOOT_ITEM, nor a LOOT_ITEM_SELF message
-    if (itemLink == nil) then 
-        core:PrintDebug("No valid loot event received."); 
-        return; 
-    end
-	-- if code reaches this point, we should have a valid looter and a valid itemLink
-    core:PrintDebug("Item looted - Looter is "..playerName.." and loot is "..itemLink);
-	ErrorDKPAutoAddLootItem(playerName, itemLink, itemCount);
-end	
 
 local function CreateLootConfirmDialog()
     core.UI.LootConfirmDialog = CreateFrame("Frame", "ErrorDKP_LootConfirmDialog", UIParent)
@@ -451,10 +387,39 @@ local function CreateLootConfirmDialog()
     return f
 end
 
--- Table definition for the drop down menu for the DKPFrame
-local LCD_DropDownTableColDef = {
-    {["name"] = "", ["width"] = 100},
-};
+function ErrorDKP:AddToLootHistory(itemLink, itemId, looter, dkp)
+    ErrorDKP:AddItemToHistory(itemLink, itemId, looter, dkp, time())
+end
+
+function ErrorDKP:AutoAddLoot(chatmsg)
+    core:PrintDebug("Adding Loot")
+    -- patterns LOOT_ITEM / LOOT_ITEM_SELF are also valid for LOOT_ITEM_MULTIPLE / LOOT_ITEM_SELF_MULTIPLE - but not the other way around - try these first
+    -- first try: somebody else received multiple loot (most parameters)
+    local playerName, itemLink, itemCount = deformat(chatmsg, LOOT_ITEM_MULTIPLE);
+    -- next try: somebody else received single loot
+    if (playerName == nil) then
+        itemCount = 1;
+        playerName, itemLink = deformat(chatmsg, LOOT_ITEM);
+    end
+    -- if player == nil, then next try: player received multiple loot
+    if (playerName == nil) then
+        playerName = UnitName("player");
+        itemLink, itemCount = deformat(chatmsg, LOOT_ITEM_SELF_MULTIPLE);
+    end
+    -- if itemLink == nil, then last try: player received single loot
+    if (itemLink == nil) then
+        itemCount = 1;
+        itemLink = deformat(chatmsg, LOOT_ITEM_SELF);
+    end
+    -- if itemLink == nil, then there was neither a LOOT_ITEM, nor a LOOT_ITEM_SELF message
+    if (itemLink == nil) then 
+        core:PrintDebug("No valid loot event received."); 
+        return; 
+    end
+	-- if code reaches this point, we should have a valid looter and a valid itemLink
+    core:PrintDebug("Item looted - Looter is "..playerName.." and loot is "..itemLink);
+	ErrorDKPAutoAddLootItem(playerName, itemLink, itemCount);
+end	
 
 function ErrorDKP:AskItemCost()
     ErrorDKP_LCD_AskCost()

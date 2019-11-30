@@ -37,7 +37,10 @@ if GetLocale() == "deDE" then
         MSG_PLAYER_NOT_FOUND_DKP = "%s nicht in der Liste gedunden, aktualisieren nicht möglich.",
         MSG_DKP_ADJUST_AUTO = "%s %d DKP für %s",
         MSG_DKP_ADJUST_MAN = "Manuelle Anpassung: %s %d DKP",
-        MSG_NOT_ALLOWED = "Das is nicht erlaubt, du bist kein Offizier."
+        MSG_NOT_ALLOWED = "Das is nicht erlaubt, du bist kein Offizier.",
+        MSG_BROADCAST_DKP_REQ = "Veteile DKP Table auf Anfrage von ",
+        MSG_BROADCAST_LOOT_REQ = "Verteile Loot-Tabelle auf Anfrage von ",
+        MSG_BROADCAST_FULL_REQ = "Veteile sämtliche Date auf Anfrage von "
     }
 
 end

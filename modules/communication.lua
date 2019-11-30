@@ -39,7 +39,8 @@ function core.Sync:OnEnable()
     core.Sync:RegisterComm("ErrDKPSyncReq")         -- Request a table sync from a officer, data defines type "DKP", "PRICELIST", "ITEMHISTORY" => "FULL"
     core.Sync:RegisterComm("ErrDKPPriceList")       -- Price List Broadcast
     core.Sync:RegisterComm("ErrDKPAdjP")            -- Adjust DKP Points of a player
-    core.Sync:RegisterComm("ErrDKPAdjPA")           -- Adjust DKP Points caused by lootentry
+    --core.Sync:RegisterComm("ErrDKPAdjPA")           -- Adjust DKP Points caused by lootentry, also containes the historyentry
+    core.Sync:RegisterComm("ErrDKPAdjPAWI")         -- Adjust DKP Points caused by lootentry, also containes the historyentry
     core.Sync:RegisterComm("ErrDKPTableCheck")      -- Check for any updated tables
     core.Sync:RegisterComm("ErrDKPBuildCheck")      -- Inform about available update
     core.Sync:RegisterComm("ErrDKPManDKP")          -- Manual DKP Single Entry Update
@@ -66,7 +67,7 @@ function core.Sync:OnCommReceived(prefix, message, channel, sender)
             core.Sync:Send("ErrDKPBuildCheck", tostring(core.Build))
         end
         return
-    elseif (prefix == "ErrDKPAdjP" or prefix == "ErrDKPAdjPA") --and sender ~= UnitName("player") 
+    elseif prefix == "ErrDKPAdjP" --and sender ~= UnitName("player") 
     then
         -- Data is serialized { PTS, ATS, Data }
         local success, deserialized = Serializer:Deserialize(message)
@@ -107,6 +108,48 @@ function core.Sync:OnCommReceived(prefix, message, channel, sender)
         else
             core:Print("Error while deserializing data from message: ", prefix)
         end
+    elseif prefix == "ErrDKPAdjPAWI" --and sender ~= UnitName("player") 
+    then
+        -- Data is serialized { PTS, ATS, Data, Item }
+        local success, deserialized = Serializer:Deserialize(message)
+            if success then
+            core:PrintDebug(deserialized.PTS, deserialized.ATS)
+            local timestampMatches = CheckDKPTimestamp(deserialized.PTS)
+
+            -- timestamp doesnt match request a full update
+            if not timestampMatches then
+                core:Print(_L["MSG_DKPTABLE_OUTOFDATE"])
+                local officer = core:GetOnlineOfficer()
+                if officer then
+                    core.Sync:SendTo("ErrDKPSyncReq", "DKP", officer)
+                else
+                    core:Print("There is currently no online officer")
+                end
+            end
+
+            local entry;
+            for i, v in ipairs(core.DKPTable) do
+                if v["name"] == deserialized.DataSet["name"] then
+                    v["dkp"] = deserialized.DataSet["dkp"]
+                    entry = v
+                    core:SetDKPDataTimestamp(deserialized.ATS)
+                    break
+                end
+            end
+            if not entry then
+                table.insert(core.DKPTable, deserialized.DataSet)
+            end
+
+            -- we also get the item that caused the adjsutment so add it to loothistory
+            table.insert(core.LootLog, deserialized.Item)
+            core:SetLootDataTimestamp(deserialized.IATS)
+
+           
+            core:Print(string.format(_L["MSG_DKP_ADJUST_AUTO"], deserialized.DataSet["name"], deserialized.Details["DKP"], deserialized.Item["ItemLink"]))
+            ErrorDKP:DKPTableUpdate()
+        else
+            core:Print("Error while deserializing data from message: ", prefix)
+        end
     elseif prefix == "ErrDKPDKPSync" then
         if VerifySender(sender) then
             local success, deserialized = Serializer:Deserialize(message)
@@ -138,6 +181,21 @@ function core.Sync:OnCommReceived(prefix, message, channel, sender)
                 core:Print("Error while deserializing data from message: ", prefix)
             end
             ErrorDKP:LootHistoryTableUpdate()
+        end
+    elseif prefix == "ErrDKPSyncReq" then
+        if message == "DKP" then
+            core:Print(_L["MSG_BROADCAST_DKP_REQ"], sender)
+            ErrorDKP:BroadcastDKPTable()
+        end
+        if message == "ITEMHISTORY" then
+            core:Print(_L["MSG_BROADCAST_LOOT_REQ"], sender)
+            ErrorDKP:BroadcastLootTable()
+        end
+        if message == "FULL" then
+            core:Print(_L["MSG_BROADCAST_FULL_REQ"], sender)
+            -- Is this Ok? maybe its neccessary to split some data? We will see
+            ErrorDKP:BroadcastDKPTable()
+            ErrorDKP:BroadcastLootTable()
         end
     end
 end

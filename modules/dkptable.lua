@@ -67,12 +67,27 @@ function ErrorDKP:CreateDKPScrollingTable()
       end
     end)
 
+    -- Register ContextMenu
+    UI.DKPTable:RegisterEvents({
+      ["OnMouseDown"] = function (rowFrame, cellFrame, data, cols, row, realrow, column, scrollingTable, ...)
+          local button = ...
+          if button == "RightButton" then
+              core:PrintDebug("DKPTable RightButton clicked"),
+              
+          end
+  
+          --[[ return true to have your event override the default one
+               return false, or nothing at all to have the deafult handler 
+                  processed after yours.
+               The default OnClick handler for example, handles column sorting clicks.
+               if row and realrow are nil, then this is a column header cell ]]--
+          
+      end
+    })
+
     if not core:CheckSelfTrusted() then
       adjustDKPButton:Hide()
     end
-
-    --MRT_GUI_RaidLogTable:GetCell()
-    --:GetSelection
 
     ErrorDKP:DKPTableUpdate()
 end

@@ -65,6 +65,30 @@ function ErrorDKP:AutoAdjustDKP(player, dkp, itemLink)
     end
 end
 
+function ErrorDKP:AdjustDKPWithItem(player, dkp, itemHistoryEntry)
+    if core:CheckSelfTrusted() then
+        --Validate that player exists
+        local entry, oldTimestamp, newTimestamp;
+        for i, v in ipairs(core.DKPTable) do
+            if v["name"] == player then
+                v["dkp"] = v["dkp"] + dkp
+                entry = v
+                oldTimestamp = core:GetDKPDataTimestamp()
+                newTimestamp = UpdateDataTimestamp()
+                break
+            end
+        end
+        if entry then                     -- Previous Timestamp, ActualTimestam, ActualTimestamp Lootlog,                  PlayerENtry,     ItemEntry
+            core.Sync:Send("ErrDKPAdjPAWI", { PTS = oldTimestamp, ATS = newTimestamp, IATS = core:GetLootDataTimestamp(), DataSet = entry, Item = itemHistoryEntry })
+            core:Print(string.format(_L["MSG_DKP_ADJUST_AUTO"], player, dkp, itemHistoryEntry.ItemLink ))
+            ErrorDKP:DKPTableUpdate()
+        else 
+            core:Print(string.format(_L["MSG_PLAYER_NOT_FOUND_DKP"], player)) 
+        end
+    end
+end
+
+
 function DKPAdjustmentDialog_OnOk()
     local val = UI.DKPAdjustment.DkpInput:GetNumber()
     if val > 0 or val < 0 then

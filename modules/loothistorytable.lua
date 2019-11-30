@@ -130,17 +130,19 @@ function ErrorDKP:GetLootHistoryTable()
 end
 
 function ErrorDKP:AddItemToHistory(itemLink, itemId, looter, dkp, lootTime)
-    table.insert(core.LootLog, 1, {
+    local historyEntry = {
         ["ItemId"] = itemId,
         ["ItemLink"] = itemLink,
         ["Looter"] = looter,
         ["Dkp"] = dkp,
         ["Time"] = lootTime
-    })
+    }
+    table.insert(core.LootLog, 1, historyEntry)
     while #core.LootLog > 50 do
         table.remove(core.LootLog, #core.LootLog)
     end
     if UI.LootHistoryTable then ErrorDKP:LootHistoryTableUpdate() end
+    return historyEntry
 end
 
 function ErrorDKP:BroadcastLootTable()
