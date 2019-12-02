@@ -6,3 +6,14 @@
 --#  Last Edit: 30.11.2019
 --###############################################
 local addonName, core = ...
+-- This is what erroritemimport wants
+-- <items>
+-- 			<item>
+-- 				<name>Eskhandar's Collar</name>
+-- 				<time>1574802838</time>
+-- 				<member>disenchanted</member>
+-- 				<itemid>18205::::::::60:::::::</itemid>
+-- 				<cost>0</cost>
+-- 				<boss>Onyxia</boss>
+-- 			</item>
+-- 		</items>
