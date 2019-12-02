@@ -14,7 +14,7 @@ local _C = core.CONSTANTS
 
 -- Version
 core.Version = GetAddOnMetadata("ErrorDKP", "Version")
-core.Build = 1130200
+core.Build = 1130201
 core.Type = "R" -- R = Release, B = Beta
 
 SetCVar("ScriptErrors", 1)
