@@ -10,10 +10,21 @@ local ErrorDKP = core.ErrorDKP
 local UI = core.UI
 local _L = core._L
 local _LS = _L.LOOTHISTORYTABLE
+local ScrollingTable = LibStub("ScrollingTable")
 
 local pendingItemRequests = {}
 
-local ScrollingTable = LibStub("ScrollingTable")
+local contextMenuItems = {
+    { text = "Select an Option", isTitle = true, notCheckable = true},
+    { text = "Export", notCheckable = true, func = function() 
+      local selection = ErrorDKP:GetLootHistoryTable():GetSelection()
+      if selection then
+        ErrorDKP:ExportItems(core.LootLog[selection])
+        -- ErrorDKP:ExportItems(items)
+        -- ErrorDKP:StartAdjustment(UI.DKPTable:GetCell(selection, 3))
+      end
+    end }
+}
 
 local LootHistoryTableColDef = {
     { -- coloumn for Item Icon - need to store ID
@@ -125,6 +136,28 @@ local function CreateLootHistoryTable()
 
     t.frame:RegisterEvent("ITEM_DATA_LOAD_RESULT")
     t.frame:SetScript("OnEvent", Table_OnEvent)
+
+    t:RegisterEvents({
+        ["OnMouseDown"] = function (rowFrame, cellFrame, data, cols, row, realrow, column, scrollingTable, ...)
+            local button = ...
+            if button == "RightButton" then
+                core:PrintDebug("DKPTable RightButton clicked")
+                scrollingTable:SetSelection(realrow)
+                -- There is currently ony one entry so do it the easy way and hide whole menu
+                if core:CheckSelfTrusted() then
+                    ErrorDKP:ConextMenu(contextMenuItems)
+                end
+            end
+    
+            --[[ return true to have your event override the default one
+                 return false, or nothing at all to have the deafult handler 
+                    processed after yours.
+                 The default OnClick handler for example, handles column sorting clicks.
+                 if row and realrow are nil, then this is a column header cell ]]--
+            
+        end
+      })
+
     ErrorDKP:LootHistoryTableUpdate()
     return t
 end

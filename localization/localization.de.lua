@@ -24,6 +24,10 @@ if GetLocale() == "deDE" then
         MINIMAP = {
             DESCRLCLICK = "Linke Maustaste - Öffne Fenster"
         },
+        EXPORTDIALOG = {
+            TITLE = "Exportieren",
+            HELPTEXT = "STRG+C um Inhalt zu kopieren\r\nESC um Fenster zu schliessen."
+        },
         OK = "Ok",
         CANCEL = "Abbrechen",
         LCD_ENTERCOSTFOR = "DKP-Preis eingeben für",

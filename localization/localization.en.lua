@@ -23,6 +23,10 @@ local addonName, core = ...;
         MINIMAP = {
             DESCRLCLICK = "Left Click - Open Window"
         },
+        EXPORTDIALOG = {
+            TITLE = "Export",
+            HELPTEXT = "CRTL+C to copy content.\r\n ESC to close window."
+        },
         OK = "Ok",
         CANCEL = "Cancel",
         LCD_ENTERCOSTFOR = "Enter DKP cost for",

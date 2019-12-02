@@ -81,7 +81,15 @@ local function onSetHyperlink(self, link)
     --core:PrintDebug("onSetHyperlink", link, kind)
     if kind == "item" then
         if id and core.ItemPriceList[id] then
+            local prio
+            if not core.ItemPriceList[id].prio and core.ItemPriceList[id].prio ~= "" then
+              local prio = core.ItemPriceList[id].prio
+            end
+            addHeadLine(self, " ")
+            addHeadLine(self, "Error DKP")
             addLine(self, core.ItemPriceList[id].price, core._L["DKPPRICE"])
+            addLine(self, prio or _L["TOOLTIP_PRIO_NONE"], _L["TOOLTIP_PRIO_LABEL"]  )
+
         end
     end
 end

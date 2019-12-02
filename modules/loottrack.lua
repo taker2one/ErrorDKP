@@ -26,9 +26,9 @@ local function DecomposeItemLink(link)
         core:Debug('DecomposeItemLink: No itemLink')
         return nil; 
     end
-    local _, itemString, _ = deformat(itemLink, "|c%s|H%s|h%s|h|r");
-    local itemId, _ = deformat(itemString, "item:%d:%s");
-    local itemColor = MRT_ItemColors[itemRarity + 1];
+    local _, itemString, _ = deformat(itemLink, "|c%s|H%s|h%s|h|r")
+    local itemId, _ = deformat(itemString, "item:%d:%s")
+    local itemColor = nil
     core:PrintDebug("Demposed: ", itemRarity)
     return itemName, itemLink, itemId, itemString, itemRarity, itemColor, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice, itemClassID, itemSubClassID;
 end
@@ -63,10 +63,6 @@ local function ErrorDKP_LCD_AskCost()
         playerData[1] = { LootInfo.Looter }
     end
 
-    -- for i, val in ipairs(MRT_RaidLog[raidNum]["Bosskills"][MRT_NumOfLastBoss]["Players"]) do
-    --     playerData[i] = { val };
-    -- end
-
     table.sort(playerData, function(a, b) return (a[1] < b[1]); end )
 
     local ddt = core.UI.LCDDropDownTable or ErrorDKP:CreateDropDownTable()
@@ -77,7 +73,7 @@ local function ErrorDKP_LCD_AskCost()
         ddt:SetDisplayRows(8, 15);
     end
     ddt.frame:Hide();
-
+   
     -- set up rest of the frame
     local lcd = core.UI.LootConfirmDialog or ErrorDKP:CreateLootConfirmDialog()
     lcd.Textline1:SetText(_L["LCD_ENTERCOSTFOR"])
@@ -95,13 +91,7 @@ local function ErrorDKP_LCD_AskCost()
         UI.LootConfirmDialog.NoteInput:SetText("");
     end
     UI.LootConfirmDialog.Looter = LootInfo["Looter"];
-    -- set autoFocus of EditBoxes
-    --if (MRT_Options["Tracking_AskCostAutoFocus"] == 3 or (MRT_Options["Tracking_AskCostAutoFocus"] == 2 and UnitAffectingCombat("player")) ) then
-        --MRT_GetDKPValueFrame_EB:SetAutoFocus(false);
-    --else
-        UI.LootConfirmDialog.NoteInput:SetAutoFocus(true);
-    --end
-    -- show DKPValue Frame
+    UI.LootConfirmDialog.NoteInput:SetAutoFocus(true);
     ErrorDKP:GetLootConfirmDialog():Show();  
 end
 
@@ -128,7 +118,6 @@ local function ErrorDKPAutoAddLootItem(playerName, itemLink, itemCount)
     -- check options, if this item should be tracked
     if (core.ISettings.ItemTracking_MinItemQualityToLog > itemRarity) then core:PrintDebug("Item not tracked - quality is too low."); return; end
     if (core.ISettings["ItemTracking_IgnoreEnchantingMats"] and itemClassID == 7 and itemSubClassID == 12) then core:PrintDebug("Item not tracked - it is a enchanting material and the corresponding ignore option is on."); return; end
-    --if (MRT_IgnoredItemIDList[itemId]) then core:PrintDebug("Item not tracked - ItemID is listed on the ignore list"); return; end
     
     local dkpValue = 0;
     local lootAction = nil;
@@ -136,7 +125,16 @@ local function ErrorDKPAutoAddLootItem(playerName, itemLink, itemCount)
     local supressCostDialog = nil;
     local gp1, gp2 = nil, nil;
   
-    -- TODO: DKP Price from Pricelist
+    -- DKP Price from Pricelist
+    local priceListItem = core.ItemPriceList[tostring(itemId)]
+    if priceListItem then
+        local priceListPrice = tonumber(priceListItem.price)
+        if priceListPrice then
+            dkpValue = priceListPrice
+        else
+            dkpvalue = 0
+        end
+    end
 
     -- if code reach this point, we should have valid item information, an active raid and at least one boss kill entry - make a table!
     local LootInfo = {
@@ -433,7 +431,7 @@ end
 function ErrorDKP:CreateDropDownTable()
     core.UI.LCDDropDownTable = ScrollingTable:CreateST(LCD_DropDownTableColDef, 9, nil, nil, core.UI.LootConfirmDialog)
     local ddt = core.UI.LCDDropDownTable
-    --MRT_DKPFrame_DropDownTable = ScrollingTable:CreateST(MRT_DKPFrame_DropDownTableColDef, 9, nil, nil, MRT_GetDKPValueFrame);
+
     ddt.head:SetHeight(1);
     ddt.frame:SetFrameLevel(3);
     ddt.frame:Hide();

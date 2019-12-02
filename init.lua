@@ -210,8 +210,6 @@ function ErrorDKP_OnEventHandler(self, event, ...)
     elseif (event == "BOSS_KILL") then
         local encounterID, name = ...
         core:PrintDebug("BOSS_KILL", "encounterID="..encounterID..", name="..name)
-        --if (not MRT_Options["General_MasterEnable"]) then return end;
-        --mrt:BossKillHandler(encounterID, name);  
     elseif (event == "PARTY_LOOT_METHOD_CHANGED") then
         -- check if mastlooter an enable modules
         core:PrintDebug("PARTY_LOOT_METHOD_CHANGED", ...)
