@@ -457,3 +457,50 @@ end
 function ErrorDKP:GetLootConfirmDialog()
     return core.UI.LootConfirmDialog or CreateLootConfirmDialog()
 end
+
+
+-- hook on masterloot function to cause for chat loot mesage chars are always to far away
+local function GiveMasterLootHook(slot, charIndex)
+    -- sollte zwar nicht notwenig sein oba bessa ois a stoa am schedl
+    if core:CheckMasterLooter() then
+        if LootSlotHasItem(slot) then
+            local charName = GetMasterLootCandidate(slot, charIndex)
+            local itemLink = GetLootSlotLink(slot)
+            local lootIcon, lootName, lootQuantity, currencyID, lootQuality, locked, isQuestItem, questID, isActive = GetLootSlotInfo(slot)
+            core:PrintDebug("GiveMasterLootHook", slot, charName, itemLink, lootQuantity)
+
+            -- This is triggered before item is really given to player, even when bag is full,
+            -- save it first and add on LOOT_SLOT_CLEARED event
+            core.PendingMLI = {
+                ["slot"] = slot,
+                ["charName"] = charName,
+                ["itemLink"] = itemLink,
+                ["lootQuantity"] = lootQuantity
+            }
+        else
+            core:PrintDebug("GiveMasterLootHook not LootSlotHasItem")
+        end 
+        --local test = GetLootSlotLink(slot)
+        --LootSlotHasItem(slot) returns sisLootitem
+        --GetNumLootItems() anzahl items im lootfenter
+        --local info = GetLootInfo() --Returns a table with all of the loot info for the current loot window.
+    else
+        core:PrintDebug("GiveMasterLootHook but not master looter")
+    end
+end
+hooksecurefunc("GiveMasterLoot", GiveMasterLootHook)
+
+function ErrorDKP:AddPendingMasterLoot(slot)
+    core:PrintDebug("AddPendingMasterLoot", slot)
+    if core.PendingMLI and core.PendingMLI["slot"] == slot then
+        ErrorDKPAutoAddLootItem(core.PendingMLI["charName"], core.PendingMLI["itemLink"], core.PendingMLI["lootQuantity"])
+        ErrorDKP:ClearPedingMasterLoot()
+    end
+end
+
+function ErrorDKP:ClearPedingMasterLoot()
+    if core.PendingMLI then
+        table.wipe(core.PendingMLI) 
+        core.PendingMLI = nil
+    end
+end

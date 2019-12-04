@@ -142,7 +142,10 @@ function core.Sync:OnCommReceived(prefix, message, channel, sender)
             end
 
             -- we also get the item that caused the adjsutment so add it to loothistory
-            table.insert(core.LootLog, deserialized.Item)
+            table.insert(core.LootLog, 1, deserialized.Item)
+            while #core.LootLog > 50 do
+                table.remove(core.LootLog, #core.LootLog)
+            end
             core:SetLootDataTimestamp(deserialized.IATS)
 
            

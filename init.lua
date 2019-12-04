@@ -200,9 +200,9 @@ function ErrorDKP_OnEventHandler(self, event, ...)
         if IsInGuild() then
             core.Sync:Send("ErrDKPBuildCheck", tostring(core.Build))
         end
-    elseif event == "CHAT_MSG_LOOT" then
+    --elseif event == "CHAT_MSG_LOOT" then
         --Add loot
-        ErrorDKP:AutoAddLoot(...)
+    --    ErrorDKP:AutoAddLoot(...)
     elseif event == "ENCOUNTER_END" then
         --currently no use for that, just for reference
         local encounterID, name, difficulty, size, success = ...
@@ -219,6 +219,12 @@ function ErrorDKP_OnEventHandler(self, event, ...)
         -- members goes offline triggers this?
         core:PrintDebug("RAID_ROSTER_UPDATE", ...)
         core.IsMLooter = core:CheckMasterLooter()
+    --elseif (event == "OPEN_MASTER_LOOT_LIST") then 
+    --    core:PrintDebug(event, ...)
+    elseif (event == "LOOT_SLOT_CLEARED")  then
+        ErrorDKP:AddPendingMasterLoot(arg1)
+    elseif (event == "LOOT_CLOSED") then 
+        ErrorDKP:ClearPedingMasterLoot()
     end
 end
 
@@ -233,9 +239,14 @@ event:RegisterEvent("CHAT_MSG_LOOT")
 -- event:RegisterEvent("RAID_INSTANCE_WELCOME")
 event:RegisterEvent("RAID_ROSTER_UPDATE")
 event:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
+--event:RegisterEvent("OPEN_MASTER_LOOT_LIST")
+event:RegisterEvent("LOOT_SLOT_CLEARED")
+event:RegisterEvent("LOOT_CLOSED")
 -- event:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 -- event:RegisterEvent("ENCOUNTER_END")
 event:SetScript("OnEvent", ErrorDKP_OnEventHandler)
+
+
 --LOOT_CLOSED --Firest before lat chat loot event
 --LOOT_OPENED
 --LOOT_SLOT_CLEARED Fired when loot is removed from a corpse

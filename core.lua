@@ -31,6 +31,7 @@ core.WorkItemPriceList = {}
 core.ItemInfosLoaded = {}
 core.LootLog = {}
 core.LootQueue = {}
+core.PendingMLI = nil -- Master Loot detected but waiting for LOOT_SLOT_CLEARED
 
 core.LastUpdateAvailableMsg = 0
 core.AskCostQueueRunning = false
@@ -63,7 +64,7 @@ core.ISettings = {
         RowHeight = 18,
         RowCount = 27
     },
-    ItemTracking_MinItemQualityToLog = _C.ITEMRARITY.EPIC,
+    ItemTracking_MinItemQualityToLog = _C.ITEMRARITY.COMMON, --DBG
     ItemTracking_IgnoreEnchantingMats = true
 }
 
@@ -74,7 +75,7 @@ core.Settings = {
 core.UI = {}
 
 -- Debug
-core.Debug = false
+core.Debug = true --DBG
 function core:PrintDebug(...)
     if core.Debug then
         print("|cff90EE90<ErrorDKP-Dbg>|r", ...)
@@ -101,6 +102,10 @@ function core:GetGuildRankIndex(player)
     end
     return false;
   end
+end
+
+function core:ToDateString(t)
+    return date("%m/%d/%Y %H:%M:%S", t)
 end
 
 function core:CheckSelfTrusted()

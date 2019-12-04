@@ -93,13 +93,13 @@ local function onSetHyperlink(self, link)
         end
     end
 end
-hooksecurefunc(ItemRefTooltip, "SetHyperlink", onSetHyperlink)
-hooksecurefunc(GameTooltip, "SetHyperlink", onSetHyperlink) --ErrorDKPItemToolTip
+--hooksecurefunc(ItemRefTooltip, "SetHyperlink", onSetHyperlink)
+--hooksecurefunc(GameTooltip, "SetHyperlink", onSetHyperlink) --ErrorDKPItemToolTip
 
 -- To register scripts on a central place this will be called from init.lua
 function ErrorDKP:RegisterItemPriceTooltip()
     GameTooltip:HookScript("OnTooltipSetItem", attachItemTooltip)
-    ErrorDKPItemToolTip:HookScript("OnTooltipSetItem", attachItemTooltip)
+    ItemRefTooltip:HookScript("OnTooltipSetItem", attachItemTooltip)
 end
 
 function ErrorDKP:OnSetHyperlink()
