@@ -161,6 +161,15 @@ function core:SetLootDataTimestamp(timestamp)
   core.DKPDataInfo["LootInfo"]["timestamp"] = timestamp
 end
 
+function core:IsTableEmpty(t)
+    if not t then return true end
+    for k,v in pairs(t) do
+      if k or v then return nil end
+      return true
+    end
+    return true
+end
+
 -- function core:UpdateTimestamps()		-- updates seeds on leaders note as well as all 3 tables
 -- 	local leader = MonDKP:GetGuildRankGroup(1)
 -- 	local seed = MonDKP:RosterSeedUpdate(leader[1].index)

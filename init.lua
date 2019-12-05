@@ -132,7 +132,7 @@ local function GetNewestData(dkpdb, dkpinfo, importinfo)
 end
 
 local function OnInit()
-    core:PrintDebug("Initialize")
+    core:PrintDebug("Initialize", core.Imports.ItemPriceListInfo["version"])
     RegisterSlashCommands()
     core:Print(addonName, core.Version)
     --Load Saved Data
@@ -152,7 +152,8 @@ local function OnInit()
     ErrorDKPDKPList, ErrorDKPDataInfo.DKPInfo = GetNewestData(ErrorDKPDKPList, ErrorDKPDataInfo.DKPInfo, DKPInfo) --DKP is global from the jdkp export
     -- Same for itemprices
     if not ErrorDKPDataInfo.PriceListInfo then ErrorDKPDataInfo.PriceListInfo = {} end
-    if #ErrorDKPPriceList == 0 or (ErrorDKPDataInfo.PriceListInfo["timestamp"] < core.Imports.ItemPriceListInfo) then
+    if core:IsTableEmpty(ErrorDKPPriceList) or (ErrorDKPDataInfo.PriceListInfo["timestamp"] < core.Imports.ItemPriceListInfo["timestamp"]) then
+        core:PrintDebug("Pricelist in import folder is newer, use it.", core:IsTableEmpty(ErrorDKPPriceList), ErrorDKPDataInfo.PriceListInfo["timestamp"], core.Imports.ItemPriceListInfo["timestamp"])
         ErrorDKPPriceList = core.Imports.ItemPriceList
         ErrorDKPDataInfo.PriceListInfo["timestamp"] = core.Imports.ItemPriceListInfo["timestamp"]
         ErrorDKPDataInfo.PriceListInfo["version"] = core.Imports.ItemPriceListInfo["version"]
