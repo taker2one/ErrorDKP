@@ -40,20 +40,6 @@ core.Commands = {
         if core:CheckSelfTrusted() then
             core:Print("|cff00cc66/edkp broadcast|r - ".._L["HELP_BROADCAST"])
         end
-		-- MonDKP:Print(L["SLASHCOMMANDLIST"]..":")
-		-- MonDKP:Print("|cff00cc66/dkp|r - "..L["DKPLAUNCH"]);
-		-- MonDKP:Print("|cff00cc66/dkp ?|r - "..L["HELPINFO"]);
-		-- MonDKP:Print("|cff00cc66/dkp reset|r - "..L["DKPRESETPOS"]);
-		-- MonDKP:Print("|cff00cc66/dkp lockouts|r - "..L["DKPLOCKOUT"]);
-		-- MonDKP:Print("|cff00cc66/dkp timer|r - "..L["CREATERAIDTIMER"]);
-		-- MonDKP:Print("|cff00cc66/dkp bid|r - "..L["OPENBIDWINDOWHELP"]);
-		-- MonDKP:Print("|cff00cc66/dkp award "..L["PLAYERCOST"].."|r - "..L["DKPAWARDHELP"]);
-		-- MonDKP:Print("|cff00cc66/dkp modes|r - "..L["DKPMODESHELP"]);
-		-- MonDKP:Print("|cff00cc66/dkp export|r - "..L["DKPEXPORTHELP"]);
-		-- print(" ");
-		-- MonDKP:Print(L["WHISPERCMDSHELP"]);
-		-- MonDKP:Print("|cff00cc66!bid (or !bid <"..L["VALUE"]..">)|r - "..L["BIDHELP"]);
-		-- MonDKP:Print("|cff00cc66!dkp (or !dkp <"..L["PLAYERNAME"]..">)|r - "..L["DKPCMDHELP"]);
 	end
 }
 

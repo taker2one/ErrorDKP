@@ -64,7 +64,7 @@ core.ISettings = {
         RowHeight = 18,
         RowCount = 27
     },
-    ItemTracking_MinItemQualityToLog = _C.ITEMRARITY.COMMON, --DBG
+    ItemTracking_MinItemQualityToLog = _C.ITEMRARITY.EPIC,
     ItemTracking_IgnoreEnchantingMats = true
 }
 
@@ -75,7 +75,7 @@ core.Settings = {
 core.UI = {}
 
 -- Debug
-core.Debug = true --DBG
+core.Debug = false
 function core:PrintDebug(...)
     if core.Debug then
         print("|cff90EE90<ErrorDKP-Dbg>|r", ...)
@@ -169,12 +169,3 @@ function core:IsTableEmpty(t)
     end
     return true
 end
-
--- function core:UpdateTimestamps()		-- updates seeds on leaders note as well as all 3 tables
--- 	local leader = MonDKP:GetGuildRankGroup(1)
--- 	local seed = MonDKP:RosterSeedUpdate(leader[1].index)
-	
--- 	MonDKP_DKPTable.seed = seed
--- 	MonDKP_DKPHistory.seed = seed
--- 	MonDKP_Loot.seed = seed
--- end
