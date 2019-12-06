@@ -40,6 +40,7 @@ modules\contextmenu.lua
 modules\lootml.lua
 modules\lootmlsetupsurvey.lua
 modules\lootsurvey.lua
+modules\lootmlresult.lua
 
 widgets\iconbutton.lua
 # modules\DropDownMenu\DropDownMenuTemplates.xml
