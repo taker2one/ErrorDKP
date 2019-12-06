@@ -162,6 +162,10 @@ local function OnInit()
     ErrorDKP:CreateMiniMapIcon()
 
     --ErrorDKP:GetLootSurveyDialog()
+    -- local testButton = ErrorDKP:CreateIconButton(UIParent, nil, nil)
+    -- testButton:SetPoint("CENTER", UIParent, "CENTER")
+    -- testButton:SetBorderColor("purple")
+    ErrorDKP.LootSurvey:Show()
 end
 
 
@@ -212,6 +216,16 @@ function ErrorDKP_OnEventHandler(self, event, ...)
         ErrorDKP:AddPendingMasterLoot(arg1)
     elseif (event == "LOOT_CLOSED") then 
         ErrorDKP:ClearPedingMasterLoot()
+    elseif (event == "LOOT_READY") then
+        core:PrintDebug(event, ...)
+        ErrorDKP:BuidLootSlotInfo()
+    elseif (event == "ENCOUNTER_LOOT_RECEIVED") then
+        core:PrintDebug(event, ...)
+    elseif (event == "GUILD_ROSTER_UPDATE") then
+        core:PrintDebug(event, ...)
+    elseif (event == "LOOT_OPENED") then
+        core:PrintDebug(event, ...)
+        ErrorDKP:OnLootOpened()
     end
 end
 
@@ -219,18 +233,16 @@ end
 local event = CreateFrame("Frame", "EventFrame")
 event:RegisterEvent("ADDON_LOADED")
 event:RegisterEvent("PLAYER_ENTERING_WORLD")
--- event:RegisterEvent("BOSS_KILL")
 event:RegisterEvent("CHAT_MSG_LOOT")
--- event:RegisterEvent("CHAT_MSG_WHISPER")
--- event:RegisterEvent("ENCOUNTER_END")
--- event:RegisterEvent("RAID_INSTANCE_WELCOME")
 event:RegisterEvent("RAID_ROSTER_UPDATE")
 event:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
---event:RegisterEvent("OPEN_MASTER_LOOT_LIST")
 event:RegisterEvent("LOOT_SLOT_CLEARED")
 event:RegisterEvent("LOOT_CLOSED")
--- event:RegisterEvent("ZONE_CHANGED_NEW_AREA")
--- event:RegisterEvent("ENCOUNTER_END")
+event:RegisterEvent("LOOT_READY")
+event:RegisterEvent("LOOT_OPENED")
+--event:RegisterEvent("ENCOUNTER_LOOT_RECEIVED") -- encounterID, itemID, "itemLink", quantity, "itemName", "fileName"
+event:RegisterEvent("GUILD_ROSTER_UPDATE")
+--event:RegisterEvent("OPEN_MASTER_LOOT_LIST")
 event:SetScript("OnEvent", ErrorDKP_OnEventHandler)
 
 

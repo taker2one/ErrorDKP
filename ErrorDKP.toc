@@ -37,6 +37,11 @@ modules\loottrack.lua
 modules\loothistorytable.lua
 modules\export.lua
 modules\contextmenu.lua
+modules\lootml.lua
+modules\lootmlsetupsurvey.lua
+modules\lootsurvey.lua
+
+widgets\iconbutton.lua
 # modules\DropDownMenu\DropDownMenuTemplates.xml
 # modules\DropDownMenu\DropDownMenu.lua
 

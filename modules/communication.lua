@@ -34,6 +34,7 @@ end
 --###############################################
 
 function core.Sync:OnEnable()
+    -- Guild
     core.Sync:RegisterComm("ErrDKPDKPSync")         -- Broadcast DKP Table
     core.Sync:RegisterComm("ErrDKPLootSync")        -- Broadcast LootLog Table
     core.Sync:RegisterComm("ErrDKPSyncReq")         -- Request a table sync from a officer, data defines type "DKP", "PRICELIST", "ITEMHISTORY" => "FULL"
@@ -45,6 +46,12 @@ function core.Sync:OnEnable()
     core.Sync:RegisterComm("ErrDKPTableCheck")      -- Check for any updated tables
     core.Sync:RegisterComm("ErrDKPBuildCheck")      -- Inform about available update
     core.Sync:RegisterComm("ErrDKPManDKP")          -- Manual DKP Single Entry Update
+
+    -- Raid
+    core.Sync:RegisterComm("ErrDKPSurvStart")       -- Start a loot survey
+    core.Sync:RegisterComm("ErrDKPSurvGot")         -- Client answers that he got the survey
+    core.Sync:RegisterComm("ErrDKPSurvAnsw")        -- Answer for an item survey
+    core.Sync:RegisterComm("ErrDKPSurvClosed")      -- Item survey is closed
 end
 
 
@@ -223,6 +230,15 @@ function core.Sync:OnCommReceived(prefix, message, channel, sender)
             ErrorDKP:BroadcastLootTable()
         end
     end
+
+    if channel == "RAID" then
+        if prefix == "ErrDKPSurvStart" then
+            --if VerifySender(sender) then
+            local success, deserialized = Serializer:Deserialize(message)
+            core:PrintDebug("ItemSurveyStarted", deserialized["id"])
+        end
+
+    end
 end
 
 --###############################################
@@ -247,6 +263,17 @@ function core.Sync:SendTo(prefix, data, player)
         core.Sync:SendCommMessage(prefix, serialized, "WHISPER", player)
     else
         core.Sync:SendCommMessage(prefix, data, "WHISPER", player)
+    end
+end
+
+function core.Sync:SendRaid(prefix, data)
+    if type(data) == "table" then
+        core:PrintDebug("Data is a table -> serialize to string")
+        local serialized = Serializer:Serialize(data)
+        --core:PrintDebug("serialized:", serialized)
+        core.Sync:SendCommMessage(prefix, serialized, "RAID")
+    else
+        core.Sync:SendCommMessage(prefix, data, "RAID")
     end
 end
 

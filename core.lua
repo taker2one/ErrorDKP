@@ -38,6 +38,13 @@ core.AskCostQueueRunning = false
 --
 core.IsTrusted = ""
 core.IsMLooter = nil
+
+-- LootNeedSurveyStuff
+core.LootSlotInfos = {}
+core.LootTable = {} -- Shown in Survey Setup
+core.SurveyInProgress = nil
+core.ActiveSurveyData = {}
+
 core.TrustedPlayers = {
   "Doktorwho",
   "Rassputin",
@@ -64,6 +71,7 @@ core.ISettings = {
         RowHeight = 18,
         RowCount = 27
     },
+    MasterLootMinQuality = _C.ITEMRARITY.POOR, --DBG
     ItemTracking_MinItemQualityToLog = _C.ITEMRARITY.EPIC,
     ItemTracking_IgnoreEnchantingMats = true
 }
@@ -75,11 +83,17 @@ core.Settings = {
 core.UI = {}
 
 -- Debug
-core.Debug = false
+core.Debug = true --DBG
 function core:PrintDebug(...)
     if core.Debug then
         print("|cff90EE90<ErrorDKP-Dbg>|r", ...)
     end
+end
+
+function core:ErrorDebug(...)
+  if core.Debug then
+      print("|cffff0000<ErrorDKP-Dbg>|r", ...)
+  end
 end
 
 -- Print
@@ -168,4 +182,50 @@ function core:IsTableEmpty(t)
       return true
     end
     return true
+end
+
+function core:CreateDefaultFrame(name, title, width, height)
+    local f = CreateFrame("Frame", name, UIParent)
+    f:SetSize(width,height)
+    f:SetBackdrop({
+      bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+      edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+      tile = true,
+      edgeSize = 32,
+      tileSize = 32,
+      insets = { left = 11, right = 12, top = 12, bottom = 11 }
+    })
+    f:RegisterForDrag("LeftButton")
+    f:EnableMouse(true)
+    f:SetMovable(true)
+    f:SetScript("OnDragStart", f.StartMoving)
+    f:SetScript("OnDragStop", f.StopMovingOrSizing)
+
+    if title then
+      f.Header = f:CreateTexture(nil, "ARTWORK")
+      f.Header:SetTexture("Interface\\DialogFrame\\UI-DialogBox-Header")
+      f.Header:SetSize(300,64)
+      f.Header:SetPoint("TOP", f, "TOP", 0, 12)
+
+      f.Title = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+      f.Title:SetPoint("TOP", f, "TOP", 0, -2)
+      f.Title:SetText(title)
+    end
+
+    return f
+end
+
+function core:CreateButton(parent, name, text)
+    local b = CreateFrame("Button", parent:GetName()..name, parent, "UIPanelButtonTemplate")
+    b:SetText(text or "")
+    b:SetSize(100,25)
+    return b
+end
+
+-- Just append a random number to current timestamp and use it as unique reference
+function core:GenUniqueId()
+    -- Its not real unique cause in theory random could give us 2 times same number but its more than enough for our need
+    local t = time()
+    local rndNumber = math.random(1000)
+    return tostring(t)..tostring(rndNumber)
 end
