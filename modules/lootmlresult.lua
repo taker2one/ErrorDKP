@@ -94,9 +94,9 @@ function MLResult:UpdateItemButton(i, icon, itemLink, awarded)
     -- Create Button of not exists
     if not btn then 
         core:PrintDebug("Create:", i, icon)
-        btn = ErrorDKP:CreateIconButton(f, nil, icon)
+        btn = ErrorDKP:CreateIconButton(f.ItemToggleFrame, nil, icon)
 		if i == 1 then
-			btn:SetPoint("TOPLEFT", f, "TOPLEFT",-100)
+			btn:SetPoint("TOPLEFT", f.ItemToggleFrame, "TOPLEFT",-100)
 		else
 			btn:SetPoint("TOP", itemButtons[i-1], "BOTTOM", 0, -2)
 		end
@@ -207,13 +207,16 @@ function MLResult:Update(forceUpdate)
 end
 
 function MLResult:CreateFrame()
-    
 	local f = core:CreateDefaultFrame("MLResultFrame", "Result", 250, 440)
+	core.UI.MLResult = f
     f:SetPoint("CENTER", UIParent, "CENTER")
 
     local st = ScrollingTable:CreateST(colDef, 15, 20, nil, f)
     f.ScrollingTable = st
-    st.frame:SetPoint("TOPLEFT", f, "TOPLEFT", 22, -100)
+	st.frame:SetPoint("TOPLEFT", f, "TOPLEFT", 22, -100)
+	
+	local closeButton = CreateFrame("Button", nil, f, "UIPanelCloseButton")
+    closeButton:SetPoint("TOPRIGHT", f, "TOPRIGHT", -5, -5)
 
 	local item = CreateFrame("Button", nil, f)
     item:SetNormalTexture("Interface/ICONS/INV_Misc_QuestionMark")
@@ -254,14 +257,15 @@ function MLResult:CreateFrame()
 	-- Item toggle
 	local itemToggle = CreateFrame("Frame", nil, f)
 	itemToggle:SetWidth(40)
-	itemToggle:SetHeight(f:GetHeight())
-	itemToggle:SetPoint("TOPRIGHT", f, "TOPLEFT", -2, 0)
+	itemToggle:SetHeight(f:GetHeight()-24)
+	itemToggle:SetPoint("TOPRIGHT", f, "TOPLEFT", -2, -12)
+	--itemToggle:SetPoint("TOPLEFT", f, "TOPLEFT", -2, 0)
 	f.ItemToggleFrame = itemToggle
     itemToggleButtons = {}
     
     itemToggle.bg = itemToggle:CreateTexture(nil, "BACKGROUND")
     itemToggle.bg:SetAllPoints(itemToggle)
-    itemToggle.bg:SetTexture(1,0.5,0.5,0.5)
+	itemToggle.bg:SetTexture(1,0.5,0.5,0.5)
 
     f:SetWidth(st.frame:GetWidth() + 44)
     f:Hide()
