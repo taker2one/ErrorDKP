@@ -27,10 +27,10 @@ function ErrorDKP:DKPTableUpdate()
     local playerNameColored = string.format("|cFF%s%s|r", classColor, v["name"])
     
 
-    DKPTableData[index] = { index,  playerNameColored, v.name, classString , v.dkp}
+    DKPTableData[index] = { index,  classInfo.classFile, playerNameColored, v.name, classString , v.dkp}
     index = index + 1
   end
-  table.sort(DKPTableData, function(a, b) return (a[5] > b[5]); end);
+  table.sort(DKPTableData, function(a, b) return (a[6] > b[6]); end);
   UI.DKPTable:ClearSelection()
   UI.DKPTable:SetData(DKPTableData, true)
 end
@@ -40,13 +40,26 @@ local menu = {
       { text = "Adjust DKP", notCheckable = true, func = function() 
         local selection = UI.DKPTable:GetSelection()
         if selection then
-          ErrorDKP:StartAdjustment(UI.DKPTable:GetCell(selection, 3))
+          ErrorDKP:StartAdjustment(UI.DKPTable:GetCell(selection, 4))
         end
       end }
   }
 
 local tableDef = {
   { ["name"] = "", ["width"] = 1 },
+  { ["name"] = "", ["width"] = 15, 
+	["DoCellUpdate"] = function(rowFrame, cellFrame, data, cols, row, realrow, column, fShow, self, ...) 
+		if fShow then
+			local class = self:GetCell(realrow, column)
+			if class then
+				cellFrame:SetNormalTexture("Interface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-CLASSES"); -- this is the image containing all class icons
+				local coords = CLASS_ICON_TCOORDS[class]; -- get the coordinates of the class icon we want
+				cellFrame:GetNormalTexture():SetTexCoord(unpack(coords)); -- cut out the region with our class icon according to coords
+			else -- if there's no class
+				cellFrame:SetNormalTexture("Interface/ICONS/INV_Sigil_Thorim.png")
+			end
+		end
+	end}, -- classIcon
   { ["name"] = _LS["COLNAME"], ["width"] = 100,
   -- ["DoCellUpdate"] = function(rowFrame, cellFrame, data, cols, row, realrow, column, fShow, self, ...)
   --   cellFrame:SetScript("OnMouseUp", function(self, button)
@@ -82,7 +95,7 @@ function ErrorDKP:CreateDKPScrollingTable()
     adjustDKPButton:SetScript("OnClick", function(self, ...)
       local selection = UI.DKPTable:GetSelection()
       if selection then
-        ErrorDKP:StartAdjustment(UI.DKPTable:GetCell(selection, 3))
+        ErrorDKP:StartAdjustment(UI.DKPTable:GetCell(selection, 4))
       end
     end)
 

@@ -16,7 +16,19 @@ local itemIndex = 1
 local itemButtons = {}
 
 local colDef = {
-    { ["name"] = "", ["width"] = 20 }, -- class
+	{ ["name"] = "", ["width"] = 20, 
+	["DoCellUpdate"] = function(rowFrame, cellFrame, data, cols, row, realrow, column, fShow, self, ...) 
+		if fShow then
+			local class = self:GetCell(realrow, column)
+			if class then
+				cellFrame:SetNormalTexture("Interface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-CLASSES"); -- this is the image containing all class icons
+				local coords = CLASS_ICON_TCOORDS[class]; -- get the coordinates of the class icon we want
+				cellFrame:GetNormalTexture():SetTexCoord(unpack(coords)); -- cut out the region with our class icon according to coords
+			else -- if there's no class
+				cellFrame:SetNormalTexture("Interface/ICONS/INV_Sigil_Thorim.png")
+			end
+		end
+	end}, -- classIcon
     { ["name"] = "Name", ["width"] = 150 }, -- PlayerName
    -- { ["name"] = "", ["width"] = 20 }, -- Guild Rank
     { ["name"] = "Answer", ["width"] = 150 } -- Answer
@@ -30,23 +42,78 @@ local DemoSurveyData = {
             ["name"] = "Nemesis Leggings",
             ["itemLink"] = "|cffa335ee|Hitem:16930::::::::60:::::::|h[Nemesis Leggings]|h|r",
             ["quality"] = 4,
-            ["icon"] = "Interface\\InventoryItems\\WoWUnknownItem01"
+			["icon"] = "Interface\\InventoryItems\\WoWUnknownItem01",
+			["players"] = {
+				{
+					["name"] = "Doktorwho",
+					["class"] = "PRIEST",
+					["answerState"] = "None"
+				},
+				{
+					["name"] = "Repa",
+					["class"] = "MAGE",
+					["answerState"] = "None"
+				},
+				{
+					["name"] = "Rassputin",
+					["class"] = "MAGE",
+					["answerState"] = "None"
+				},
+			}
         },
         {
             ["index"] = 2,
             ["name"] = "Nemesis Leggings",
             ["itemLink"] = "|cffa335ee|Hitem:16930::::::::60:::::::|h[Nemesis Leggings]|h|r",
             ["quality"] = 4,
-            ["icon"] = "Interface\\InventoryItems\\WoWUnknownItem01"
+			["icon"] = "Interface\\InventoryItems\\WoWUnknownItem01",
+			["players"] = {
+				{
+					["name"] = "Doktorwho",
+					["class"] = "PRIEST",
+					["answerState"] = "None"
+				},
+				{
+					["name"] = "Repa",
+					["class"] = "MAGE",
+					["answerState"] = "None"
+				},
+				{
+					["name"] = "Rassputin",
+					["class"] = "MAGE",
+					["answerState"] = "None"
+				},
+			}
         },
         {
             ["index"] = 3,
             ["name"] = "Nemesis Leggings",
             ["itemLink"] = "|cffa335ee|Hitem:16930::::::::60:::::::|h[Nemesis Leggings]|h|r",
             ["quality"] = 4,
-            ["icon"] = "Interface\\InventoryItems\\WoWUnknownItem01"
+			["icon"] = "Interface\\InventoryItems\\WoWUnknownItem01",
+			["players"] = {
+				{
+					["name"] = "Doktorwho",
+					["class"] = "PRIEST",
+					["answerState"] = "None"
+				},
+				{
+					["name"] = "Repa",
+					["class"] = "MAGE",
+					["answerState"] = "None"
+				},
+				{
+					["name"] = "Rassputin",
+					["class"] = "MAGE",
+					["answerState"] = "None"
+				},
+			}
         }
     }
+}
+
+local DemoPlayerData = {
+	
 }
 
 core.ActiveSurveyData = DemoSurveyData --DBG
@@ -123,7 +190,8 @@ function MLResult:SwitchItem(i)
     
 	local old = itemIndex
 	itemIndex = i
-    local item = core.ActiveSurveyData.items[i]
+	local item = core.ActiveSurveyData.items[i]
+	local players = item.players
     local f = self:GetFrame()
 
 	f.ItemIcon:SetNormalTexture(item.icon)
@@ -143,6 +211,7 @@ function MLResult:SwitchItem(i)
 	-- self.frame.st.cols[j].sort = 1
 	-- FauxScrollFrame_OnVerticalScroll(self.frame.st.scrollframe, 0, self.frame.st.rowHeight, function() self.frame.st:Refresh() end) -- Reset scrolling to 0
 	self:Update(true)
+	self:UpdateScrollTable(players)
 	--self:UpdatePeopleToVote()
 	-- addon:SendMessage("RCSessionChangedPost", s)
 end
@@ -204,6 +273,20 @@ function MLResult:Update(forceUpdate)
 	else
 		self.frame.itemTooltip:Hide()
 	end
+end
+
+function MLResult:UpdateScrollTable(players)
+	local rows = {}
+
+	for i, v in ipairs(players) do
+		local row = {
+			v.class, --icon
+			v.name,
+			v.answerState
+		}
+		table.insert(rows, row)
+	end
+	MLResult:GetFrame().ScrollingTable:SetData(rows, true)
 end
 
 function MLResult:CreateFrame()
