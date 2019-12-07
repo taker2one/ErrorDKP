@@ -12,6 +12,7 @@ local LootSurvey = {}
 
 local ScrollingTable = LibStub("ScrollingTable")
 
+local itemSurveyData
 
 local colDef = {
     { name = "", width = 80, ["DoCellUpdate"] = function(...) LootSurvey:DoCellUpdateIcon(...) end }, -- icon
@@ -57,16 +58,19 @@ local function buildTableData()
     return t
 end
 
-function LootSurvey:Show()
+function LootSurvey:Show(data)
+    if not data and not itemSurveyData then 
+        core:Print("Cant show survey cause there is no data")
+    end
+    itemSurveyData = data
     core:PrintDebug("LootSurvey:Show")
     self:GetFrame():Show()
-    --local data = buildTableData()
-    LootSurvey:Update(data)
+    LootSurvey:Update(itemSurveyData)
 end
 
 function LootSurvey:Update(data)
     local f = LootSurvey:GetFrame()
-    for i,v in ipairs(DemoSurveyData.items) do
+    for i,v in ipairs(data.items) do
         entryFrame = LootSurvey:GetEntry(i)
         entryFrame:SetPoint("TOPLEFT", f, "TOPLEFT", 11, 65+(-90*i))
 

@@ -236,8 +236,8 @@ function core.Sync:OnCommReceived(prefix, message, channel, sender)
             --if VerifySender(sender) then
             local success, deserialized = Serializer:Deserialize(message)
             core:PrintDebug("ItemSurveyStarted", deserialized["id"])
+            LootSurvey:Show(deserialized)
         end
-
     end
 end
 

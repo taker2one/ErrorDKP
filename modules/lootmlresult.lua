@@ -43,23 +43,7 @@ local DemoSurveyData = {
             ["itemLink"] = "|cffa335ee|Hitem:16930::::::::60:::::::|h[Nemesis Leggings]|h|r",
             ["quality"] = 4,
 			["icon"] = "Interface\\InventoryItems\\WoWUnknownItem01",
-			["players"] = {
-				{
-					["name"] = "Doktorwho",
-					["class"] = "PRIEST",
-					["answerState"] = "None"
-				},
-				{
-					["name"] = "Repa",
-					["class"] = "MAGE",
-					["answerState"] = "None"
-				},
-				{
-					["name"] = "Rassputin",
-					["class"] = "MAGE",
-					["answerState"] = "None"
-				},
-			}
+			["answers"] = {}
         },
         {
             ["index"] = 2,
@@ -67,23 +51,7 @@ local DemoSurveyData = {
             ["itemLink"] = "|cffa335ee|Hitem:16930::::::::60:::::::|h[Nemesis Leggings]|h|r",
             ["quality"] = 4,
 			["icon"] = "Interface\\InventoryItems\\WoWUnknownItem01",
-			["players"] = {
-				{
-					["name"] = "Doktorwho",
-					["class"] = "PRIEST",
-					["answerState"] = "None"
-				},
-				{
-					["name"] = "Repa",
-					["class"] = "MAGE",
-					["answerState"] = "None"
-				},
-				{
-					["name"] = "Rassputin",
-					["class"] = "MAGE",
-					["answerState"] = "None"
-				},
-			}
+			["answers"] = {}
         },
         {
             ["index"] = 3,
@@ -91,25 +59,28 @@ local DemoSurveyData = {
             ["itemLink"] = "|cffa335ee|Hitem:16930::::::::60:::::::|h[Nemesis Leggings]|h|r",
             ["quality"] = 4,
 			["icon"] = "Interface\\InventoryItems\\WoWUnknownItem01",
-			["players"] = {
-				{
-					["name"] = "Doktorwho",
-					["class"] = "PRIEST",
-					["answerState"] = "None"
-				},
-				{
-					["name"] = "Repa",
-					["class"] = "MAGE",
-					["answerState"] = "None"
-				},
-				{
-					["name"] = "Rassputin",
-					["class"] = "MAGE",
-					["answerState"] = "None"
-				},
+			["answers"] = {
+				["Doktorwho"] = "MAIN"
 			}
         }
-    }
+	},
+	players = {
+		{
+			["name"] = "Doktorwho",
+			["classFileName"] = "PRIEST",
+			["answerState"] = "None"
+		},
+		{
+			["name"] = "Repa",
+			["classFileName"] = "MAGE",
+			["answerState"] = "None"
+		},
+		{
+			["name"] = "Rassputin",
+			["classFileName"] = "MAGE",
+			["answerState"] = "None"
+		},
+	}
 }
 
 local DemoPlayerData = {
@@ -191,7 +162,7 @@ function MLResult:SwitchItem(i)
 	local old = itemIndex
 	itemIndex = i
 	local item = core.ActiveSurveyData.items[i]
-	local players = item.players
+	local players = core.ActiveSurveyData.players
     local f = self:GetFrame()
 
 	f.ItemIcon:SetNormalTexture(item.icon)
@@ -211,7 +182,7 @@ function MLResult:SwitchItem(i)
 	-- self.frame.st.cols[j].sort = 1
 	-- FauxScrollFrame_OnVerticalScroll(self.frame.st.scrollframe, 0, self.frame.st.rowHeight, function() self.frame.st:Refresh() end) -- Reset scrolling to 0
 	self:Update(true)
-	self:UpdateScrollTable(players)
+	self:UpdateScrollTable(players, item.answers)
 	--self:UpdatePeopleToVote()
 	-- addon:SendMessage("RCSessionChangedPost", s)
 end
@@ -275,14 +246,15 @@ function MLResult:Update(forceUpdate)
 	end
 end
 
-function MLResult:UpdateScrollTable(players)
+function MLResult:UpdateScrollTable(players, answers)
 	local rows = {}
 
 	for i, v in ipairs(players) do
+		local answerState = answers[v.name] or "None"
 		local row = {
-			v.class, --icon
+			v.classFileName, --icon
 			v.name,
-			v.answerState
+			answerState --v.answerState 
 		}
 		table.insert(rows, row)
 	end

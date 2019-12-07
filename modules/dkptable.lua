@@ -135,3 +135,10 @@ function ErrorDKP:BroadcastDKPTable()
     core:Print(_L["MSG_NOT_ALLOWED"])
   end
 end
+
+function ErrorDKP:GetPlayerDKP(playerName)
+  for i, v in ipairs(core.DKPTable) do
+      if v.name == playerName then return v.dkp end
+  end
+  return nil
+end

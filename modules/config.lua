@@ -36,7 +36,7 @@ local minimapShapes = {
 
 local menu = {
     { text = "Select an Option", isTitle = true, notCheckable = true},
-    { text = "Adjust DKP", notCheckable = true, func = function() core:PrintDebug("MinimapRight"); end }
+    { text = "Vote-Results", notCheckable = true, func = function() ErrorDKP.MLResult:Show() end }
 }
 
 local function IconMoveButton(self)
@@ -101,6 +101,7 @@ end
 
 function ErrorDKP:CreateMiniMapIcon()
     core:PrintDebug("Create Minimap Icon")
+    if core.UI.MiniMapIcon then return end
     core.UI.MiniMapIcon = CreateFrame("Button", "LibDBIcon10_ErrorDKP", Minimap)
     local MiniMapIcon = core.UI.MiniMapIcon
     ErrorDKP.MiniMapIcon = MiniMapIcon

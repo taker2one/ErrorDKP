@@ -86,16 +86,31 @@ function BuildSurveyData()
     local survey = {}
     survey["id"] = id
     survey["items"] = {}
+    survey["players"] = {}
 
+    -- Items
     for i,v in ipairs(core.LootTable) do
         local item = {
             ["index"] = i,
             ["name"] = v.name,
             ["itemLink"] = v.itemLink,
             ["quality"] = v.quality,
-            ["icon"] = v.icon
+            ["icon"] = v.icon,
+            ["asnwers"] = {}
         }
         table.insert(survey.items, item)
+    end
+    -- Players
+    local cntPlayers = GetNumGroupMembers();
+    for i=1, cntPlayers do
+        name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(i);
+        local player = {
+            ["name"] = name,
+            ["classFileName"] = fileName,
+            ["answerState"] = "None",
+            ["dkp"] = ErrorDKP:GetPlayerDKP(name)
+        }
+        table.insert(playsurvey.players, {})
     end
 
     return survey
@@ -106,13 +121,12 @@ function ErrorDKP:StartSurvey()
     
     if core.SurveyInProgress then
         -- Lootumfrage bereits aktiv, aktuell können wir nur eine gleichzeitig
-        core:Print("There is already an aktive survey, finish old one to start new")
+        core:Print("There is already an active survey, finish or cancel old one to start new")
         return
     end
 
     core.ActiveSurveyData = BuildSurveyData()
-    core.Sync:SendRaid("ErrDKPSurvStart", core.ActiveSurveyData)
-
+    core.Sync:SendRaid("ErrDKPSurvStart", { ["id"] = core.ActiveSurveyData.id, ["items"] = core.ActiveSurveyData.items })
     core.SurveyInProgress = true
 end
 
