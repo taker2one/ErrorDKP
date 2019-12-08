@@ -49,7 +49,6 @@ function core.Sync:OnEnable()
 
     -- Raid
     core.Sync:RegisterComm("ErrDKPSurvStart")       -- Start a loot survey
-    core.Sync:RegisterComm("ErrDKPSurvGot")         -- Client answers that he got the survey
     core.Sync:RegisterComm("ErrDKPSurvAnsw")        -- Answer for an item survey
     core.Sync:RegisterComm("ErrDKPSurvClosed")      -- Item survey is closed
 end
@@ -237,6 +236,15 @@ function core.Sync:OnCommReceived(prefix, message, channel, sender)
             local success, deserialized = Serializer:Deserialize(message)
             core:PrintDebug("ItemSurveyStarted", deserialized["id"])
             LootSurvey:Show(deserialized)
+            core.Sync:SendRaid("ErrDKPSurvAnsw", {["id"] = deserialized["id"], ["response"] = "GOT"})
+        elseif prefix == "ErrDKPSurvAnsw" then
+            --  { ["id"], ["itemIndex"], ["response"]  } 
+            -- clients also responds instantly after receiving the survey
+            local success, deserialized = Serializer:Deserialize(message)
+            
+            if success then
+                ErrorDKP:OnCommReceived_SurvAnsw(sender, deserialized)
+            end
         end
     end
 end

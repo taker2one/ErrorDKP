@@ -96,7 +96,7 @@ function BuildSurveyData()
             ["itemLink"] = v.itemLink,
             ["quality"] = v.quality,
             ["icon"] = v.icon,
-            ["asnwers"] = {}
+            ["responses"] = {}
         }
         table.insert(survey.items, item)
     end
@@ -107,7 +107,6 @@ function BuildSurveyData()
         local player = {
             ["name"] = name,
             ["classFileName"] = fileName,
-            ["answerState"] = "None",
             ["dkp"] = ErrorDKP:GetPlayerDKP(name)
         }
         table.insert(playsurvey.players, {})
@@ -128,6 +127,27 @@ function ErrorDKP:StartSurvey()
     core.ActiveSurveyData = BuildSurveyData()
     core.Sync:SendRaid("ErrDKPSurvStart", { ["id"] = core.ActiveSurveyData.id, ["items"] = core.ActiveSurveyData.items })
     core.SurveyInProgress = true
+end
+
+function ErrorDKP:OnCommReceived_SurvAnsw(sender, data)
+     -- { ["id"], ["itemIndex"], ["response"]  } 
+     if data["id"] ~= core.ActiveSurveyData["id"] then
+        core:Print("Got a response from"..sender.."for old survey => drop response")
+        return 
+     end
+
+     if data["response"] == "GOT" then
+        -- Client responds survey received
+        -- We have multiple items in a survey but only geht one reveived so set it for all items
+        for i,v in core.ActiveSurveyData["items"] do
+            v.responses[sender] = data["response"]
+        end
+        ErrorDKP.MLResult:SetVisualUpdateRequired()
+     else
+        core.ActiveSurveyData.items[data["itemIndex"]].responses[sender] = data["response"]
+        ErrorDKP.MLResult:SetVisualUpdateRequired()
+     end
+
 end
 
 

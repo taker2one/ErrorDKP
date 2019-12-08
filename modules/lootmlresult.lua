@@ -14,6 +14,7 @@ local ScrollingTable = LibStub("ScrollingTable")
 
 local itemIndex = 1
 local itemButtons = {}
+local visualUpdatePending = nil
 
 local colDef = {
 	{ ["name"] = "", ["width"] = 20, 
@@ -43,7 +44,7 @@ local DemoSurveyData = {
             ["itemLink"] = "|cffa335ee|Hitem:16930::::::::60:::::::|h[Nemesis Leggings]|h|r",
             ["quality"] = 4,
 			["icon"] = "Interface\\InventoryItems\\WoWUnknownItem01",
-			["answers"] = {}
+			["responses"] = {}
         },
         {
             ["index"] = 2,
@@ -51,7 +52,7 @@ local DemoSurveyData = {
             ["itemLink"] = "|cffa335ee|Hitem:16930::::::::60:::::::|h[Nemesis Leggings]|h|r",
             ["quality"] = 4,
 			["icon"] = "Interface\\InventoryItems\\WoWUnknownItem01",
-			["answers"] = {}
+			["responses"] = {}
         },
         {
             ["index"] = 3,
@@ -59,7 +60,7 @@ local DemoSurveyData = {
             ["itemLink"] = "|cffa335ee|Hitem:16930::::::::60:::::::|h[Nemesis Leggings]|h|r",
             ["quality"] = 4,
 			["icon"] = "Interface\\InventoryItems\\WoWUnknownItem01",
-			["answers"] = {
+			["responses"] = {
 				["Doktorwho"] = "MAIN"
 			}
         }
@@ -68,17 +69,14 @@ local DemoSurveyData = {
 		{
 			["name"] = "Doktorwho",
 			["classFileName"] = "PRIEST",
-			["answerState"] = "None"
 		},
 		{
 			["name"] = "Repa",
 			["classFileName"] = "MAGE",
-			["answerState"] = "None"
 		},
 		{
 			["name"] = "Rassputin",
 			["classFileName"] = "MAGE",
-			["answerState"] = "None"
 		},
 	}
 }
@@ -119,9 +117,20 @@ function MLResult:Setup(table)
 end
 
 function MLResult:UpdateItemButtons()
+	-- Hide all first
+	local highestIndex = 0
+
     for i, v in ipairs(core.ActiveSurveyData.items) do
         core:PrintDebug("UpdateButton:", i, v.icon)
 		itemButtons[i] = self:UpdateItemButton(i, v.icon, v.itemLink, v.awarded)
+		highestIndex = i
+	end
+
+	if highestIndex < #itemButtons then
+		core:PrintDebug("There are more buttons already created => hide them", highestIndex, #itemButtons)
+		for i=highestIndex+1, #itemButtons do
+			itemButtons[i]:Hide()
+		end
 	end
 end
 
@@ -148,7 +157,6 @@ function MLResult:UpdateItemButton(i, icon, itemLink, awarded)
 		btn:SetBorderColor("yellow")
 	elseif awarded then
 		btn:SetBorderColor("green")
-		--tinsert(lines, L["This item has been awarded"])
 	else
 		btn:SetBorderColor("white") -- white
 	end
@@ -157,7 +165,8 @@ function MLResult:UpdateItemButton(i, icon, itemLink, awarded)
 end
 
 function MLResult:SwitchItem(i)
-    core:PrintDebug("MLResult:SwitchItem", i)
+	core:PrintDebug("MLResult:SwitchItem", i)
+	--if itemIndex == i then retirn
     
 	local old = itemIndex
 	itemIndex = i
@@ -182,7 +191,7 @@ function MLResult:SwitchItem(i)
 	-- self.frame.st.cols[j].sort = 1
 	-- FauxScrollFrame_OnVerticalScroll(self.frame.st.scrollframe, 0, self.frame.st.rowHeight, function() self.frame.st:Refresh() end) -- Reset scrolling to 0
 	self:Update(true)
-	self:UpdateScrollTable(players, item.answers)
+	self:UpdateScrollTable(players, item.responses)
 	--self:UpdatePeopleToVote()
 	-- addon:SendMessage("RCSessionChangedPost", s)
 end
@@ -246,19 +255,22 @@ function MLResult:Update(forceUpdate)
 	end
 end
 
-function MLResult:UpdateScrollTable(players, answers)
+function MLResult:UpdateScrollTable(players, responses)
 	local rows = {}
 
 	for i, v in ipairs(players) do
-		local answerState = answers[v.name] or "None"
 		local row = {
 			v.classFileName, --icon
-			v.name,
-			answerState --v.answerState 
+			v.name
 		}
 		table.insert(rows, row)
 	end
 	MLResult:GetFrame().ScrollingTable:SetData(rows, true)
+end
+
+function MLResult:SetVisualUpdateRequired()
+	-- We get so many data updates that its required to bulk the drawing
+	visualUpdatePending = true
 end
 
 function MLResult:CreateFrame()
@@ -316,11 +328,7 @@ function MLResult:CreateFrame()
 	itemToggle:SetPoint("TOPRIGHT", f, "TOPLEFT", -2, -12)
 	--itemToggle:SetPoint("TOPLEFT", f, "TOPLEFT", -2, 0)
 	f.ItemToggleFrame = itemToggle
-    itemToggleButtons = {}
-    
-    itemToggle.bg = itemToggle:CreateTexture(nil, "BACKGROUND")
-    itemToggle.bg:SetAllPoints(itemToggle)
-	itemToggle.bg:SetTexture(1,0.5,0.5,0.5)
+    f.TtemToggleButtons = {}
 
     f:SetWidth(st.frame:GetWidth() + 44)
     f:Hide()
