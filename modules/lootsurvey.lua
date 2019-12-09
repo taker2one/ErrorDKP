@@ -14,10 +14,6 @@ local ScrollingTable = LibStub("ScrollingTable")
 
 local itemSurveyData
 
-local colDef = {
-    { name = "", width = 80, ["DoCellUpdate"] = function(...) LootSurvey:DoCellUpdateIcon(...) end }, -- icon
-    { name = "", width = 400, ["DoCellUpdate"] = function(...) LootSurvey:DoCellUpdateItemAndButtons(...) end } -- Itemname + buttons
-}
 local DemoSurveyData = {
     id = "157564448499",
     items = {
@@ -26,21 +22,21 @@ local DemoSurveyData = {
             ["name"] = "Nemesis Leggings",
             ["itemLink"] = "|cffa335ee|Hitem:16930::::::::60:::::::|h[Nemesis Leggings]|h|r",
             ["quality"] = 4,
-            ["icon"] = "Interface\\InventoryItems\\WoWUnknownItem01"
+            ["icon"] = "Interface\\Icons\\inv_pants_07"
         },
         {
             ["index"] = 2,
-            ["name"] = "Nemesis Leggings",
-            ["itemLink"] = "|cffa335ee|Hitem:16930::::::::60:::::::|h[Nemesis Leggings]|h|r",
+            ["name"] = "Giantstalker's Gloves",
+            ["itemLink"] = "|cffa335ee|Hitem:16852::::::::60:::::::|h[Giantstalker's Gloves]|h|r",
             ["quality"] = 4,
-            ["icon"] = "Interface\\InventoryItems\\WoWUnknownItem01"
+            ["icon"] = "Interface\\Icons\\inv_gauntlets_10"
         },
         {
             ["index"] = 3,
-            ["name"] = "Nemesis Leggings",
-            ["itemLink"] = "|cffa335ee|Hitem:16930::::::::60:::::::|h[Nemesis Leggings]|h|r",
+            ["name"] = "Seal of the Archmagus",
+            ["itemLink"] = "|cffa335ee|Hitem:17110::::::::60:::::::|h[Seal of the Archmagus]|h|r",
             ["quality"] = 4,
-            ["icon"] = "Interface\\InventoryItems\\WoWUnknownItem01"
+            ["icon"] = "Interface\\Icons\\inv_jewelry_ring_21"
         }
     }
 }
@@ -66,17 +62,17 @@ function LootSurvey:Update(data)
     local f = LootSurvey:GetFrame()
     for i,v in ipairs(data.items) do
         entryFrame = LootSurvey:GetEntry(i)
+        entryFrame:SetParent(f)
         entryFrame:SetPoint("TOPLEFT", f, "TOPLEFT", 11, 65+(-90*i))
 
         entryFrame.ItemText:SetText(v.itemLink)
+        entryFrame.Icon.texture:SetTexture(v.icon)
+        entryFrame.MainBtn:SetEnabled(true)
+        entryFrame.SecBtn:SetEnabled(true)
+        entryFrame.PassBtn:SetEnabled(true)
     end
 
-    f:SetHeight(#DemoSurveyData.items*90+60)
-end
-
-function LootSurvey:DoCellUpdateItemAndButtons(rowFrame, cellFrame, data, cols, row, realrow, column, fShow, self, ...)
-    local buttonSetFrame = LootSurvey:GetButtonSet(realrow)
-    buttonSetFrame:SetPoint("LEFT", cellFrame, "LEFT")
+    f:SetHeight(#data.items*90+60)
 end
 
 function LootSurvey:OnClickEntryButton(button, index)
@@ -88,14 +84,29 @@ function LootSurvey:OnClickEntryButton(button, index)
         core:ErrorDebug("WTF happened there is no entry")
         return
     end
-    --  { ["id"], ["itemIndex"], ["response"]  } 
-    core.Sync:SendRaid("ErrDKPSurvAnsw", {
-        ["id"] = itemSurveyData["id"],
-        ["itemIndex"] = index,
-        ["response"] = button
-    })
 
-    entry.responded = true
+    if not entry.responded then 
+        --  { ["id"], ["itemIndex"], ["response"]  } 
+        core.Sync:SendRaid("ErrDKPSurvAnsw", {
+            ["id"] = itemSurveyData["id"],
+            ["itemIndex"] = index,
+            ["response"] = button
+        })
+
+        entry.responded = true
+    end
+    LootSurvey:FinishEntry(index)
+    if not LootSurvey:EntryOpen() then
+        LootSurvey:FinishSurvey()
+    end
+end
+
+function LootSurvey:EntryOpen()
+    if not itemSurveyData.items or #itemSurveyData.items == 0 then return false; end
+    for i, v in ipairs(itemSurveyData.items) do
+        if v.responded ~= true then return true; end
+    end
+    return false
 end
 
 function LootSurvey:CreateFrame()
@@ -169,11 +180,12 @@ function LootSurvey:CreateEntry(name)
     f:SetSize(478,80)
    
     local icon = CreateFrame("Frame", nil, f)
-    icon:SetPoint("LEFT", f, "LEFT")
-    icon:SetSize(80,80)
+    icon:SetSize(50,50)
+    icon:SetPoint("LEFT", f, "LEFT", 30, 0)
     icon.texture = icon:CreateTexture(nil, "ARTWORK")
     icon.texture:SetAllPoints(icon)
     icon.texture:SetTexture("Interface\\InventoryItems\\WoWUnknownItem01")
+    f.Icon = icon
 
     f.ItemText = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     f.ItemText:SetText("Text")
@@ -199,6 +211,19 @@ function LootSurvey:CreateEntry(name)
     return f
 end
 
+function LootSurvey:FinishEntry(index)
+    local f = LootSurvey:GetEntry(index)
+    if not f then return; end
+
+    f.MainBtn:SetEnabled(false)
+    f.SecBtn:SetEnabled(false)
+    f.PassBtn:SetEnabled(false)
+end
+
+function LootSurvey:FinishSurvey()
+    self:GetFrame():Hide()
+end
+
 function LootSurvey:SetupTimerBar(countdown)
     if not countdown or countdown == 0 then return; end 
     local f = LootSurvey:GetFrame()
@@ -210,9 +235,11 @@ end
 function LootSurvey:OnCountdownExpired()
     if itemSurveyData and itemSurveyData.items then
         for i,v in ipairs(itemSurveyData.items) do
-            core:PrintDebug("SurveyTimeout, send asnwer", v. )
+            core:PrintDebug("SurveyTimeout, send asnwer", v.itemLink )
+            self:OnClickEntryButton("TIMEOUT", i)
         end
     end
 end
+
 
 ErrorDKP.LootSurvey = LootSurvey

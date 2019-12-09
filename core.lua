@@ -49,7 +49,8 @@ core.TrustedPlayers = {
   "Doktorwho",
   "Rassputin",
   "Repa",
-  "Dichterin"
+  "Dichterin",
+  "Karaffe"
 }
 
 core.ClassColors = {

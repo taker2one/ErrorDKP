@@ -165,8 +165,8 @@ local function OnInit()
     -- local testButton = ErrorDKP:CreateIconButton(UIParent, nil, nil)
     -- testButton:SetPoint("CENTER", UIParent, "CENTER")
     -- testButton:SetBorderColor("purple")
-    ErrorDKP.LootSurvey:Start({}, 120)
-    --ErrorDKP.MLResult:Show()
+    --ErrorDKP.LootSurvey:Start({}, 120)
+    ErrorDKP.MLResult:Show()
 end
 
 

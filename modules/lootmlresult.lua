@@ -6,6 +6,8 @@
 --###############################################
 local addonName, core = ...
 local ErrorDKP = core.ErrorDKP
+local _LS = core._L["ML_SURVEY_RESULT"]
+local _L = core._L
 
 ErrorDKP.MLResult = {}
 local MLResult = ErrorDKP.MLResult
@@ -16,8 +18,48 @@ local itemIndex = 1
 local itemButtons = {}
 local visualUpdatePending = nil
 
+local responseSortOrder = {
+	["PENDING"] = 3,
+	["MAIN"] = 1,
+	["SECOND"] = 2,
+	["PASS"] = 10,
+	["TIMEOUT"] = 5,
+	["OFFLINE"] = 4
+}
+
+function ResponseSort(table, rowa, rowb, sortbycol)
+	--core:PrintDebug("ResponseSort")
+
+	local column = table.cols[sortbycol]
+	local a, b = table:GetRow(rowa), table:GetRow(rowb);
+	a, b = core.ActiveSurveyData.items[itemIndex].responses[a[2]] or "OFFLINE",
+			core.ActiveSurveyData.items[itemIndex].responses[b[2]] or "OFFLINE"
+
+	return a < b
+	-- if a == b then
+	-- 	if column.sortnext then
+	-- 		local nextcol = table.cols[column.sortnext];
+	-- 		if nextcol and not(nextcol.sort) then
+	-- 			if nextcol.comparesort then
+	-- 				return nextcol.comparesort(table, rowa, rowb, column.sortnext);
+	-- 			else
+	-- 				return table:CompareSort(rowa, rowb, column.sortnext);
+	-- 			end
+	-- 		end
+	-- 	end
+	-- 	return false
+	-- else
+	-- 	local direction = column.sort or column.defaultsort or 1
+	-- 	if direction == 1 then
+	-- 		return a < b;
+	-- 	else
+	-- 		return a > b;
+	-- 	end
+	-- end
+end
+
 local colDef = {
-	{ ["name"] = "", ["width"] = 20, 
+	{ ["name"] = "", ["width"] = 20, ["sortnext"] = 2, 
 	["DoCellUpdate"] = function(rowFrame, cellFrame, data, cols, row, realrow, column, fShow, self, ...) 
 		if fShow then
 			local class = self:GetCell(realrow, column)
@@ -30,40 +72,46 @@ local colDef = {
 			end
 		end
 	end}, -- classIcon
-    { ["name"] = "Name", ["width"] = 150 }, -- PlayerName
+    { ["name"] = _LS["COLPLAYER"], ["width"] = 150, ["defaultsort"] = "asc" }, -- PlayerName
    -- { ["name"] = "", ["width"] = 20 }, -- Guild Rank
-    { ["name"] = "Answer", ["width"] = 150 } -- Answer
+    { ["name"] = "", ["width"] = 1}, -- ResponseType
+	{ ["name"] = _LS["COLRESPONSE"], ["width"] = 200, ["comparesort"]=ResponseSort, ["sortnext"] = 2 }, -- Answer
+	{ ["name"] = _LS["COLDKP"], ["width"] = 40, ["sortnext"] = 2 }
 }
 
 local DemoSurveyData = {
     id = "157564448499",
-    items = {
-        {
+	items = {
+		{
             ["index"] = 1,
             ["name"] = "Nemesis Leggings",
             ["itemLink"] = "|cffa335ee|Hitem:16930::::::::60:::::::|h[Nemesis Leggings]|h|r",
             ["quality"] = 4,
-			["icon"] = "Interface\\InventoryItems\\WoWUnknownItem01",
+			["icon"] = "Interface\\Icons\\inv_pants_07",
 			["responses"] = {}
         },
         {
             ["index"] = 2,
-            ["name"] = "Nemesis Leggings",
-            ["itemLink"] = "|cffa335ee|Hitem:16930::::::::60:::::::|h[Nemesis Leggings]|h|r",
+            ["name"] = "Giantstalker's Gloves",
+            ["itemLink"] = "|cffa335ee|Hitem:16852::::::::60:::::::|h[Giantstalker's Gloves]|h|r",
             ["quality"] = 4,
-			["icon"] = "Interface\\InventoryItems\\WoWUnknownItem01",
-			["responses"] = {}
+			["icon"] = "Interface\\Icons\\inv_gauntlets_10",
+			["responses"] = {
+				["Rassputin"] = "MAIN",
+				["Doktorwho"] = "SECOND"
+			}
         },
         {
             ["index"] = 3,
-            ["name"] = "Nemesis Leggings",
-            ["itemLink"] = "|cffa335ee|Hitem:16930::::::::60:::::::|h[Nemesis Leggings]|h|r",
+            ["name"] = "Seal of the Archmagus",
+            ["itemLink"] = "|cffa335ee|Hitem:17110::::::::60:::::::|h[Seal of the Archmagus]|h|r",
             ["quality"] = 4,
-			["icon"] = "Interface\\InventoryItems\\WoWUnknownItem01",
+			["icon"] = "Interface\\Icons\\inv_jewelry_ring_21",
 			["responses"] = {
 				["Doktorwho"] = "MAIN"
 			}
-        }
+        },
+
 	},
 	players = {
 		{
@@ -79,10 +127,6 @@ local DemoSurveyData = {
 			["classFileName"] = "MAGE",
 		},
 	}
-}
-
-local DemoPlayerData = {
-	
 }
 
 core.ActiveSurveyData = DemoSurveyData --DBG
@@ -259,18 +303,27 @@ function MLResult:UpdateScrollTable(players, responses)
 	local rows = {}
 
 	for i, v in ipairs(players) do
+		local responseType = responses[v.name] or "OFFLINE"
 		local row = {
 			v.classFileName, --icon
-			v.name
+			v.name,
+			responseType,
+			_LS["RESPONSE_"..responseType] or responseType,
+			0
 		}
 		table.insert(rows, row)
 	end
 	MLResult:GetFrame().ScrollingTable:SetData(rows, true)
 end
 
-function MLResult:SetVisualUpdateRequired()
+function MLResult:SetVisualUpdateRequired(index)
+
+	if index == itemIndex or index == nil then
+		core:PrintDebug("MLResult:SetVisualUpdateRequired", index, itemIndex)
+		visualUpdatePending = true
+	end
 	-- We get so many data updates that its required to bulk the drawing
-	visualUpdatePending = true
+	
 end
 
 function MLResult:CreateFrame()
@@ -330,7 +383,19 @@ function MLResult:CreateFrame()
 	f.ItemToggleFrame = itemToggle
     f.TtemToggleButtons = {}
 
-    f:SetWidth(st.frame:GetWidth() + 44)
+	f:SetWidth(st.frame:GetWidth() + 44)
+	f:SetScript("OnUpdate", function(self, elapsed)
+        self.TimeSinceLastUpdate = (self.TimeSinceLastUpdate or 0) + elapsed
+		if (self.TimeSinceLastUpdate >= 1 and visualUpdatePending) then
+			core.PrintDebug("Apply pending visual update")
+			visualUpdatePending = false
+			local item = core.ActiveSurveyData.items[i]
+			local players = core.ActiveSurveyData.players
+			MLResult:Update()
+			MLResult:UpdateScrollTable(players, item.responses)
+        end
+    end)
+
     f:Hide()
 	return f;
 end

@@ -71,6 +71,7 @@ function core.Sync:OnCommReceived(prefix, message, channel, sender)
 
         -- This version is newer => inform sender
         if tonumber(message) < core.Build then
+            core:PrintDebug("I have newer Version, inform player")
             core.Sync:Send("ErrDKPBuildCheck", tostring(core.Build))
         end
         return
@@ -235,15 +236,17 @@ function core.Sync:OnCommReceived(prefix, message, channel, sender)
             --if VerifySender(sender) then
             local success, deserialized = Serializer:Deserialize(message)
             core:PrintDebug("ItemSurveyStarted", deserialized["id"])
-            LootSurvey:Show(deserialized)
+            LootSurvey:Start(deserialized, deserialized["countdown"])
             core.Sync:SendRaid("ErrDKPSurvAnsw", {["id"] = deserialized["id"], ["response"] = "GOT"})
         elseif prefix == "ErrDKPSurvAnsw" then
             --  { ["id"], ["itemIndex"], ["response"]  } 
             -- clients also responds instantly after receiving the survey
-            local success, deserialized = Serializer:Deserialize(message)
-            
-            if success then
-                ErrorDKP:OnCommReceived_SurvAnsw(sender, deserialized)
+            if core:CheckSelfTrusted() then
+                local success, deserialized = Serializer:Deserialize(message)
+                
+                if success then
+                    ErrorDKP:OnCommReceived_SurvAnsw(sender, deserialized)
+                end
             end
         end
     end

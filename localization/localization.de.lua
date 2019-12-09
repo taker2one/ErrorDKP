@@ -28,6 +28,20 @@ if GetLocale() == "deDE" then
             TITLE = "Exportieren",
             HELPTEXT = "STRG+C um Inhalt zu kopieren\r\nESC um Fenster zu schliessen."
         },
+        ML_SURVEY_RESULT = {
+            TITLE = "Ergebnis",
+            RESPONSE_OFFLINE = "|cFFBDBDBDOffline oder Addon nicht installiert|r",
+            RESPONSE_PENDING = "|cFFBDBDBDAustehend|r",
+            RESPONSE_PASS = "|cFFB2B2B2Gepasst|r",
+            RESPONSE_SECOND = "|cFFFF4F00Second|r",
+            RESPONSE_MAIN = "|cFF00FF00Main/Need|r",
+            RESPONSE_TIMEOUT = "|cFF0000FFSpieler hat nicht geantwortet|r",
+            RESPONSE_AUTOPASS = "|cFFB2B2B2Autopass|r",
+            COLPLAYER = "Spieler",
+            COLRESPONSE = "Antwort",
+            COLDKP = "DKP",
+            RESPONSES = "Antworten"
+        },
         OK = "Ok",
         CANCEL = "Abbrechen",
         LCD_ENTERCOSTFOR = "DKP-Preis eingeben für",

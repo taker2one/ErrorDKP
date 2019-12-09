@@ -125,7 +125,7 @@ function ErrorDKP:StartSurvey()
     end
 
     core.ActiveSurveyData = BuildSurveyData()
-    core.Sync:SendRaid("ErrDKPSurvStart", { ["id"] = core.ActiveSurveyData.id, ["items"] = core.ActiveSurveyData.items })
+    core.Sync:SendRaid("ErrDKPSurvStart", { ["id"] = core.ActiveSurveyData.id, ["items"] = core.ActiveSurveyData.items, ["countdown"] = 120 })
     core.SurveyInProgress = true
 end
 
@@ -145,7 +145,7 @@ function ErrorDKP:OnCommReceived_SurvAnsw(sender, data)
         ErrorDKP.MLResult:SetVisualUpdateRequired()
      else
         core.ActiveSurveyData.items[data["itemIndex"]].responses[sender] = data["response"]
-        ErrorDKP.MLResult:SetVisualUpdateRequired()
+        ErrorDKP.MLResult:SetVisualUpdateRequired(data["itemIndex"])
      end
 
 end

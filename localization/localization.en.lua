@@ -27,6 +27,20 @@ local addonName, core = ...;
             TITLE = "Export",
             HELPTEXT = "CRTL+C to copy content.\r\n ESC to close window."
         },
+        ML_SURVEY_RESULT = {
+            TITLE = "Result",
+            RESPONSE_OFFLINE = "|cFFBDBDBDOffline or addon not installed|r",
+            RESPONSE_PENDING = "|cFFBDBDBDPending|r",
+            RESPONSE_PASS = "|cFFB2B2B2Pass|r",
+            RESPONSE_SECOND = "|cFFFF4F00Second|r",
+            RESPONSE_MAIN = "|cFF00FF00Main/Need|r",
+            RESPONSE_TIMEOUT = "|cFF0000FFPlayer didn't respond in time|r",
+            RESPONSE_AUTOPASS = "|cFFB2B2B2Autopass|r",
+            COLPLAYER = "Player",
+            COLRESPONSE = "Response",
+            COLDKP = "DKP",
+            RESPONSES = "Responses"
+        },
         OK = "Ok",
         CANCEL = "Cancel",
         LCD_ENTERCOSTFOR = "Enter DKP cost for",
