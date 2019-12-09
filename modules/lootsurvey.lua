@@ -45,27 +45,21 @@ local DemoSurveyData = {
     }
 }
 
-
-local function buildTableData()
-    local t = {}
-    for i,v in ipairs(DemoSurveyData.items) do
-        local row = {
-            v.icon,
-            v.itemLink
-        }
-        table.insert(t, row)
-    end
-    return t
-end
-
 function LootSurvey:Show(data)
-    if not data and not itemSurveyData then 
+    local d = DemoSurveyData
+    if not d and not itemSurveyData then 
         core:Print("Cant show survey cause there is no data")
     end
-    itemSurveyData = data
+    itemSurveyData = d
     core:PrintDebug("LootSurvey:Show")
     self:GetFrame():Show()
     LootSurvey:Update(itemSurveyData)
+end
+
+-- Start new LootSurvey
+function LootSurvey:Start(data, countdown)
+    self:Show(data)
+    self:SetupTimerBar(120)
 end
 
 function LootSurvey:Update(data)
@@ -77,21 +71,32 @@ function LootSurvey:Update(data)
         entryFrame.ItemText:SetText(v.itemLink)
     end
 
-    f:SetHeight(#DemoSurveyData.items*90+30)
+    f:SetHeight(#DemoSurveyData.items*90+60)
 end
-
--- 'function LootSurvey:DoCellUpdateIcon(rowFrame, cellFrame, data, cols, row, realrow, column, fShow, self, ...)
---     core:PrintDebug("DoCellUpdate")
---     local icon = self:GetCell(realrow, column) or "Interface/ICONS/INV_Sigil_Thorim.png"
---     cellFrame local f = CreateFrame("Frame", nil, UIParent)
--- end'
 
 function LootSurvey:DoCellUpdateItemAndButtons(rowFrame, cellFrame, data, cols, row, realrow, column, fShow, self, ...)
     local buttonSetFrame = LootSurvey:GetButtonSet(realrow)
-    --buttonSetFrame:SetParent(cellFrame)
     buttonSetFrame:SetPoint("LEFT", cellFrame, "LEFT")
 end
 
+function LootSurvey:OnClickEntryButton(button, index)
+    core:PrintDebug("LootSurvey:OnClickEntryButton", button, index)
+    local entry = itemSurveyData.items[index]
+
+    if not entry then 
+        -- WTF happened
+        core:ErrorDebug("WTF happened there is no entry")
+        return
+    end
+    --  { ["id"], ["itemIndex"], ["response"]  } 
+    core.Sync:SendRaid("ErrDKPSurvAnsw", {
+        ["id"] = itemSurveyData["id"],
+        ["itemIndex"] = index,
+        ["response"] = button
+    })
+
+    entry.responded = true
+end
 
 function LootSurvey:CreateFrame()
     local f = core:CreateDefaultFrame("ErrorDKPLootSurveyFrame", "Loot Survey", 420, 375)
@@ -104,11 +109,45 @@ function LootSurvey:CreateFrame()
     f:SetHeight(200)
     f:Hide()
 
-    return f
-end
+    -- Timer bar  
+    local bar = CreateFrame("StatusBar", nil, f)
+    f.CountdownBar = bar
+    bar:SetSize(128, 25)
+    bar:SetPoint("BOTTOMLEFT", f , "BOTTOMLEFT", 12, 15)
+    bar:SetPoint("BOTTOMRIGHT", f , "BOTTOMRIGHT", -12, 15)
+    bar:SetBackdrop({bgFile = [[Interface\ChatFrame\ChatFrameBackground]]})
+    bar:SetBackdropColor(0, 0, 0, 0.7)
+    bar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+    bar:SetStatusBarColor(0.98, 0.9, 0.01)
+    bar:SetMinMaxValues(0, 60)
+    bar.TimeSinceLastUpdate = 0
+    local countdown = bar:CreateFontString(nil, "OVERLAY")
+    countdown:SetFontObject("GameFontNormal")
+    countdown:SetText(0)
+    countdown:SetSize(200,30)
+    countdown:SetPoint("CENTER", bar, "CENTER", 0, 0)
+    bar.countdownString = countdown
+    bar.countdown = 0
 
-function LootSurvey:OnClickEntryButton(button, index)
-    core:PrintDebug("LootSurvey:OnClickEntryButton", button, index)
+    -- this function will run repeatedly, incrementing the value of timer as it goes
+    bar:SetScript("OnUpdate", function(self, elapsed)
+        if not CountdownActive then return; end
+        self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed; 	
+        self.countdown = self.countdown - elapsed
+        if (self.TimeSinceLastUpdate >= 1) then
+            bar.countdownString:SetText(math.floor(self.countdown))
+            self.TimeSinceLastUpdate = 0
+        end
+
+        self:SetValue(self.countdown)
+        local statusMin, statusMax = self:GetMinMaxValues()
+        if self.countdown <= statusMin then
+            CountdownActive = false
+            LootSurvey:OnCountdownExpired()
+        end
+    end)
+
+    return f
 end
 
 function LootSurvey:GetFrame()
@@ -128,10 +167,6 @@ end
 function LootSurvey:CreateEntry(name)
     local f = CreateFrame("Frame", name, UIParent)
     f:SetSize(478,80)
-
-    f.bg = f:CreateTexture(nil, "BACKGROUND")
-    f.bg:SetAllPoints(f)
-    f.bg:SetTexture(1,0.5,0.5,0.5)
    
     local icon = CreateFrame("Frame", nil, f)
     icon:SetPoint("LEFT", f, "LEFT")
@@ -164,5 +199,20 @@ function LootSurvey:CreateEntry(name)
     return f
 end
 
+function LootSurvey:SetupTimerBar(countdown)
+    if not countdown or countdown == 0 then return; end 
+    local f = LootSurvey:GetFrame()
+    f.CountdownBar:SetMinMaxValues(0, countdown)
+    f.CountdownBar.countdown = countdown
+    CountdownActive = true
+end
+
+function LootSurvey:OnCountdownExpired()
+    if itemSurveyData and itemSurveyData.items then
+        for i,v in ipairs(itemSurveyData.items) do
+            core:PrintDebug("SurveyTimeout, send asnwer", v. )
+        end
+    end
+end
 
 ErrorDKP.LootSurvey = LootSurvey
