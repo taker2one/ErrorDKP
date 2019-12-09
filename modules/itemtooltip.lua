@@ -23,6 +23,8 @@ function ErrorDKP:ShowItemTooltip(newOwner, itemLink)
     tt:SetOwner(newOwner, "ANCHOR_RIGHT")
     tt:SetHyperlink(itemLink)
     tt:Show()
+
+    	-- itemTooltip:SetScript("OnTooltipSetItem", GameTooltip:GetScript("OnTooltipSetItem"))
 end
 
 function ErrorDKP:HideItemTooltip()
