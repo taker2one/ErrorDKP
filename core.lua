@@ -14,10 +14,10 @@ local _C = core.CONSTANTS
 
 -- Version
 core.Version = GetAddOnMetadata("ErrorDKP", "Version")
-core.Build = 1130202
+core.Build = 1130203
 core.Type = "R" -- R = Release, B = Beta
 
-SetCVar("ScriptErrors", 1)
+--SetCVar("ScriptErrors", 1)
 
 -- Defaults
 core.PrintPrefix = "<ErrorDKP>"
