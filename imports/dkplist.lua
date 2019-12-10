@@ -7,11 +7,11 @@ multiTable = {
 },
 }
 DKPInfo = {
-	["date"] = "05.12.19 15:37:49",
-	["timestamp"] = "1575560269",
+	["date"] = "10.12.19 12:35:59",
+	["timestamp"] = "1575981359",
 	["process_dkp_ver"] = "3.0",
 	["total_players"] = 52,
-	["total_items"] = 125,
+	["total_items"] = 130,
 	["total_points"] = 0,
 	}
 gdkp = {
@@ -47,11 +47,11 @@ gdkp = {
 			}
 		,
 		["Cozy"] = {
-			["DKP"] = 20,
+			["DKP"] = -54,
 			["dkp_earned"] = 144.56,
-			["dkp_spend"] = 60.0,
+			["dkp_spend"] = 135.0,
 			["dkp_adjust"] = 0,
-			["dkp_current"] = 20.01,
+			["dkp_current"] = -54.99,
 			["class"] = "Schurke",
 			["rcount"] = 0,
 			}
@@ -257,11 +257,11 @@ gdkp = {
 			}
 		,
 		["Mahoud"] = {
-			["DKP"] = 49,
+			["DKP"] = -50,
 			["dkp_earned"] = 146.06,
-			["dkp_spend"] = 140.0,
+			["dkp_spend"] = 240.0,
 			["dkp_adjust"] = 0,
-			["dkp_current"] = 49.01,
+			["dkp_current"] = -50.99,
 			["class"] = "Krieger",
 			["rcount"] = 0,
 			}
