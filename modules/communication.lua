@@ -155,13 +155,15 @@ function core.Sync:OnCommReceived(prefix, message, channel, sender)
         else
             core:Print("Error while deserializing data from message: ", prefix)
         end
-    elseif prefix == "ErrDKPAddLoot" 
-    --and sender ~= UnitName("player")
+    elseif prefix == "ErrDKPAddLoot" and sender ~= UnitName("player")
     then
         -- Data is serialized { PTS, ATS, Data, Item }
         local success, deserialized = Serializer:Deserialize(message)
         if success then
-            table.insert(core.LootLog, deserialized.Item)
+            table.insert(core.LootLog, 1, deserialized.Item)
+            while #core.LootLog > 50 do
+                table.remove(core.LootLog, #core.LootLog)
+            end
             core:SetLootDataTimestamp(deserialized.IATS)
             ErrorDKP:LootHistoryTableUpdate()
 
