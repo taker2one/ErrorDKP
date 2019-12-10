@@ -166,7 +166,7 @@ local function OnInit()
     -- testButton:SetPoint("CENTER", UIParent, "CENTER")
     -- testButton:SetBorderColor("purple")
     --ErrorDKP.LootSurvey:Start({}, 120)
-    ErrorDKP.MLResult:Show()
+    ErrorDKP.MLResult:Start(20)
 end
 
 

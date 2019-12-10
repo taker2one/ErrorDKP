@@ -14,9 +14,11 @@ local MLResult = ErrorDKP.MLResult
 
 local ScrollingTable = LibStub("ScrollingTable")
 
-local itemIndex = 1
+local itemIndex = 0
 local itemButtons = {}
 local visualUpdatePending = nil
+local activeSurvey
+local CountdownActive = false
 
 local responseSortOrder = {
 	["PENDING"] = 3,
@@ -32,34 +34,34 @@ function ResponseSort(table, rowa, rowb, sortbycol)
 
 	local column = table.cols[sortbycol]
 	local a, b = table:GetRow(rowa), table:GetRow(rowb);
-	a, b = core.ActiveSurveyData.items[itemIndex].responses[a[2]] or "OFFLINE",
-			core.ActiveSurveyData.items[itemIndex].responses[b[2]] or "OFFLINE"
+	a, b = responseSortOrder[core.ActiveSurveyData.items[itemIndex].responses[a[2]] or "OFFLINE"],
+			responseSortOrder[core.ActiveSurveyData.items[itemIndex].responses[b[2]] or "OFFLINE"]
+	core:PrintDebug("ResponseSort:", a, b)
 
-	return a < b
-	-- if a == b then
-	-- 	if column.sortnext then
-	-- 		local nextcol = table.cols[column.sortnext];
-	-- 		if nextcol and not(nextcol.sort) then
-	-- 			if nextcol.comparesort then
-	-- 				return nextcol.comparesort(table, rowa, rowb, column.sortnext);
-	-- 			else
-	-- 				return table:CompareSort(rowa, rowb, column.sortnext);
-	-- 			end
-	-- 		end
-	-- 	end
-	-- 	return false
-	-- else
-	-- 	local direction = column.sort or column.defaultsort or 1
-	-- 	if direction == 1 then
-	-- 		return a < b;
-	-- 	else
-	-- 		return a > b;
-	-- 	end
-	-- end
+	if a == b then
+		if column.sortnext then
+			local nextcol = table.cols[column.sortnext];
+			if nextcol and not(nextcol.sort) then
+				if nextcol.comparesort then
+					return nextcol.comparesort(table, rowa, rowb, column.sortnext);
+				else
+					return table:CompareSort(rowa, rowb, column.sortnext);
+				end
+			end
+		end
+		return false
+	else
+		local direction = column.sort or column.defaultsort or 1
+		if direction == 1 then
+			return a < b;
+		else
+			return a > b;
+		end
+	end
 end
 
 local colDef = {
-	{ ["name"] = "", ["width"] = 20, ["sortnext"] = 2, 
+	{ ["name"] = "", ["width"] = 20,
 	["DoCellUpdate"] = function(rowFrame, cellFrame, data, cols, row, realrow, column, fShow, self, ...) 
 		if fShow then
 			local class = self:GetCell(realrow, column)
@@ -72,11 +74,11 @@ local colDef = {
 			end
 		end
 	end}, -- classIcon
-    { ["name"] = _LS["COLPLAYER"], ["width"] = 150, ["defaultsort"] = "asc" }, -- PlayerName
+    { ["name"] = _LS["COLPLAYER"], ["width"] = 150 }, -- PlayerName
    -- { ["name"] = "", ["width"] = 20 }, -- Guild Rank
     { ["name"] = "", ["width"] = 1}, -- ResponseType
-	{ ["name"] = _LS["COLRESPONSE"], ["width"] = 200, ["comparesort"]=ResponseSort, ["sortnext"] = 2 }, -- Answer
-	{ ["name"] = _LS["COLDKP"], ["width"] = 40, ["sortnext"] = 2 }
+	{ ["name"] = _LS["COLRESPONSE"], ["width"] = 200, ["comparesort"]=ResponseSort, ["sortnext"] = 5, ["defaultsort"] = "asc"  }, -- Answer
+	{ ["name"] = _LS["COLDKP"], ["width"] = 40 }
 }
 
 local DemoSurveyData = {
@@ -88,7 +90,8 @@ local DemoSurveyData = {
             ["itemLink"] = "|cffa335ee|Hitem:16930::::::::60:::::::|h[Nemesis Leggings]|h|r",
             ["quality"] = 4,
 			["icon"] = "Interface\\Icons\\inv_pants_07",
-			["responses"] = {}
+			["responses"] = {},
+			["closed"] = nil
         },
         {
             ["index"] = 2,
@@ -99,7 +102,8 @@ local DemoSurveyData = {
 			["responses"] = {
 				["Rassputin"] = "MAIN",
 				["Doktorwho"] = "SECOND"
-			}
+			},
+			["closed"] = true
         },
         {
             ["index"] = 3,
@@ -109,7 +113,8 @@ local DemoSurveyData = {
 			["icon"] = "Interface\\Icons\\inv_jewelry_ring_21",
 			["responses"] = {
 				["Doktorwho"] = "MAIN"
-			}
+			},
+			["closed"] = nil
         },
 
 	},
@@ -131,32 +136,26 @@ local DemoSurveyData = {
 
 core.ActiveSurveyData = DemoSurveyData --DBG
 
-function MLResult:Show()
+function MLResult:Show(index)
     local f = self:GetFrame() 
 
-	if core.ActiveSurveyData.items[itemIndex] then
+	local i = index or 1
+	if core.ActiveSurveyData.items[i] then
 		f:Show()
-		self:SwitchItem(itemIndex)
+		self:SwitchItem(i)
 	else
 		core:Print("No items in loottable")
 	end
 end
 
-function MLResult:Setup(table)
-	for session, t in ipairs(table) do
-		if not t.added then
-			self:SetupSession(session, t)
-		end
-	end
-	-- Hide unused session buttons
-	for i = #lootTable+1, #sessionButtons do
-		sessionButtons[i]:Hide()
-	end
-	session = 1
-	self:BuildST()
-	self:SwitchSession(session)
-	if addon.isMasterLooter and db.autoAddRolls then
-		self:DoAllRandomRolls()
+function MLResult:Start(countdown)
+	itemIndex = 0
+
+	if core.ActiveSurveyData.items[1] then
+		self:SetupTimerBar(countdown)
+		self:Show()
+	else
+		core:Print("No items in loottable")
 	end
 end
 
@@ -166,7 +165,7 @@ function MLResult:UpdateItemButtons()
 
     for i, v in ipairs(core.ActiveSurveyData.items) do
         core:PrintDebug("UpdateButton:", i, v.icon)
-		itemButtons[i] = self:UpdateItemButton(i, v.icon, v.itemLink, v.awarded)
+		itemButtons[i] = self:UpdateItemButton(i, v.icon, v.itemLink, v.closed)
 		highestIndex = i
 	end
 
@@ -178,7 +177,7 @@ function MLResult:UpdateItemButtons()
 	end
 end
 
-function MLResult:UpdateItemButton(i, icon, itemLink, awarded)
+function MLResult:UpdateItemButton(i, icon, itemLink, closed)
     local f = self:GetFrame()
     local btn = itemButtons[i]
     
@@ -197,14 +196,15 @@ function MLResult:UpdateItemButton(i, icon, itemLink, awarded)
 	-- Update Button
 	btn:SetNormalTexture(icon or "Interface\\InventoryItems\\WoWUnknownItem01")
 	--local lines = { format(L["Click to switch to 'item'"], link) }
-	if i == itemIndex then
-		btn:SetBorderColor("yellow")
-	elseif awarded then
+	
+		
+	if closed then
 		btn:SetBorderColor("green")
+	elseif i == itemIndex then
+		btn:SetBorderColor("purple")
 	else
-		btn:SetBorderColor("white") -- white
+		btn:SetBorderColor("white")
 	end
-	--btn:SetScript("OnEnter", function() addon:CreateTooltip(unpack(lines)) end)
 	return btn
 end
 
@@ -224,83 +224,29 @@ function MLResult:SwitchItem(i)
     -- Set a proper item type text
     local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(item.itemLink)
 	f.ItemType:SetText(itemType)
+	if itemSubType then f.ItemType:SetText(f.ItemType:GetText()..', '..itemSubType); end
 
-	self:UpdateItemButtons()
-
-	local j = 1
-	-- for i in ipairs(self.frame.st.cols) do
-	-- 	self.frame.st.cols[i].sort = nil
-	-- 	if self.frame.st.cols[i].colName == "response" then j = i end
-	-- end
-	-- self.frame.st.cols[j].sort = 1
 	-- FauxScrollFrame_OnVerticalScroll(self.frame.st.scrollframe, 0, self.frame.st.rowHeight, function() self.frame.st:Refresh() end) -- Reset scrolling to 0
-	self:Update(true)
-	self:UpdateScrollTable(players, item.responses)
-	--self:UpdatePeopleToVote()
-	-- addon:SendMessage("RCSessionChangedPost", s)
+	self:Update(players, item.responses)
+	self:UpdateScrollTable(players, item.responses, old ~= itemIndex)
 end
 
-function MLResult:Update(forceUpdate)
-	needUpdate = false
-	if not forceUpdate and noUpdateTimeRemaining > 0 then needUpdate = true; return end
-	if not self.frame then return end -- No updates when it doesn't exist
-	if not lootTable[session] then return addon:Debug("VotingFrame:Update() without lootTable!!") end -- No updates if lootTable doesn't exist.
-	noUpdateTimeRemaining = MIN_UPDATE_INTERVAL
-	self.frame.st:SortData()
-	self.frame.st:SortData() -- It appears that there is a bug in lib-st that only one SortData() does not use the "sortnext" to correct sort the rows.
-	-- update awardString
-	if lootTable[session] and lootTable[session].awarded then
-		self.frame.awardString:SetText(L["Item was awarded to"])
-		self.frame.awardString:Show()
-		local name = lootTable[session].awarded
-		self.frame.awardStringPlayer:SetText(addon.Ambiguate(name))
-		local c = addon:GetClassColor(lootTable[session].candidates[name].class)
-		self.frame.awardStringPlayer:SetTextColor(c.r,c.g,c.b,c.a)
-		self.frame.awardStringPlayer:Show()
-		-- Hack-reuse the SetCellClassIcon function
-		addon.SetCellClassIcon(nil,self.frame.awardStringPlayer.classIcon,nil,nil,nil,nil,nil,nil,nil, lootTable[session].candidates[name].class)
-		self.frame.awardStringPlayer.classIcon:Show()
-	elseif lootTable[session] and lootTable[session].baggedInSession then
-		self.frame.awardString:SetText(L["The item will be awarded later"])
-		self.frame.awardString:Show()
-		self.frame.awardStringPlayer:Hide()
-		self.frame.awardStringPlayer.classIcon:Hide()
-	else
-		self.frame.awardString:Hide()
-		self.frame.awardStringPlayer:Hide()
-		self.frame.awardStringPlayer.classIcon:Hide()
-	end
-	-- This only applies to the ML
-	if addon.isMasterLooter then
-		-- Update close button text
-		if active then
-			self.frame.abortBtn:SetText(L["Abort"])
-		else
-			self.frame.abortBtn:SetText(_G.CLOSE)
-		end
-		self.frame.disenchant:Show()
-	else -- Non-MLs:
-		self.frame.abortBtn:SetText(_G.CLOSE)
-		self.frame.disenchant:Hide()
-	end
-	if #self.frame.st.filtered < #self.frame.st.data then -- Some row is filtered in this session
-		self.frame.filter.Text:SetTextColor(0.86,0.5,0.22) -- #db8238
-	else
-		self.frame.filter.Text:SetTextColor(_G.NORMAL_FONT_COLOR:GetRGB()) --#ffd100
-	end
-	if db.modules["RCVotingFrame"].alwaysShowTooltip then
-		self.frame.itemTooltip:SetOwner(self.frame.content, "ANCHOR_NONE")
-		self.frame.itemTooltip:SetHyperlink(lootTable[session].link)
-		self.frame.itemTooltip:Show()
-		self.frame.itemTooltip:SetPoint("TOP", self.frame, "TOP", 0, 0)
-		self.frame.itemTooltip:SetPoint("RIGHT", sessionButtons[#lootTable], "LEFT", 0, 0)
-	else
-		self.frame.itemTooltip:Hide()
+function MLResult:Update(players, responses)
+	--Update Repsone Fontstring upper right corner
+	local f = self:GetFrame()
+	local totalPlayers = core:tcount(players)
+	local responseCnt = core:tcount(responses)
+	f.ResponseFontString:SetText( _LS["RESPONSES"].." "..responseCnt.."/"..totalPlayers )
+	MLResult:UpdateItemButtons()
+	if not self:CheckResponsesMissing() then
+		-- We are done
+		self:FinishSurvey()
 	end
 end
 
-function MLResult:UpdateScrollTable(players, responses)
+function MLResult:UpdateScrollTable(players, responses, resetSorting)
 	local rows = {}
+	local st = MLResult:GetFrame().ScrollingTable
 
 	for i, v in ipairs(players) do
 		local responseType = responses[v.name] or "OFFLINE"
@@ -309,11 +255,22 @@ function MLResult:UpdateScrollTable(players, responses)
 			v.name,
 			responseType,
 			_LS["RESPONSE_"..responseType] or responseType,
-			0
+			ErrorDKP:GetPlayerDKP(v.name) or 0
 		}
 		table.insert(rows, row)
 	end
-	MLResult:GetFrame().ScrollingTable:SetData(rows, true)
+
+	if resetSorting then
+		core:PrintDebug("Reset table sorting")
+		-- reset sorting to response
+		for i in ipairs(st.cols) do
+			st.cols[i].sort = nil
+		end
+		st.cols[4].sort = 1	
+	end
+
+	st:SetData(rows, true)
+	st:SortData()
 end
 
 function MLResult:SetVisualUpdateRequired(index)
@@ -326,12 +283,27 @@ function MLResult:SetVisualUpdateRequired(index)
 	
 end
 
+function MLResult:CheckResponsesMissing()
+	-- check if everybody has answered 
+	local totalPlayers = core:tcount(core.ActiveSurveyData["players"])
+	for i,v in ipairs(core.ActiveSurveyData.items) do
+		if not v["closed"] then
+			if core:tcount(v["responses"]) == totalPlayers then
+				v["closed"] = true
+			else
+				return true
+			end
+		end
+	end
+	return nil
+end
+
 function MLResult:CreateFrame()
-	local f = core:CreateDefaultFrame("MLResultFrame", "Result", 250, 440)
+	local f = core:CreateDefaultFrame("MLResultFrame", "Result", 250, 480)
 	core.UI.MLResult = f
     f:SetPoint("CENTER", UIParent, "CENTER")
 
-    local st = ScrollingTable:CreateST(colDef, 15, 20, nil, f)
+    local st = ScrollingTable:CreateST(colDef, 16, 20, nil, f)
     f.ScrollingTable = st
 	st.frame:SetPoint("TOPLEFT", f, "TOPLEFT", 22, -100)
 	
@@ -361,18 +333,12 @@ function MLResult:CreateFrame()
 	local rf = CreateFrame("Frame", nil, f)
 	rf:SetWidth(100)
 	rf:SetHeight(20)
-	if b2 then rf:SetPoint("RIGHT", b2, "LEFT", -10, 0) else rf:SetPoint("TOPRIGHT", f, "TOPRIGHT", -10, -20) end
-	rf:SetScript("OnLeave", function()
-		addon:HideTooltip()
-	end)
-	local rft = rf:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	rft:SetPoint("CENTER", rf, "CENTER")
-	rft:SetText(" ")
-	rft:SetTextColor(0,1,0,1) -- Green
-	rf.text = rft
-	rf:SetWidth(rft:GetStringWidth())
-	f.rollResult = rf
 
+	local responseFontString = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	responseFontString:SetPoint("TOPRIGHT", f, "TOPRIGHT", -22, -35)
+	responseFontString:SetText(_LS["RESPONSES"])
+	responseFontString:SetTextColor(0,1,0,1) -- Green
+	f.ResponseFontString = responseFontString
 
 	-- Item toggle
 	local itemToggle = CreateFrame("Frame", nil, f)
@@ -394,7 +360,45 @@ function MLResult:CreateFrame()
 			MLResult:Update()
 			MLResult:UpdateScrollTable(players, item.responses)
         end
-    end)
+	end)
+	
+	 -- Timer bar  
+	 local bar = CreateFrame("StatusBar", nil, f)
+	 f.CountdownBar = bar
+	 bar:SetSize(128, 25)
+	 bar:SetPoint("BOTTOMLEFT", f , "BOTTOMLEFT", 12, 15)
+	 bar:SetPoint("BOTTOMRIGHT", f , "BOTTOMRIGHT", -12, 15)
+	 bar:SetBackdrop({bgFile = [[Interface\ChatFrame\ChatFrameBackground]]})
+	 bar:SetBackdropColor(0, 0, 0, 0.7)
+	 bar:SetStatusBarTexture([[Interface\TargetingFrame\UI-StatusBar]])
+	 bar:SetStatusBarColor(0.98, 0.9, 0.01)
+	 bar:SetMinMaxValues(0, 60)
+	 bar.TimeSinceLastUpdate = 0
+	 local countdown = bar:CreateFontString(nil, "OVERLAY")
+	 countdown:SetFontObject("GameFontNormal")
+	 countdown:SetText(0)
+	 countdown:SetSize(200,30)
+	 countdown:SetPoint("CENTER", bar, "CENTER", 0, 0)
+	 bar.countdownString = countdown
+	 bar.countdown = 0
+ 
+	 -- this function will run repeatedly, incrementing the value of timer as it goes
+	 bar:SetScript("OnUpdate", function(self, elapsed)
+		 if not CountdownActive then return; end
+		 self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed; 	
+		 self.countdown = self.countdown - elapsed
+		 if (self.TimeSinceLastUpdate >= 1) then
+			 bar.countdownString:SetText(math.floor(self.countdown))
+			 self.TimeSinceLastUpdate = 0
+		 end
+ 
+		 self:SetValue(self.countdown)
+		 local statusMin, statusMax = self:GetMinMaxValues()
+		 if self.countdown <= statusMin then
+			 CountdownActive = false
+			 MLResult:OnCountdownExpired()
+		 end
+	 end)
 
     f:Hide()
 	return f;
@@ -403,4 +407,38 @@ end
 function MLResult:GetFrame()
     local f = core.UI.MLResult or self:CreateFrame()
     return f
+end
+
+function MLResult:SetupTimerBar(countdown)
+	local f = self:GetFrame()
+	if not countdown or countdown == 0 then
+		f.CountdownBar:SetValue(0)
+		CountdownActive = false
+		return
+	end 
+    f.CountdownBar:SetMinMaxValues(0, countdown)
+    f.CountdownBar.countdown = countdown
+    CountdownActive = true
+end
+
+function MLResult:OnCountdownExpired()
+    core:PrintDebug("SurveyTimeout, send closed" )
+	self:CloseSurvey()
+end
+
+function MLResult:FinishSurvey()
+	core.SurveyInProgress = false
+	self:GetFrame().CountdownBar.countdownString:SetText(_LS["SURVEYCLOSED"])
+	self:SetupTimerBar(0) -- deavtivates timer bar 
+
+end
+
+function MLResult:CloseSurvey()
+	for i,v in ipairs(core.ActiveSurveyData.items) do
+		v["closed"] = true
+	end
+	self:UpdateItemButtons()
+	self:GetFrame().CountdownBar.countdownString:SetText(_LS["SURVEYCLOSED"])
+	self:FinishSurvey()
+	core.Sync:SendRaid("ErrDKPSurvClosed", core.ActiveSurveyData["id"])
 end

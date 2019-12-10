@@ -19,11 +19,24 @@ function ErrorDKP:GetContextMenu()
 end
 
 function ErrorDKP:ConextMenu(menu, xoffset, yoffset)
+    local isTrusted = core:CheckSelfTrusted()
+    local m = {}
+    if not isTrusted then
+        for i,v in ipairs(menu) do
+            if not v.onlyTrusted then
+                tinsert(m, b)
+            end
+        end
+    else
+        m = menu
+    end
+
+
     menuFrame = ErrorDKP:GetContextMenu()
     local x = xoffset or 0
     local y = yoffset or 0
 
-    EasyMenu(menu, menuFrame, "cursor", xoffset , yoffset, "MENU")  
+    EasyMenu(m, menuFrame, "cursor", xoffset , yoffset, "MENU")  
 end
 
 -- Example menu

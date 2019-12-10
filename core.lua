@@ -185,6 +185,29 @@ function core:IsTableEmpty(t)
     return true
 end
 
+function core:tcount(t)
+    local count = 0
+    for _ in pairs(t) do count = count + 1 end
+    return count
+end
+
+function core:tcopy(t)
+    local to = {}
+    self:tcopyto(to, t)
+    return to
+end
+
+function core:tcopyto(to, from)
+    for k,v in pairs(from) do
+      if(type(v)=="table") then
+        to[k] = {}
+        self:tcopyto(to[k], v);
+      else
+        to[k] = v;
+      end
+    end
+end
+
 function core:CreateDefaultFrame(name, title, width, height)
     local f = CreateFrame("Frame", name, UIParent)
     f:SetSize(width,height)

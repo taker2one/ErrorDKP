@@ -51,6 +51,7 @@ function core.Sync:OnEnable()
     core.Sync:RegisterComm("ErrDKPSurvStart")       -- Start a loot survey
     core.Sync:RegisterComm("ErrDKPSurvAnsw")        -- Answer for an item survey
     core.Sync:RegisterComm("ErrDKPSurvClosed")      -- Item survey is closed
+    core.Sync:RegisterComm("ErrDKPSurvCancel")      -- Item survey canceled
 end
 
 
@@ -249,6 +250,18 @@ function core.Sync:OnCommReceived(prefix, message, channel, sender)
                 if success then
                     ErrorDKP:OnCommReceived_SurvAnsw(sender, deserialized)
                 end
+            end
+        elseif prefix == "ErrDKPSurvClosed" then
+            if VerifySender(sender) then
+                core:PrintDebug("Lottsurvey closed")
+                ErrorDKP.LootSurvey:OnCommCloseReceived("CLOSED")
+                core:Print(string.format(MSG_SURVEY_CLOSED_BY, sender))
+            end
+        elseif prefix == "ErrDKPSurvCancel" then
+            if VerifySender(sender) then
+                core:PrintDebug("Lottsurvey cancelled")
+                ErrorDKP.LootSurvey:OnCommCloseReceived("CANCEL")
+                core:Print(string.format(MSG_SURVEY_CANCELLED_BY, sender))
             end
         end
     end
