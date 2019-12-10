@@ -2,7 +2,7 @@
 --#  Project: ErrorDKP
 --#  File: itemtooltip.lua
 --#  Author: Manuel "Doktorwho@Venoxis" Ebner
---#  Last Edit: 22.11.2019
+--#  Last Edit: 10.12.2019
 --###############################################
 local addonName, core = ...
 local UI = core.UI
@@ -12,13 +12,16 @@ local _L = core._L
 local function CreateItemToolTip()
     core:PrintDebug("CreateItemToolTip")
     UI.ItemTooltip = CreateFrame("GameTooltip", "ErrorDKPItemToolTip", UIParent, "GameTooltipTemplate")
-    --hooksecurefunc(core.UI.ItemTooltip, "SetHyperlink", ErrorDKP:OnSetHyperlink )
     return UI.ItemTooltip
 end
-CreateItemToolTip()
+
+function ErrorDKP:GetItemTooltip()
+    local tt  = UI.ItemTooltip  or CreateItemToolTip()
+    return tt 
+end
 
 function ErrorDKP:ShowItemTooltip(newOwner, itemLink)
-    local tt = UI.ItemTooltip or CreateItemToolTip()
+    local tt = ErrorDKP:GetItemTooltip()
 
     tt:SetOwner(newOwner, "ANCHOR_RIGHT")
     tt:SetHyperlink(itemLink)
@@ -28,7 +31,7 @@ function ErrorDKP:ShowItemTooltip(newOwner, itemLink)
 end
 
 function ErrorDKP:HideItemTooltip()
-    local tt = UI.ItemTooltip or CreateItemToolTip()
+    local tt = ErrorDKP:GetItemTooltip()
     tt:Hide()
     tt:SetOwner(UIParent, "ANCHOR_NONE")
 end

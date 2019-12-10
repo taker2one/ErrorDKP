@@ -21,7 +21,10 @@ local addonName, core = ...;
         },
         DKPPRICE = "DKP Price",
         MINIMAP = {
-            DESCRLCLICK = "Left Click - Open Window"
+            DESCRLCLICK = "Left Click - Open Window",
+            MENU_SELECT = "Select an option:",
+            MENU_TOGGLE_ERRORDKP = "Toggle ErrorDKP window",
+            MENU_ML_VOTE = "Lootsurvey result"
         },
         EXPORTDIALOG = {
             TITLE = "Export",
@@ -39,7 +42,8 @@ local addonName, core = ...;
             COLPLAYER = "Player",
             COLRESPONSE = "Response",
             COLDKP = "DKP",
-            RESPONSES = "Responses"
+            RESPONSES = "Responses",
+            SURVEYCLOSED = "Survey closed"
         },
         OK = "Ok",
         CANCEL = "Cancel",
@@ -62,6 +66,8 @@ local addonName, core = ...;
         MSG_SYNC_FINISHED = "Got full %s update from %s.",
         MSG_LOOT_ADDED = "%s added to loot history.",
         MSG_LOOT_DISENCHANTED = "%s got disenchanted.",
+        MSG_SURVEY_CLOSED_BY = "The Item-Survey got closed by %s",
+        MSG_SURVEY_CANCELLED_BY = "The Item-Survey got cancelled by %s",
 
         HELP_EDKP = "Opens ErrorDKP window.",
         HELP_HELP = "Prints cuurent help list.",

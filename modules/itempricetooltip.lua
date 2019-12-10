@@ -11,7 +11,7 @@ local _L = core._L
 local function addHeadLine(tooltip, text)
   if not text or text == "" then return end
 
-  local line = NORMAL_FONT_COLOR_CODE .. text .. FONT_COLOR_CODE_CLOSE
+  local line = "|cff75DAFF" .. text .. "|r"
   tooltip:AddLine(line)
 end
 
@@ -100,6 +100,7 @@ end
 function ErrorDKP:RegisterItemPriceTooltip()
     GameTooltip:HookScript("OnTooltipSetItem", attachItemTooltip)
     ItemRefTooltip:HookScript("OnTooltipSetItem", attachItemTooltip)
+    ErrorDKP:GetItemTooltip():HookScript("OnTooltipSetItem", attachItemTooltip)
 end
 
 function ErrorDKP:OnSetHyperlink()

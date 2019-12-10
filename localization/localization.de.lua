@@ -22,7 +22,10 @@ if GetLocale() == "deDE" then
         },
         DKPPRICE = "DKP Preis",
         MINIMAP = {
-            DESCRLCLICK = "Linke Maustaste - Öffne Fenster"
+            DESCRLCLICK = "Linke Maustaste - Öffne Fenster",
+            MENU_SELECT = "Wähle aus",
+            MENU_TOGGLE_ERRORDKP = "ErrorDKP Ein-/Ausblenden",
+            MENU_ML_VOTE = "Lootabstimmung-Ergebnis"
         },
         EXPORTDIALOG = {
             TITLE = "Exportieren",
@@ -40,7 +43,8 @@ if GetLocale() == "deDE" then
             COLPLAYER = "Spieler",
             COLRESPONSE = "Antwort",
             COLDKP = "DKP",
-            RESPONSES = "Antworten"
+            RESPONSES = "Antworten",
+            SURVEYCLOSED = "Umfrage geschlossen"
         },
         OK = "Ok",
         CANCEL = "Abbrechen",
@@ -62,6 +66,8 @@ if GetLocale() == "deDE" then
         MSG_SYNC_FINISHED = "Vollständiges %s update von %s erhalten.",
         MSG_LOOT_ADDED = "%s zur Loot-Historie hinzugefügt.",
         MSG_LOOT_DISENCHANTED = "%s wurde entzaubert.",
+        MSG_SURVEY_CLOSED_BY = "Die Lootumfrage wurde von %s geschlossen.",
+        MSG_SURVEY_CANCELLED_BY = "Die Lootumfrage wurde von %s abgebrochen.",
 
         HELP_EDKP = "Öffnet das ErrorDKP Fenster.",
         HELP_HELP = "Gibt die aktuelle Hilfeliste aus.",

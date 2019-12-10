@@ -241,5 +241,12 @@ function LootSurvey:OnCountdownExpired()
     end
 end
 
+function LootSurvey:OnCommCloseReceived(closeType)
+    if closeType == "CLOSE" then
+        self:FinishSurvey() -- i think this should be enough
+    elseif closeType == "CANCEL" then
+        self:FinishSurvey() -- i think this should be enough
+    end
+end
 
 ErrorDKP.LootSurvey = LootSurvey
