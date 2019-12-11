@@ -2,7 +2,7 @@
 ## Title: ErrorDKP
 ## Author: Manuel "Doktorwho@Venoxis" Ebner
 ## Notes:  DKP and raid utility for Guild WoW-Error@Venoxis
-## Version: 1.13.2.4
+## Version: 1.13.3.0
 ## DefaultState: enabled
 ## SavedVariables: ErrorDKPConfig, ErrorDKPDB, ErrorDKPDKPList, ErrorDKPDataInfo, ErrorDKPPriceList, ErrorDKPLootLog, ErrorDKPLootQueue
 
