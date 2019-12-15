@@ -50,6 +50,7 @@ function ResponseSort(table, rowa, rowb, sortbycol)
 			end
 		end
 		return false
+	elseif not a or not b then return true
 	else
 		local direction = column.sort or column.defaultsort or 1
 		if direction == 1 then
@@ -78,7 +79,7 @@ local colDef = {
    -- { ["name"] = "", ["width"] = 20 }, -- Guild Rank
     { ["name"] = "", ["width"] = 1}, -- ResponseType
 	{ ["name"] = _LS["COLRESPONSE"], ["width"] = 200, ["comparesort"]=ResponseSort, ["sortnext"] = 5, ["defaultsort"] = "asc"  }, -- Answer
-	{ ["name"] = _LS["COLDKP"], ["width"] = 40 }
+	{ ["name"] = _LS["COLDKP"], ["width"] = 60 }
 }
 
 local DemoSurveyData = {
@@ -249,6 +250,7 @@ function MLResult:UpdateScrollTable(players, responses, resetSorting)
 	local st = MLResult:GetFrame().ScrollingTable
 
 	for i, v in ipairs(players) do
+		core.Print("UpdateScrollTable, players: ", v.name)
 		local responseType = responses[v.name] or "OFFLINE"
 		local row = {
 			v.classFileName, --icon
@@ -288,7 +290,13 @@ function MLResult:CheckResponsesMissing()
 	local totalPlayers = core:tcount(core.ActiveSurveyData["players"])
 	for i,v in ipairs(core.ActiveSurveyData.items) do
 		if not v["closed"] then
-			if core:tcount(v["responses"]) == totalPlayers then
+			local cnt = 0
+			for k, v in pairs(v["responses"]) do
+				if v ~= "PENDING" then
+					cnt = cnt + 1
+				end 
+			end
+			if cnt == totalPlayers then
 				v["closed"] = true
 			else
 				return true
@@ -355,9 +363,9 @@ function MLResult:CreateFrame()
 		if (self.TimeSinceLastUpdate >= 1 and visualUpdatePending) then
 			core.PrintDebug("Apply pending visual update")
 			visualUpdatePending = false
-			local item = core.ActiveSurveyData.items[i]
+			local item = core.ActiveSurveyData.items[itemIndex]
 			local players = core.ActiveSurveyData.players
-			MLResult:Update()
+			MLResult:Update(players, item["responses"])
 			MLResult:UpdateScrollTable(players, item.responses)
         end
 	end)

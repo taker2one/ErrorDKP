@@ -104,12 +104,13 @@ function BuildSurveyData()
     local cntPlayers = GetNumGroupMembers();
     for i=1, cntPlayers do
         name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(i);
+        core:PrintDebug("Add player to survey ", name)
         local player = {
             ["name"] = name,
             ["classFileName"] = fileName,
             ["dkp"] = ErrorDKP:GetPlayerDKP(name)
         }
-        table.insert(playsurvey.players, {})
+        table.insert(survey.players, player)
     end
 
     return survey
@@ -124,23 +125,26 @@ function ErrorDKP:StartSurvey()
         return
     end
 
+    local countdown = 10
+
     core.ActiveSurveyData = BuildSurveyData()
-    core.Sync:SendRaid("ErrDKPSurvStart", { ["id"] = core.ActiveSurveyData.id, ["items"] = core.ActiveSurveyData.items, ["countdown"] = 120 })
+    core.Sync:SendRaid("ErrDKPSurvStart", { ["id"] = core.ActiveSurveyData.id, ["items"] = core.ActiveSurveyData.items, ["countdown"] = countdown })
     core.SurveyInProgress = true
+    ErrorDKP.MLResult:Start(countdown+5)
 end
 
 function ErrorDKP:OnCommReceived_SurvAnsw(sender, data)
      -- { ["id"], ["itemIndex"], ["response"]  } 
      if data["id"] ~= core.ActiveSurveyData["id"] then
-        core:Print("Got a response from"..sender.."for old survey => drop response")
+        core:Print("Got a response from "..sender.." for old survey => drop response, active: "..core.ActiveSurveyData["id"]..", got: "..data["id"])
         return 
      end
 
      if data["response"] == "GOT" then
         -- Client responds survey received
         -- We have multiple items in a survey but only geht one reveived so set it for all items
-        for i,v in core.ActiveSurveyData["items"] do
-            v.responses[sender] = data["response"]
+        for i,v in ipairs(core.ActiveSurveyData["items"]) do
+            v.responses[sender] = "PENDING"--data["response"]
         end
         ErrorDKP.MLResult:SetVisualUpdateRequired()
      else

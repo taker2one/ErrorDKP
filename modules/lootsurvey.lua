@@ -14,35 +14,35 @@ local ScrollingTable = LibStub("ScrollingTable")
 
 local itemSurveyData
 
-local DemoSurveyData = {
-    id = "157564448499",
-    items = {
-        {
-            ["index"] = 1,
-            ["name"] = "Nemesis Leggings",
-            ["itemLink"] = "|cffa335ee|Hitem:16930::::::::60:::::::|h[Nemesis Leggings]|h|r",
-            ["quality"] = 4,
-            ["icon"] = "Interface\\Icons\\inv_pants_07"
-        },
-        {
-            ["index"] = 2,
-            ["name"] = "Giantstalker's Gloves",
-            ["itemLink"] = "|cffa335ee|Hitem:16852::::::::60:::::::|h[Giantstalker's Gloves]|h|r",
-            ["quality"] = 4,
-            ["icon"] = "Interface\\Icons\\inv_gauntlets_10"
-        },
-        {
-            ["index"] = 3,
-            ["name"] = "Seal of the Archmagus",
-            ["itemLink"] = "|cffa335ee|Hitem:17110::::::::60:::::::|h[Seal of the Archmagus]|h|r",
-            ["quality"] = 4,
-            ["icon"] = "Interface\\Icons\\inv_jewelry_ring_21"
-        }
-    }
-}
+-- local DemoSurveyData = {
+--     id = "157564448499",
+--     items = {
+--         {
+--             ["index"] = 1,
+--             ["name"] = "Nemesis Leggings",
+--             ["itemLink"] = "|cffa335ee|Hitem:16930::::::::60:::::::|h[Nemesis Leggings]|h|r",
+--             ["quality"] = 4,
+--             ["icon"] = "Interface\\Icons\\inv_pants_07"
+--         },
+--         {
+--             ["index"] = 2,
+--             ["name"] = "Giantstalker's Gloves",
+--             ["itemLink"] = "|cffa335ee|Hitem:16852::::::::60:::::::|h[Giantstalker's Gloves]|h|r",
+--             ["quality"] = 4,
+--             ["icon"] = "Interface\\Icons\\inv_gauntlets_10"
+--         },
+--         {
+--             ["index"] = 3,
+--             ["name"] = "Seal of the Archmagus",
+--             ["itemLink"] = "|cffa335ee|Hitem:17110::::::::60:::::::|h[Seal of the Archmagus]|h|r",
+--             ["quality"] = 4,
+--             ["icon"] = "Interface\\Icons\\inv_jewelry_ring_21"
+--         }
+--     }
+-- }
 
 function LootSurvey:Show(data)
-    local d = DemoSurveyData
+    local d = data
     if not d and not itemSurveyData then 
         core:Print("Cant show survey cause there is no data")
     end

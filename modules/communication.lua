@@ -234,12 +234,12 @@ function core.Sync:OnCommReceived(prefix, message, channel, sender)
         end
     end
 
-    if channel == "RAID" then
+    if channel == "RAID" or channel == "PARTY" then
         if prefix == "ErrDKPSurvStart" then
             --if VerifySender(sender) then
             local success, deserialized = Serializer:Deserialize(message)
             core:PrintDebug("ItemSurveyStarted", deserialized["id"])
-            LootSurvey:Start(deserialized, deserialized["countdown"])
+            ErrorDKP.LootSurvey:Start(deserialized, deserialized["countdown"])
             core.Sync:SendRaid("ErrDKPSurvAnsw", {["id"] = deserialized["id"], ["response"] = "GOT"})
         elseif prefix == "ErrDKPSurvAnsw" then
             --  { ["id"], ["itemIndex"], ["response"]  } 
@@ -255,13 +255,13 @@ function core.Sync:OnCommReceived(prefix, message, channel, sender)
             if VerifySender(sender) then
                 core:PrintDebug("Lottsurvey closed")
                 ErrorDKP.LootSurvey:OnCommCloseReceived("CLOSED")
-                core:Print(string.format(MSG_SURVEY_CLOSED_BY, sender))
+                core:Print(string.format(_L["MSG_SURVEY_CLOSED_BY"], sender))
             end
         elseif prefix == "ErrDKPSurvCancel" then
             if VerifySender(sender) then
                 core:PrintDebug("Lottsurvey cancelled")
                 ErrorDKP.LootSurvey:OnCommCloseReceived("CANCEL")
-                core:Print(string.format(MSG_SURVEY_CANCELLED_BY, sender))
+                core:Print(string.format(_L["MSG_SURVEY_CANCELLED_BY"], sender))
             end
         end
     end
