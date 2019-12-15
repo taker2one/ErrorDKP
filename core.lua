@@ -2,7 +2,7 @@
 --#  Project: ErrorDKP
 --#  File: core.lua
 --#  Author: Manuel "Doktorwho@Venoxis" Ebner
---#  Last Edit: 05.12.2019
+--#  Last Edit: 11.12.2019
 --###############################################
 
 local addonName, core = ...;
@@ -14,7 +14,7 @@ local _C = core.CONSTANTS
 
 -- Version
 core.Version = GetAddOnMetadata("ErrorDKP", "Version")
-core.Build = 1130203
+core.Build = 1130300
 core.Type = "R" -- R = Release, B = Beta
 
 --SetCVar("ScriptErrors", 1)
