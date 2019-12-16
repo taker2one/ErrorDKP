@@ -236,11 +236,12 @@ function core.Sync:OnCommReceived(prefix, message, channel, sender)
 
     if channel == "RAID" or channel == "PARTY" then
         if prefix == "ErrDKPSurvStart" then
-            --if VerifySender(sender) then
-            local success, deserialized = Serializer:Deserialize(message)
-            core:PrintDebug("ItemSurveyStarted", deserialized["id"])
-            ErrorDKP.LootSurvey:Start(deserialized, deserialized["countdown"])
-            core.Sync:SendRaid("ErrDKPSurvAnsw", {["id"] = deserialized["id"], ["response"] = "GOT"})
+            if VerifySender(sender) then
+                local success, deserialized = Serializer:Deserialize(message)
+                core:PrintDebug("ItemSurveyStarted", deserialized["id"])
+                ErrorDKP.LootSurvey:Start(deserialized, deserialized["countdown"])
+                core.Sync:SendRaid("ErrDKPSurvAnsw", {["id"] = deserialized["id"], ["response"] = "GOT"})
+            end
         elseif prefix == "ErrDKPSurvAnsw" then
             --  { ["id"], ["itemIndex"], ["response"]  } 
             -- clients also responds instantly after receiving the survey

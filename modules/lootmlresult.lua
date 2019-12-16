@@ -139,6 +139,23 @@ local DemoSurveyData = {
 core.ActiveSurveyData = DemoSurveyData --DBG
 
 function MLResult:Show(index)
+	-- currently only masterlooter can show this, this is just a temp solution
+	if not core.IsMLooter then
+		StaticPopupDialogs["MLRESULT_ONLYML"] = {
+			text = "Currently only the Masterlooter can view this window, this will change in a future update.",
+			button1 = "Ok",
+			OnAccept = function()
+				StaticPopup_Hide ("MLRESULT_ONLYML")
+			end,
+			timeout = 0,
+			whileDead = true,
+			hideOnEscape = true,
+			preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
+		}
+		StaticPopup_Show("MLRESULT_ONLYML")
+		return
+	end
+
     local f = self:GetFrame() 
 
 	local i = index or 1

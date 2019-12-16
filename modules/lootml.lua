@@ -129,6 +129,8 @@ function ErrorDKP:StartSurvey()
 end
 
 function ErrorDKP:OnCommReceived_SurvAnsw(sender, data)
+     -- Currently only ML can see result window, change this in a future update but for now ingore 
+     if not core.IsMLooter then return end
      -- { ["id"], ["itemIndex"], ["response"]  } 
      if data["id"] ~= core.ActiveSurveyData["id"] then
         core:Print("Got a response from "..sender.." for old survey => drop response, active: "..core.ActiveSurveyData["id"]..", got: "..data["id"])
