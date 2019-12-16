@@ -15,7 +15,7 @@ local _C = core.CONSTANTS
 -- Version
 core.Version = GetAddOnMetadata("ErrorDKP", "Version")
 core.Build = 1130300
-core.Type = "R" -- R = Release, B = Beta
+core.Type = "A" -- R = Release, B = Beta, A = Alpha
 
 --SetCVar("ScriptErrors", 1)
 
@@ -72,7 +72,7 @@ core.ISettings = {
         RowHeight = 18,
         RowCount = 27
     },
-    MasterLootMinQuality = _C.ITEMRARITY.POOR, --DBG
+    MasterLootMinQuality = _C.ITEMRARITY.RARE, --DBG
     ItemTracking_MinItemQualityToLog = _C.ITEMRARITY.EPIC,
     ItemTracking_IgnoreEnchantingMats = true
 }

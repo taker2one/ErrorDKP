@@ -120,7 +120,7 @@ function ErrorDKP:StartSurvey()
         return
     end
 
-    local countdown = 10
+    local countdown = 120
 
     core.ActiveSurveyData = BuildSurveyData()
     core.Sync:SendRaid("ErrDKPSurvStart", { ["id"] = core.ActiveSurveyData.id, ["items"] = core.ActiveSurveyData.items, ["countdown"] = countdown })
