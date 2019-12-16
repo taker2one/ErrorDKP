@@ -55,7 +55,7 @@ end
 -- Start new LootSurvey
 function LootSurvey:Start(data, countdown)
     self:Show(data)
-    self:SetupTimerBar(120)
+    self:SetupTimerBar(countdown+10)
 end
 
 function LootSurvey:Update(data)
@@ -118,6 +118,7 @@ function LootSurvey:CreateFrame()
 
     f:SetWidth(500)
     f:SetHeight(200)
+    f:SetFrameLevel(25)
     f:Hide()
 
     -- Timer bar  
@@ -242,7 +243,7 @@ function LootSurvey:OnCountdownExpired()
 end
 
 function LootSurvey:OnCommCloseReceived(closeType)
-    if closeType == "CLOSE" then
+    if closeType == "CLOSED" then
         self:FinishSurvey() -- i think this should be enough
     elseif closeType == "CANCEL" then
         self:FinishSurvey() -- i think this should be enough

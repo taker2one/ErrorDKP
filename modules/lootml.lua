@@ -10,33 +10,35 @@ local ErrorDKP = core.ErrorDKP
 -- Needed events 
 
 function ErrorDKP:BuidLootSlotInfo()
-    local numLootItems = GetNumLootItems()
+    if core.IsMLooter then
+        local numLootItems = GetNumLootItems()
 
-    if numLootItems <= 0 then return end
+        if numLootItems <= 0 then return end
 
-    table.wipe(core.LootSlotInfos)
-    for i = 1, numLootItems do
-        if LootSlotHasItem(i) then
-            local lootIcon, lootName, lootQuantity, currencyID, lootQuality, locked, isQuestItem, questID, isActive = GetLootSlotInfo(i)
-            --local guid = self.Utils:ExtractCreatureID((GetLootSourceInfo(i)))
-            --if guid and self.lootGUIDToIgnore[guid] then return self:Debug("Ignoring loot from ignored source", guid) end
-            if lootIcon then
-                local itemLink = GetLootSlotLink(i)
-                if lootQuantity == 0 then
-                    core:PrintDebug("Ignore coins")
-                --elseif not self.Utils:IsItemBlacklisted(link) then
+        table.wipe(core.LootSlotInfos)
+        for i = 1, numLootItems do
+            if LootSlotHasItem(i) then
+                local lootIcon, lootName, lootQuantity, currencyID, lootQuality, locked, isQuestItem, questID, isActive = GetLootSlotInfo(i)
+                --local guid = self.Utils:ExtractCreatureID((GetLootSourceInfo(i)))
+                --if guid and self.lootGUIDToIgnore[guid] then return self:Debug("Ignoring loot from ignored source", guid) end
+                if lootIcon then
+                    local itemLink = GetLootSlotLink(i)
+                    if lootQuantity == 0 then
+                        core:PrintDebug("Ignore coins")
+                    --elseif not self.Utils:IsItemBlacklisted(link) then
+                    else
+                        core:PrintDebug("Save info",i, itemLink, lootQuality, lootQuantity, GetLootSourceInfo(i))
+                        core.LootSlotInfos[i] = {
+                            icon = lootIcon,
+                            name = lootName,
+                            itemLink = itemLink,
+                            quantity = lootQuantity,
+                            quality = lootQuality,
+                        }
+                    end
                 else
-                    core:PrintDebug("Save info",i, itemLink, lootQuality, lootQuantity, GetLootSourceInfo(i))
-                    core.LootSlotInfos[i] = {
-                        icon = lootIcon,
-                        name = lootName,
-                        itemLink = itemLink,
-                        quantity = lootQuantity,
-                        quality = lootQuality,
-                    }
+                    core:ErrorDebug("BuidLootSlotInfo, item hat no icon", GetLootSlotInfo(i))
                 end
-            else
-                core:ErrorDebug("BuidLootSlotInfo, item hat no icon", GetLootSlotInfo(i))
             end
         end
     end
@@ -44,17 +46,10 @@ end
 
 
 function ErrorDKP:OnLootOpened()
-    --if not core:CheckMasterLooter() then return; end --DBG
+    if not core.IsMLooter then return; end
     if GetNumLootItems() > 0 then
         ErrorDKP:BuildLootTable()
-        -- for i = 1, GetNumLootItems() do
-        --     if core.LootSlotInfos[i] then
-        --         local item = core.LootSlotInfos[i].itemLink
-        --         local quantity = core.LootSlotInfos[i].quantity
-        --         local quality = core.LootSlotInfos[i].quality
-        --     end
-        -- end
-
+       
         if #core.LootTable > 0 and not core.SurveyInProgress then
 			ErrorDKP.MLSetupSurvey:Show(core.LootTable)
 		end
@@ -138,6 +133,10 @@ function ErrorDKP:OnCommReceived_SurvAnsw(sender, data)
      if data["id"] ~= core.ActiveSurveyData["id"] then
         core:Print("Got a response from "..sender.." for old survey => drop response, active: "..core.ActiveSurveyData["id"]..", got: "..data["id"])
         return 
+     end
+
+     if not core.SurveyInProgress then
+        core:Print("Got a response from "..sender.." but there is no active survey")
      end
 
      if data["response"] == "GOT" then

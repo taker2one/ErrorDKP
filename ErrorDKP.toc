@@ -31,7 +31,6 @@ modules\itemtooltip.lua
 modules\dkptable.lua
 modules\pricelisttable.lua
 modules\communication.lua
-modules\lootneedsurvey.lua
 modules\dkpadjustment.lua
 modules\loottrack.lua
 modules\loothistorytable.lua

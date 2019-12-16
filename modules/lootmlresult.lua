@@ -19,6 +19,7 @@ local itemButtons = {}
 local visualUpdatePending = nil
 local activeSurvey
 local CountdownActive = false
+local timerFrame = CreateFrame("Frame")
 
 local responseSortOrder = {
 	["PENDING"] = 3,
@@ -153,7 +154,8 @@ function MLResult:Start(countdown)
 	itemIndex = 0
 
 	if core.ActiveSurveyData.items[1] then
-		self:SetupTimerBar(countdown)
+		--self:SetupTimerBar(countdown)
+		self:EnableTimerFrame(countdown)
 		self:Show()
 	else
 		core:Print("No items in loottable")
@@ -239,7 +241,7 @@ function MLResult:Update(players, responses)
 	local responseCnt = core:tcount(responses)
 	f.ResponseFontString:SetText( _LS["RESPONSES"].." "..responseCnt.."/"..totalPlayers )
 	MLResult:UpdateItemButtons()
-	if not self:CheckResponsesMissing() then
+	if core.SurveyInProgress and not self:CheckResponsesMissing() then
 		-- We are done
 		self:FinishSurvey()
 	end
@@ -250,7 +252,6 @@ function MLResult:UpdateScrollTable(players, responses, resetSorting)
 	local st = MLResult:GetFrame().ScrollingTable
 
 	for i, v in ipairs(players) do
-		core.Print("UpdateScrollTable, players: ", v.name)
 		local responseType = responses[v.name] or "OFFLINE"
 		local row = {
 			v.classFileName, --icon
@@ -309,7 +310,7 @@ end
 function MLResult:CreateFrame()
 	local f = core:CreateDefaultFrame("MLResultFrame", "Result", 250, 480)
 	core.UI.MLResult = f
-    f:SetPoint("CENTER", UIParent, "CENTER")
+    f:SetPoint("CENTER", UIParent, "CENTER", 550, 0)
 
     local st = ScrollingTable:CreateST(colDef, 16, 20, nil, f)
     f.ScrollingTable = st
@@ -389,24 +390,6 @@ function MLResult:CreateFrame()
 	 countdown:SetPoint("CENTER", bar, "CENTER", 0, 0)
 	 bar.countdownString = countdown
 	 bar.countdown = 0
- 
-	 -- this function will run repeatedly, incrementing the value of timer as it goes
-	 bar:SetScript("OnUpdate", function(self, elapsed)
-		 if not CountdownActive then return; end
-		 self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed; 	
-		 self.countdown = self.countdown - elapsed
-		 if (self.TimeSinceLastUpdate >= 1) then
-			 bar.countdownString:SetText(math.floor(self.countdown))
-			 self.TimeSinceLastUpdate = 0
-		 end
- 
-		 self:SetValue(self.countdown)
-		 local statusMin, statusMax = self:GetMinMaxValues()
-		 if self.countdown <= statusMin then
-			 CountdownActive = false
-			 MLResult:OnCountdownExpired()
-		 end
-	 end)
 
     f:Hide()
 	return f;
@@ -429,16 +412,65 @@ function MLResult:SetupTimerBar(countdown)
     CountdownActive = true
 end
 
+function MLResult:UpdateCountdownBar(value)
+	local bar = MLResult:GetFrame().CountdownBar
+	if bar:IsShown() then
+		bar.countdownString:SetText(math.floor(value))
+		bar:SetValue(value)
+	end
+end
+
+function MLResult:EnableTimerFrame(countdown)
+	MLResult:SetupTimerBar(countdown)
+	timerFrame:Show()
+	timerFrame.TimeSinceLastUpdate = 0
+	timerFrame.countdown = countdown
+	timerFrame:SetScript("OnUpdate", function(self, elapsed)
+		if not CountdownActive then self:Hide();return; end
+		self.TimeSinceLastUpdate = self.TimeSinceLastUpdate + elapsed; 	
+		local countdownBar = MLResult:GetFrame().CountdownBar
+		self.countdown = self.countdown - elapsed;
+
+		if (self.TimeSinceLastUpdate >= 1 ) then
+			MLResult:UpdateCountdownBar(self.countdown)
+			self.TimeSinceLastUpdate = 0
+		end
+		
+		local statusMin, statusMax = countdownBar:GetMinMaxValues()
+		if self.countdown <= statusMin then
+			CountdownActive = false
+			MLResult:OnCountdownExpired()
+		end
+	end)
+end
+
+function MLResult:DisableTimerFrame()
+	timerFrame:Hide()
+	self:SetupTimerBar(0)
+end
+
 function MLResult:OnCountdownExpired()
-    core:PrintDebug("SurveyTimeout, send closed" )
+	core:PrintDebug("SurveyTimeout, send closed" )
+	self:DisableTimerFrame()
 	self:CloseSurvey()
 end
 
 function MLResult:FinishSurvey()
+	core:PrintDebug("MLResult:FinishSurvey()")
 	core.SurveyInProgress = false
 	self:GetFrame().CountdownBar.countdownString:SetText(_LS["SURVEYCLOSED"])
-	self:SetupTimerBar(0) -- deavtivates timer bar 
+	MLResult:DisableTimerFrame()
 
+	-- set pending results to timeout
+	for i,v in  ipairs(core.ActiveSurveyData["items"]) do
+		for i1,v1 in ipairs(core.ActiveSurveyData["players"]) do
+			local resp = v["responses"][v1["name"]]
+			if resp and resp == "PENDING" then
+				v["responses"][v1["name"]] = "TIMEOUT"
+			end
+		end
+	end
+	visualUpdatePending = true
 end
 
 function MLResult:CloseSurvey()
