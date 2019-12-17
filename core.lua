@@ -14,8 +14,8 @@ local _C = core.CONSTANTS
 
 -- Version
 core.Version = GetAddOnMetadata("ErrorDKP", "Version")
-core.Build = 1130300
-core.Type = "A" -- R = Release, B = Beta, A = Alpha
+core.Build = 1130301
+core.Type = "R" -- R = Release, B = Beta, A = Alpha
 
 --SetCVar("ScriptErrors", 1)
 
@@ -72,7 +72,7 @@ core.ISettings = {
         RowHeight = 18,
         RowCount = 27
     },
-    MasterLootMinQuality = _C.ITEMRARITY.RARE, --DBG
+    MasterLootMinQuality = _C.ITEMRARITY.EPIC, 
     ItemTracking_MinItemQualityToLog = _C.ITEMRARITY.EPIC,
     ItemTracking_IgnoreEnchantingMats = true
 }
@@ -84,7 +84,7 @@ core.Settings = {
 core.UI = {}
 
 -- Debug
-core.Debug = true --DBG
+core.Debug = false
 function core:PrintDebug(...)
     if core.Debug then
         print("|cff90EE90<ErrorDKP-Dbg>|r", ...)
@@ -209,7 +209,19 @@ function core:tcopyto(to, from)
     end
 end
 
-function core:CreateDefaultFrame(name, title, width, height)
+function core:SplitString(inputstr, sep, doUnpack)
+    if sep == nil then
+        sep = "%s"
+    end
+    local t={}
+    for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
+            table.insert(t, str)
+    end
+    if doUnpack then return unpack(t) end
+    return t
+end
+
+function core:CreateDefaultFrame(name, title, width, height, addCloseButton)
     local f = CreateFrame("Frame", name, UIParent)
     f:SetSize(width,height)
     f:SetBackdrop({
@@ -235,6 +247,13 @@ function core:CreateDefaultFrame(name, title, width, height)
       f.Title = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
       f.Title:SetPoint("TOP", f, "TOP", 0, -2)
       f.Title:SetText(title)
+
+      f.Header:SetWidth(string.len(title)*20 + 50)
+    end
+
+    if addCloseButton then
+        f.CloseButton = CreateFrame("Button", nil, f, "UIPanelCloseButton")
+        f.CloseButton:SetPoint("TOPRIGHT", f, "TOPRIGHT", -5, -5)
     end
 
     return f

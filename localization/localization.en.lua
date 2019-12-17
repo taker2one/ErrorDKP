@@ -24,7 +24,8 @@ local addonName, core = ...;
             DESCRLCLICK = "Left Click - Open Window",
             MENU_SELECT = "Select an option:",
             MENU_TOGGLE_ERRORDKP = "Toggle ErrorDKP window",
-            MENU_ML_VOTE = "Lootsurvey result"
+            MENU_ML_VOTE = "Lootsurvey result",
+            MENU_VERSIONCHECK = "Version-check"
         },
         EXPORTDIALOG = {
             TITLE = "Export",

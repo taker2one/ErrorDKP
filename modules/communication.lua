@@ -13,6 +13,7 @@ local _L = core._L
 local Serializer = LibStub:GetLibrary("AceSerializer-3.0")
 
 core.Sync = LibStub("AceAddon-3.0"):NewAddon("ErrorDKP", "AceComm-3.0")
+local Sync = core.Sync
 
 -- Check is timestamp matches current DataTimestamp
 local function CheckDKPTimestamp(timestamp)
@@ -33,32 +34,35 @@ end
 --# Register Addon Messages
 --###############################################
 
-function core.Sync:OnEnable()
+function Sync:OnEnable()
     -- Guild
-    core.Sync:RegisterComm("ErrDKPDKPSync")         -- Broadcast DKP Table
-    core.Sync:RegisterComm("ErrDKPLootSync")        -- Broadcast LootLog Table
-    core.Sync:RegisterComm("ErrDKPSyncReq")         -- Request a table sync from a officer, data defines type "DKP", "PRICELIST", "ITEMHISTORY" => "FULL"
-    core.Sync:RegisterComm("ErrDKPPriceList")       -- Price List Broadcast
-    core.Sync:RegisterComm("ErrDKPAdjP")            -- Adjust DKP Points of a player
-    --core.Sync:RegisterComm("ErrDKPAdjPA")           -- Adjust DKP Points caused by lootentry, also containes the historyentry
-    core.Sync:RegisterComm("ErrDKPAddLoot")         -- Add Loot to history
-    core.Sync:RegisterComm("ErrDKPAdjPAWI")         -- Adjust DKP Points caused by lootentry, also containes the historyentry
-    core.Sync:RegisterComm("ErrDKPTableCheck")      -- Check for any updated tables
-    core.Sync:RegisterComm("ErrDKPBuildCheck")      -- Inform about available update
-    core.Sync:RegisterComm("ErrDKPManDKP")          -- Manual DKP Single Entry Update
+    self:RegisterComm("ErrDKPDKPSync")         -- Broadcast DKP Table
+    self:RegisterComm("ErrDKPLootSync")        -- Broadcast LootLog Table
+    self:RegisterComm("ErrDKPSyncReq")         -- Request a table sync from a officer, data defines type "DKP", "PRICELIST", "ITEMHISTORY" => "FULL"
+    self:RegisterComm("ErrDKPPriceList")       -- Price List Broadcast
+    self:RegisterComm("ErrDKPAdjP")            -- Adjust DKP Points of a player
+    self:RegisterComm("ErrDKPAddLoot")         -- Add Loot to history
+    self:RegisterComm("ErrDKPAdjPAWI")         -- Adjust DKP Points caused by lootentry, also containes the historyentry
+    self:RegisterComm("ErrDKPTableCheck")      -- Check for any updated tables
+    self:RegisterComm("ErrDKPBuildCheck")      -- Inform about available update
+    self:RegisterComm("ErrDKPManDKP")          -- Manual DKP Single Entry Update
 
     -- Raid
-    core.Sync:RegisterComm("ErrDKPSurvStart")       -- Start a loot survey
-    core.Sync:RegisterComm("ErrDKPSurvAnsw")        -- Answer for an item survey
-    core.Sync:RegisterComm("ErrDKPSurvClosed")      -- Item survey is closed
-    core.Sync:RegisterComm("ErrDKPSurvCancel")      -- Item survey canceled
+    self:RegisterComm("ErrDKPSurvStart")       -- Start a loot survey
+    self:RegisterComm("ErrDKPSurvAnsw")        -- Answer for an item survey
+    self:RegisterComm("ErrDKPSurvClosed")      -- Item survey is closed
+    self:RegisterComm("ErrDKPSurvCancel")      -- Item survey canceled
+
+    --Mixed
+    self:RegisterComm("VerCheck")        -- Request Version from every Group/Guild member
+    self:RegisterComm("VerResp")         -- Response to Versionrequest
 end
 
 
 --###############################################
 --# Message Implementation
 --###############################################
-function core.Sync:OnCommReceived(prefix, message, channel, sender)
+function Sync:OnCommReceived(prefix, message, channel, sender)
     core:PrintDebug("OnMessageReceived", prefix, channel, sender)
 
     if prefix == "ErrDKPBuildCheck" and sender ~= UnitName("player") then
@@ -266,41 +270,51 @@ function core.Sync:OnCommReceived(prefix, message, channel, sender)
             end
         end
     end
+
+    if prefix == "VerCheck" then
+        if VerifySender(sender) then
+            core:PrintDebug("Got Version request from ", sender)
+            self:SendTo("VerResp", tostring(core.Build..core.Type), sender)
+        end
+    end
+
+    if prefix == "VerResp" then
+        ErrorDKP.VersionCheck:OnCommResponse(sender, message)
+    end
 end
 
 --###############################################
 --# Send
 --###############################################
-function core.Sync:Send(prefix, data)
+function Sync:Send(prefix, data)
     if type(data) == "table" then
         core:PrintDebug("Data is a table -> serialize to string")
         local serialized = Serializer:Serialize(data)
         --core:PrintDebug("serialized:", serialized)
-        core.Sync:SendCommMessage(prefix, serialized, "GUILD")
+        self:SendCommMessage(prefix, serialized, "GUILD")
     else
-        core.Sync:SendCommMessage(prefix, data, "GUILD")
+        self:SendCommMessage(prefix, data, "GUILD")
     end
 end
 
-function core.Sync:SendTo(prefix, data, player)
+function Sync:SendTo(prefix, data, player)
     if type(data) == "table" then
         core:PrintDebug("Data is a table -> serialize to string")
         local serialized = Serializer:Serialize(data)
         --core:PrintDebug("serialized:", serialized)
-        core.Sync:SendCommMessage(prefix, serialized, "WHISPER", player)
+        self:SendCommMessage(prefix, serialized, "WHISPER", player)
     else
-        core.Sync:SendCommMessage(prefix, data, "WHISPER", player)
+        self:SendCommMessage(prefix, data, "WHISPER", player)
     end
 end
 
-function core.Sync:SendRaid(prefix, data)
+function Sync:SendRaid(prefix, data)
     if type(data) == "table" then
         core:PrintDebug("Data is a table -> serialize to string")
         local serialized = Serializer:Serialize(data)
-        --core:PrintDebug("serialized:", serialized)
-        core.Sync:SendCommMessage(prefix, serialized, "RAID")
+        self:SendCommMessage(prefix, serialized, "RAID")
     else
-        core.Sync:SendCommMessage(prefix, data, "RAID")
+        self:SendCommMessage(prefix, data, "RAID")
     end
 end
 

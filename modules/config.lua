@@ -37,7 +37,8 @@ local minimapShapes = {
 local menu = {
     { text = _L["MINIMAP"]["MENU_SELECT"], isTitle = true, notCheckable = true},
     { text = _L["MINIMAP"]["MENU_TOGGLE_ERRORDKP"], notCheckable = true, func = function() ErrorDKP:Toggle() end },
-    { text = _L["MINIMAP"]["MENU_ML_VOTE"], notCheckable = true, func = function() ErrorDKP.MLResult:Show() end, onlyTrusted = true }
+    { text = _L["MINIMAP"]["MENU_ML_VOTE"], notCheckable = true, func = function() ErrorDKP.MLResult:Show() end, onlyTrusted = true },
+    { text = _L["MINIMAP"]["MENU_VERSIONCHECK"], notCheckable = true, func = function() ErrorDKP.VersionCheck:Show() end, onlyTrusted = true }
 }
 
 local function IconMoveButton(self)

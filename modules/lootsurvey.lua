@@ -55,7 +55,7 @@ end
 -- Start new LootSurvey
 function LootSurvey:Start(data, countdown)
     self:Show(data)
-    self:SetupTimerBar(countdown+10)
+    self:SetupTimerBar(countdown)
 end
 
 function LootSurvey:Update(data)
@@ -198,12 +198,7 @@ function LootSurvey:CreateEntry(name)
     f.ItemText = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     f.ItemText:SetText("Text")
     f.ItemText:SetPoint("TOPLEFT", f, "TOPLEFT", 85, -15)
-    f.ItemText:SetScript("OnEnter", function(self)
-        ErrorDKP:ShowItemTooltip(self, self:GetText())
-    end)
-    f.ItemText:SetScript("OnLeave", function(self)
-        ErrorDKP:HideItemTooltip()
-    end)
+    
 
     f.MainBtn = core:CreateButton(f, "MainSpecBtn", "Main")
     f.MainBtn:SetPoint("TOPLEFT", f, "TOPLEFT", 85, -40)

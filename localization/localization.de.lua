@@ -25,7 +25,8 @@ if GetLocale() == "deDE" then
             DESCRLCLICK = "Linke Maustaste - Öffne Fenster",
             MENU_SELECT = "Wähle aus",
             MENU_TOGGLE_ERRORDKP = "ErrorDKP Ein-/Ausblenden",
-            MENU_ML_VOTE = "Lootabstimmung-Ergebnis"
+            MENU_ML_VOTE = "Lootabstimmung-Ergebnis",
+            MENU_VERSIONCHECK = "Versionscheck"
         },
         EXPORTDIALOG = {
             TITLE = "Exportieren",

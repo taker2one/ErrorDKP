@@ -7,10 +7,10 @@ multiTable = {
 },
 }
 DKPInfo = {
-	["date"] = "11.12.19 17:07:46",
-	["timestamp"] = "1576084066",
+	["date"] = "17.12.19 16:09:33",
+	["timestamp"] = "1576598973",
 	["process_dkp_ver"] = "3.0",
-	["total_players"] = 51,
+	["total_players"] = 54,
 	["total_items"] = 162,
 	["total_points"] = 0,
 	}
@@ -386,6 +386,16 @@ gdkp = {
 			["rcount"] = 0,
 			}
 		,
+		["Vollnarkose"] = {
+			["DKP"] = 37,
+			["dkp_earned"] = 37.07,
+			["dkp_spend"] = 0.0,
+			["dkp_adjust"] = 0,
+			["dkp_current"] = 37.07,
+			["class"] = "Krieger",
+			["rcount"] = 0,
+			}
+		,
 		["Watschenbaum"] = {
 			["DKP"] = 119,
 			["dkp_earned"] = 154.35,
@@ -636,6 +646,12 @@ DKP_ITEMS = {
 		}
 	,
 	["Stichtag"] = {
+		["Items"] = {
+			}
+		,
+		}
+	,
+	["Vollnarkose"] = {
 		["Items"] = {
 			}
 		,
