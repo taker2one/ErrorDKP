@@ -7,11 +7,11 @@ multiTable = {
 },
 }
 DKPInfo = {
-	["date"] = "17.12.19 16:09:33",
-	["timestamp"] = "1576598973",
+	["date"] = "17.12.19 19:29:42",
+	["timestamp"] = "1576610982",
 	["process_dkp_ver"] = "3.0",
 	["total_players"] = 54,
-	["total_items"] = 162,
+	["total_items"] = 178,
 	["total_points"] = 0,
 	}
 gdkp = {
@@ -27,11 +27,11 @@ gdkp = {
 			}
 		,
 		["Breituxs"] = {
-			["DKP"] = -43,
+			["DKP"] = -83,
 			["dkp_earned"] = 176.19,
-			["dkp_spend"] = 155.0,
+			["dkp_spend"] = 195.0,
 			["dkp_adjust"] = 0,
-			["dkp_current"] = -43.36,
+			["dkp_current"] = -83.36,
 			["class"] = "Schurke",
 			["rcount"] = 0,
 			}
@@ -47,11 +47,11 @@ gdkp = {
 			}
 		,
 		["Davanus"] = {
-			["DKP"] = 10,
+			["DKP"] = -39,
 			["dkp_earned"] = 127.59,
-			["dkp_spend"] = 130.0,
+			["dkp_spend"] = 180.0,
 			["dkp_adjust"] = 0,
-			["dkp_current"] = 10.54,
+			["dkp_current"] = -39.46,
 			["class"] = "Priester",
 			["rcount"] = 0,
 			}
@@ -63,6 +63,16 @@ gdkp = {
 			["dkp_adjust"] = 0,
 			["dkp_current"] = -254.95,
 			["class"] = "Jäger",
+			["rcount"] = 0,
+			}
+		,
+		["Deobodyspray"] = {
+			["DKP"] = -60,
+			["dkp_earned"] = 0.0,
+			["dkp_spend"] = 60.0,
+			["dkp_adjust"] = 0,
+			["dkp_current"] = -60.0,
+			["class"] = "Krieger",
 			["rcount"] = 0,
 			}
 		,
@@ -97,11 +107,11 @@ gdkp = {
 			}
 		,
 		["Ezral"] = {
-			["DKP"] = 81,
+			["DKP"] = 61,
 			["dkp_earned"] = 188.59,
-			["dkp_spend"] = 40.0,
+			["dkp_spend"] = 60.0,
 			["dkp_adjust"] = 0,
-			["dkp_current"] = 81.54,
+			["dkp_current"] = 61.54,
 			["class"] = "Schamane",
 			["rcount"] = 0,
 			}
@@ -187,11 +197,11 @@ gdkp = {
 			}
 		,
 		["Lustknabe"] = {
-			["DKP"] = 37,
+			["DKP"] = -12,
 			["dkp_earned"] = 174.6,
-			["dkp_spend"] = 140.0,
+			["dkp_spend"] = 190.0,
 			["dkp_adjust"] = 0,
-			["dkp_current"] = 37.56,
+			["dkp_current"] = -12.44,
 			["class"] = "Magier",
 			["rcount"] = 0,
 			}
@@ -207,11 +217,11 @@ gdkp = {
 			}
 		,
 		["Maniop"] = {
-			["DKP"] = 79,
+			["DKP"] = 49,
 			["dkp_earned"] = 168.7,
-			["dkp_spend"] = 145.0,
+			["dkp_spend"] = 175.0,
 			["dkp_adjust"] = 0,
-			["dkp_current"] = 79.15,
+			["dkp_current"] = 49.15,
 			["class"] = "Priester",
 			["rcount"] = 0,
 			}
@@ -227,11 +237,11 @@ gdkp = {
 			}
 		,
 		["Midget"] = {
-			["DKP"] = -9,
+			["DKP"] = -89,
 			["dkp_earned"] = 180.3,
-			["dkp_spend"] = 100.0,
+			["dkp_spend"] = 180.0,
 			["dkp_adjust"] = 0,
-			["dkp_current"] = -9.25,
+			["dkp_current"] = -89.25,
 			["class"] = "Krieger",
 			["rcount"] = 0,
 			}
@@ -317,11 +327,11 @@ gdkp = {
 			}
 		,
 		["Repa"] = {
-			["DKP"] = 66,
+			["DKP"] = 36,
 			["dkp_earned"] = 188.59,
-			["dkp_spend"] = 220.0,
+			["dkp_spend"] = 250.0,
 			["dkp_adjust"] = 0,
-			["dkp_current"] = 66.54,
+			["dkp_current"] = 36.54,
 			["class"] = "Magier",
 			["rcount"] = 0,
 			}
@@ -377,11 +387,11 @@ gdkp = {
 			}
 		,
 		["Stichtag"] = {
-			["DKP"] = -13,
+			["DKP"] = -73,
 			["dkp_earned"] = 188.59,
-			["dkp_spend"] = 190.0,
+			["dkp_spend"] = 250.0,
 			["dkp_adjust"] = 0,
-			["dkp_current"] = -13.46,
+			["dkp_current"] = -73.46,
 			["class"] = "Schurke",
 			["rcount"] = 0,
 			}
@@ -406,6 +416,16 @@ gdkp = {
 			["rcount"] = 0,
 			}
 		,
+		["Xraa"] = {
+			["DKP"] = -50,
+			["dkp_earned"] = 0.0,
+			["dkp_spend"] = 50.0,
+			["dkp_adjust"] = 0,
+			["dkp_current"] = -50.0,
+			["class"] = "Schamane",
+			["rcount"] = 0,
+			}
+		,
 		["yahya"] = {
 			["DKP"] = 128,
 			["dkp_earned"] = 180.3,
@@ -417,11 +437,11 @@ gdkp = {
 			}
 		,
 		["Zelu"] = {
-			["DKP"] = -21,
+			["DKP"] = -71,
 			["dkp_earned"] = 188.59,
-			["dkp_spend"] = 210.0,
+			["dkp_spend"] = 260.0,
 			["dkp_adjust"] = 0,
-			["dkp_current"] = -21.41,
+			["dkp_current"] = -71.41,
 			["class"] = "Jäger",
 			["rcount"] = 0,
 			}
@@ -454,6 +474,12 @@ DKP_ITEMS = {
 		}
 	,
 	["Dema"] = {
+		["Items"] = {
+			}
+		,
+		}
+	,
+	["Deobodyspray"] = {
 		["Items"] = {
 			}
 		,
@@ -658,6 +684,12 @@ DKP_ITEMS = {
 		}
 	,
 	["Watschenbaum"] = {
+		["Items"] = {
+			}
+		,
+		}
+	,
+	["Xraa"] = {
 		["Items"] = {
 			}
 		,
