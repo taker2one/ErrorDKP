@@ -50,7 +50,8 @@ local addonName, core = ...;
         CANCEL = "Cancel",
         LCD_ENTERCOSTFOR = "Enter DKP cost for",
         LCD_LOOTETBY = "Looted by |cFFFFFFFF%s|r.",
-        
+        PRICE = "Price",
+        ITEM = "Item",
         
         TOOLTIP_PRIO_NONE = "None",
         TOOLTIP_PRIO_LABEL = "Prio",

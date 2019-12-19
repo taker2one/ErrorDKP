@@ -18,21 +18,6 @@ local LCD_DropDownTableColDef = {
     {["name"] = "", ["width"] = 100},
 };
 
-
-local function DecomposeItemLink(link)
-    core:PrintDebug("DecomposeItemLink", link)
-    local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice, itemClassID, itemSubClassID = GetItemInfo(link);
-    if (not itemLink) then 
-        core:Debug('DecomposeItemLink: No itemLink')
-        return nil; 
-    end
-    local _, itemString, _ = deformat(itemLink, "|c%s|H%s|h%s|h|r")
-    local itemId, _ = deformat(itemString, "item:%d:%s")
-    local itemColor = nil
-    core:PrintDebug("Demposed: ", itemRarity)
-    return itemName, itemLink, itemId, itemString, itemRarity, itemColor, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice, itemClassID, itemSubClassID;
-end
-
 -- process first queue entry
 local function ErrorDKP_LCD_AskCost()
     -- if there are no entries in the queue, then return
@@ -94,7 +79,6 @@ local function ErrorDKP_LCD_AskCost()
     UI.LootConfirmDialog.NoteInput:SetAutoFocus(true);
     ErrorDKP:GetLootConfirmDialog():Show();  
 end
-
 ---------------------------
 --  loot cost functions  --
 ---------------------------
@@ -113,7 +97,7 @@ local function ErrorDKPAutoAddLootItem(playerName, itemLink, itemCount)
 	if (not itemLink) then return; end
 	if (not itemCount) then return; end
     core:PrintDebug("ErrorDKPAutoAddLootItem called - playerName: "..playerName.." - itemLink: "..itemLink.." - itemCount: "..itemCount);
-    local itemName, _, itemId, itemString, itemRarity, itemColor, itemLevel, _, itemType, itemSubType, _, _, _, _, itemClassID, itemSubClassID = DecomposeItemLink(itemLink);
+    local itemName, _, itemId, itemString, itemRarity, itemColor, itemLevel, _, itemType, itemSubType, _, _, _, _, itemClassID, itemSubClassID = core:ItemInfo(itemLink);
     if (not itemName == nil) then core:PrintDebug("Panic! Item information lookup failed horribly. Source: ErrorDKPAutoAddLootItem()"); return; end
     -- check options, if this item should be tracked
     if (core.ISettings.ItemTracking_MinItemQualityToLog > itemRarity) then core:PrintDebug("Item not tracked - quality is too low."); return; end
@@ -454,10 +438,14 @@ function ErrorDKP:CreateDropDownTable()
     return ddt
 end
 
+function ErrorDKP:GetDropDownTable()
+    local f = core.UI.LCDDropDownTable or ErrorDKP:CreateDropDownTable()
+    return f
+end
+
 function ErrorDKP:GetLootConfirmDialog()
     return core.UI.LootConfirmDialog or CreateLootConfirmDialog()
 end
-
 
 -- hook on masterloot function to cause for chat loot mesage chars are always to far away
 local function GiveMasterLootHook(slot, charIndex)

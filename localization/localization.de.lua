@@ -51,6 +51,8 @@ if GetLocale() == "deDE" then
         CANCEL = "Abbrechen",
         LCD_ENTERCOSTFOR = "DKP-Preis eingeben für",
         LCD_LOOTETBY = "Geplündert von |cFFFFFFFF%s|r.",
+        PRICE = "Price",
+        ITEM = "Item",
         
         TOOLTIP_PRIO_NONE = "Keine",
         TOOLTIP_PRIO_LABEL = "Prio",

@@ -84,7 +84,7 @@ core.Settings = {
 core.UI = {}
 
 -- Debug
-core.Debug = false
+core.Debug = true --DBG
 function core:PrintDebug(...)
     if core.Debug then
         print("|cff90EE90<ErrorDKP-Dbg>|r", ...)
@@ -273,3 +273,23 @@ function core:GenUniqueId()
     local rndNumber = math.random(1000)
     return tostring(t)..tostring(rndNumber)
 end
+
+function core:ItemInfo(linkorid)
+  core:PrintDebug("core:ItemInfo", linkorid)
+  local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice, itemClassID, itemSubClassID = GetItemInfo(linkorid);
+  if (not itemLink) then 
+      core:Debug('core:ItemInfo: No itemLink')
+      return nil; 
+  end
+  local _, itemString, _ = deformat(itemLink, "|c%s|H%s|h%s|h|r")
+  local itemId, _ = deformat(itemString, "item:%d:%s")
+  local itemColor = nil
+  core:PrintDebug("Demposed: ", itemRarity)
+  return itemName, itemLink, itemId, itemString, itemRarity, itemColor, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice, itemClassID, itemSubClassID;
+end
+
+-- shift-click-parsing of item links
+function core:Hook_ChatEdit_InsertLink(link)
+    ErrorDKP.LootTracker:OnChatEdit_InsertLink(link)
+end
+hooksecurefunc("ChatEdit_InsertLink", core.Hook_ChatEdit_InsertLink);
