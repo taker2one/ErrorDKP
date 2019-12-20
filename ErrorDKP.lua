@@ -9,7 +9,7 @@ local ErrorDKP = core.ErrorDKP
 
 -- Toggle Main Window
 function ErrorDKP:Toggle()
-    core:PrintDebug("Toogle Main Window")
+    core:PrintDebug("Toggle Main Window")
     core.UI.Main = core.UI.Main or ErrorDKP:CreateMain()
     core.UI.Main:SetShown(not core.UI.Main:IsShown())
     core.UI.Main:SetClampedToScreen(true)

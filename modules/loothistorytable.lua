@@ -158,13 +158,16 @@ local function CreateLootHistoryTable()
         end
       })
 
-      local lootAddBtn = CreateFrame("Button", nil, t.frame, "UIPanelButtonTemplate")
-      lootAddBtn:SetSize(109,24)
-      lootAddBtn:SetPoint("TOPLEFT", t.frame, "BOTTOMLEFT", 0,0)
-      lootAddBtn:SetText("Add Item")
-      lootAddBtn:SetScript("OnClick", function(self, ...)
-            ErrorDKP.LootTracker:GetAddFrame():Show()
-      end)
+    if core:CheckSelfTrusted() then
+        local lootAddBtn = CreateFrame("Button", nil, t.frame, "UIPanelButtonTemplate")
+        lootAddBtn:SetSize(109,24)
+        lootAddBtn:SetPoint("TOPLEFT", t.frame, "BOTTOMLEFT", 0,0)
+        lootAddBtn:SetText("Add Item")
+        lootAddBtn:SetScript("OnClick", function(self, ...)
+            ErrorDKP.LootTracker:Show()
+        end)
+    end
+    
 
     ErrorDKP:LootHistoryTableUpdate()
     return t

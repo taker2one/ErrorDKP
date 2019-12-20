@@ -51,6 +51,7 @@ if GetLocale() == "deDE" then
         CANCEL = "Abbrechen",
         LCD_ENTERCOSTFOR = "DKP-Preis eingeben für",
         LCD_LOOTETBY = "Geplündert von |cFFFFFFFF%s|r.",
+        LOOTER = "Looter",
         PRICE = "Price",
         ITEM = "Item",
         

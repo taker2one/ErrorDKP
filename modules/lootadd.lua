@@ -11,9 +11,11 @@ local _L = core._L
 ErrorDKP.LootTracker = {}
 local LootTracker = ErrorDKP.LootTracker
 
-local function test()
-    ErrorDKP:GetDropDownTable()
-end
+local ScrollingTable = LibStub("ScrollingTable")
+
+local PlayerDropDownTableColDef = {
+    {["name"] = "", ["width"] = 100},
+};
 
 function LootTracker:OnChatEdit_InsertLink(link)
     if core.UI.LootAddFrame and core.UI.LootAddFrame:IsVisible() then
@@ -28,6 +30,44 @@ function LootTracker:Handler(t)
     if t == "CANCEL" then
         self:GetAddFrame():Hide()
     end
+
+    core:PrintDebug(" LootTracker:OnChatEdit_InsertLink("..t..")");
+    
+    local f = self:GetAddFrame()
+
+    -- if OK was pressed, check input data
+    local player = f.LooterInput:GetText()
+    local price = f.PriceInput:GetText()
+    local item = f.ItemInput:GetText()
+
+    if not tonumber(price) then price = 0 end
+
+    -- First check item cause this is need in any case
+    local itemName, itemLink, itemId, itemString, itemRarity, itemColor, itemLevel, itemMinLevel, itemType, 
+          itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice, itemClassID, itemSubClassID = core:ItemInfo(item)
+
+    if not itemLink then
+        core:Print(string.format("Item: %s doesnt exist", item))
+        return
+    end
+
+    if t == "OK" then
+        if ErrorDKP:GetPlayerDKP(player) ~= nil then
+            local historyEntry = ErrorDKP:AddToLootHistory(itemLink, itemId , player, price)
+            ErrorDKP:AdjustDKPWithItem(player, -price, historyEntry)
+        else
+            core:Print(string.format("Player: %s not in DKP List", player))
+            return
+        end
+    elseif t == "BANK" then
+        local historyEntry = ErrorDKP:AddToLootHistory(itemLink, itemId, "Errorbank", price)
+        ErrorDKP:AdjustDKPWithItem("Errorbank", -price, historyEntry)
+    elseif t == "DISENCHANTED" then
+        ErrorDKP:AddToLootHistory(itemLink, itemId, "disenchanted", 0, true)
+    elseif t == "CANCEL" then
+        self:ResetAddFrame()
+        f:Hide()
+    end
 end
 
 function LootTracker:CreateAddFrame()
@@ -37,11 +77,12 @@ function LootTracker:CreateAddFrame()
     f:SetFrameLevel(25)
     f:EnableMouse(true)
     f:EnableKeyboard(true)
+    f:Hide()
 
     --Item
     f.ItemLabel = f:CreateFontString(nil, "OVERLAY", "GameFontWhite")
     local itemLabel = f.ItemLabel
-    itemLabel:SetPoint("TOPLEFT", f, "TOPLEFT", 50, -90)
+    itemLabel:SetPoint("TOPLEFT", f, "TOPLEFT", 50, -20)
     itemLabel:SetText(_L["ITEM"])
 
     f.ItemInput = CreateFrame("EditBox", nil, f, "InputBoxTemplate")
@@ -61,10 +102,33 @@ function LootTracker:CreateAddFrame()
         priceInput:SetFocus()
     end)
 
+    --Player/Looter
+    f.LooterLabel = f:CreateFontString(nil, "OVERLAY", "GameFontWhite")
+    local looterLabel = f.LooterLabel
+    looterLabel:SetPoint("TOPLEFT", itemInput, "BOTTOMLEFT", 0, -10)
+    looterLabel:SetText(_L["LOOTER"])
+
+    f.LooterInput = CreateFrame("EditBox", nil, f, "InputBoxTemplate")
+    local looterInput = f.LooterInput
+    looterInput:SetPoint("TOPLEFT", looterLabel, "BOTTOMLEFT", 8)
+    looterInput:SetSize(250, 32)
+    looterInput:SetMultiLine(false)
+    looterInput:EnableMouse(true)
+    looterInput:EnableKeyboard(true)
+    looterInput:SetScript("OnEnterPressed", function()
+        LootTracker:Handler("OK")
+    end)
+    itemInput:SetScript("OnEscapePressed", function()
+        LootTracker:Handler("CANCEL")
+    end)
+    itemInput:SetScript("OnTabPressed", function()
+        priceInput:SetFocus()
+    end)
+
     --price
     f.PriceLabel = f:CreateFontString(nil, "OVERLAY", "GameFontWhite")
     local priceLabel = f.PriceLabel
-    priceLabel:SetPoint("LEFT", itemInput, "TOPLEFT", 0, -40)
+    priceLabel:SetPoint("TOPLEFT", looterInput, "BOTTOMLEFT", 0, -10)
     priceLabel:SetText(_L["PRICE"])
 
     -- price input
@@ -105,10 +169,10 @@ function LootTracker:CreateAddFrame()
     local bankButton = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
     f.BankButton = bankButton
     bankButton:SetSize(95,22)
-    bankButton:SetPoint("TOP", cancelButton, "BOTTOM", 0, -15)
+    bankButton:SetPoint("TOP", okButton, "BOTTOM", 0, -15)
     bankButton:SetText("Bank")
     bankButton:SetScript("OnClick", function()
-         ErrorDKP_LCD_Handler("BANK") 
+        LootTracker:Handler("BANK") 
     end)
 
     local dissButton = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
@@ -117,14 +181,16 @@ function LootTracker:CreateAddFrame()
     dissButton:SetPoint("LEFT", bankButton, "RIGHT", 15, 0)
     dissButton:SetText("Disenchanted")
     dissButton:SetScript("OnClick", function()
-         ErrorDKP_LCD_Handler("DISENCHANTED") 
+        LootTracker:Handler("DISENCHANTED") 
     end)
 
     local ddButton = CreateFrame("Button", nil, f)
     f.DdButton = ddButton
     ddButton:SetSize(16,16)
-    ddButton:SetPoint("LEFT", textline3, "RIGHT")
-    ddButton:SetScript("OnClick", ErrorDKP_LCD_DropDownList_Toggle)
+    ddButton:SetPoint("LEFT", looterInput, "RIGHT")
+    ddButton:SetScript("OnClick", function()
+        self:ToggleAddDropDown(ddButton)
+    end)
     ddButton:CreateTexture()
     ddButton.normalTexture = ddButton:CreateTexture(nil)
     ddButton.normalTexture:SetTexture("Interface\\ChatFrame\\UI-ChatIcon-ScrollDown-Up")
@@ -164,3 +230,87 @@ function LootTracker:GetAddFrame()
     return f
 end
 
+function LootTracker:SetupPlayerDropDown()
+    local playerData = {};
+    local numRaidMembers = GetNumGroupMembers()
+    
+    for i=1, numRaidMembers do
+        name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(i)
+        playerData[i] = { name }
+    end
+    if numRaidMembers==0  then 
+        playerData[1] = { "Not in raid/group" }
+    end
+
+    table.sort(playerData, function(a, b) return (a[1] < b[1]); end )
+
+    local ddt = self:GetAddDropDownTable()
+    ddt:SetData(playerData, true);
+    if (#playerData < 8) then
+        ddt:SetDisplayRows(#playerData, 15);
+    else
+        ddt:SetDisplayRows(8, 15);
+    end
+    ddt.frame:Hide();
+end
+
+function LootTracker:ResetAddFrame()
+    f = self:GetAddFrame()
+    f.ItemInput:SetText("")
+    f.PriceInput:SetText("")
+    f.LooterInput:SetText("")
+end
+
+-- DropdownTable
+function LootTracker:CreateAddDropDownTable()
+    core.UI.LootAddFrameDDT = ScrollingTable:CreateST(PlayerDropDownTableColDef, 9, nil, nil, core.UI.LootAddFrame)
+    local ddt = core.UI.LootAddFrameDDT
+
+    ddt.head:SetHeight(1);
+    ddt.frame:SetFrameLevel(26);
+    ddt.frame:Hide();
+    ddt:EnableSelection(false);
+    ddt:RegisterEvents({
+        ["OnClick"] = function (rowFrame, cellFrame, data, cols, row, realrow, column, scrollingTable, ...)
+            if (not realrow) then return true; end
+            local playerName = scrollingTable:GetCell(realrow, column);
+            core:PrintDebug("set ",playerName, " as looter")
+            if (playerName) then
+                core.UI.LootAddFrame.Looter = playerName;
+                core.UI.LootAddFrame.LooterInput:SetText(playerName);
+                LootTracker:ToggleAddDropDown(nil)
+            end
+            return true;
+        end
+    });
+    ddt.head:SetHeight(1);
+
+    return ddt
+end
+
+function LootTracker:GetAddDropDownTable()
+    local f = core.UI.LootAddFrameDDT or self:CreateAddDropDownTable()
+    return f
+end
+
+function LootTracker:ToggleAddDropDown(parent)
+    core:PrintDebug("LootTracker:ToggleAddDropDown()", parent)
+    local ddt = self:GetAddDropDownTable()
+    if (ddt.frame:IsShown()) then
+        core:PrintDebug("LootTracker:ToggleAddDropDown()", "Hide")
+        ddt.frame:Hide()
+    else
+        ddt.frame:Show()
+        ddt.frame:SetPoint("TOPRIGHT", core.UI.LootAddFrame.DdButton, "BOTTOMRIGHT", 0, 0)
+        core:PrintDebug("LootTracker:ToggleAddDropDown()", "Show")
+    end
+end
+
+--Setup dialog an show
+function LootTracker:Show()
+    local f = self:GetAddFrame()
+    if f:IsShown() then core:PrintDebug("LootTracker:Show()", "Dialog already opened"); return; end
+
+    LootTracker:SetupPlayerDropDown()
+    f:Show()
+end

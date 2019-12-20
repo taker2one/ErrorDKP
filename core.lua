@@ -11,6 +11,7 @@ core.ErrorDKP = {}
 local ErrorDKP = core.ErrorDKP
 local _C = core.CONSTANTS
 
+local deformat = LibStub("LibDeformat-3.0")
 
 -- Version
 core.Version = GetAddOnMetadata("ErrorDKP", "Version")
@@ -50,7 +51,8 @@ core.TrustedPlayers = {
   "Rassputin",
   "Repa",
   "Dichterin",
-  "Karaffe"
+  "Karaffe",
+  "Lightrider"
 }
 
 core.ClassColors = {
@@ -278,18 +280,19 @@ function core:ItemInfo(linkorid)
   core:PrintDebug("core:ItemInfo", linkorid)
   local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice, itemClassID, itemSubClassID = GetItemInfo(linkorid);
   if (not itemLink) then 
-      core:Debug('core:ItemInfo: No itemLink')
+      core:PrintDebug('core:ItemInfo: No itemLink')
       return nil; 
   end
   local _, itemString, _ = deformat(itemLink, "|c%s|H%s|h%s|h|r")
   local itemId, _ = deformat(itemString, "item:%d:%s")
   local itemColor = nil
-  core:PrintDebug("Demposed: ", itemRarity)
+  core:PrintDebug("Demposed id: ", itemId, itemLink)
   return itemName, itemLink, itemId, itemString, itemRarity, itemColor, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice, itemClassID, itemSubClassID;
 end
 
 -- shift-click-parsing of item links
-function core:Hook_ChatEdit_InsertLink(link)
+local function Hook_ChatEdit_InsertLink(link)
+    core:PrintDebug("core:Hook_ChatEdit_InsertLink", link)
     ErrorDKP.LootTracker:OnChatEdit_InsertLink(link)
 end
-hooksecurefunc("ChatEdit_InsertLink", core.Hook_ChatEdit_InsertLink);
+hooksecurefunc("ChatEdit_InsertLink", Hook_ChatEdit_InsertLink);
