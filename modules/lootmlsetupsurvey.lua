@@ -49,23 +49,6 @@ local function buildDataForTable(data)
         }
 
         table.insert(t, row)
-
-		-- if not v.isSent then 
-		-- 	local bonusText = v.link and addon:GetItemBonusText(v.link, "\n ") or ""
-		-- 	if bonusText ~= "" then bonusText = "\n |cff33ff33"..bonusText end
-		-- 	tinsert(self.frame.rows, {
-		-- 		session = k,
-		-- 		texture = v.texture or nil,
-		-- 		link = v.link,
-		-- 		owner = v.owner,
-		-- 		cols = {
-		-- 			{ DoCellUpdate = self.SetCellDeleteBtn, },
-		-- 			{ DoCellUpdate = self.SetCellItemIcon},
-		-- 			{ value = " "..(addon:GetItemLevelText(v.ilvl, v.token) or "")..bonusText},
-		-- 			{ DoCellUpdate = self.SetCellText },
-		-- 		},
-		-- 	})
-		-- end
     end
     return t
 end

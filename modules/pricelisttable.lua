@@ -74,7 +74,7 @@ function PriceListTableUpdate()
     for k,v in pairs(core.ItemPriceList) do
 
         if C_Item.IsItemDataCachedByID(k) then
-            core:PrintDebug("Already chached")
+            --core:PrintDebug("Already chached")
             local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(k)
 
             -- TODO: we should get itemdata only once not on every update!
