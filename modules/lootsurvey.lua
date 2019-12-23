@@ -60,6 +60,7 @@ end
 
 function LootSurvey:Update(data)
     local f = LootSurvey:GetFrame()
+    self:HideAllEntries()
     for i,v in ipairs(data.items) do
         entryFrame = LootSurvey:GetEntry(i)
         entryFrame:SetParent(f)
@@ -70,6 +71,7 @@ function LootSurvey:Update(data)
         entryFrame.MainBtn:SetEnabled(true)
         entryFrame.SecBtn:SetEnabled(true)
         entryFrame.PassBtn:SetEnabled(true)
+        entryFrame:Show()
     end
 
     f:SetHeight(#data.items*90+60)
@@ -174,6 +176,13 @@ function LootSurvey:GetEntry(index)
         f.Entries[index].Index = index
     end
     return f.Entries[index]
+end
+
+function LootSurvey:HideAllEntries()
+    local f = LootSurvey:GetFrame()
+    for i,v in ipairs(f.Entries) do
+        v:Hide()
+    end
 end
 
 function LootSurvey:CreateEntry(name)

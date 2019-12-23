@@ -215,8 +215,7 @@ function MLResult:UpdateItemButton(i, icon, itemLink, closed)
     
 	-- Update Button
 	btn:SetNormalTexture(icon or "Interface\\InventoryItems\\WoWUnknownItem01")
-	--local lines = { format(L["Click to switch to 'item'"], link) }
-	
+	btn:Show()
 		
 	if closed then
 		btn:SetBorderColor("green")

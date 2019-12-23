@@ -115,8 +115,9 @@ function MLSetupSurvey:CreateFrame()
     })
     f.ScrollingTable = scrollingTable
     
-	local startButton = core:CreateButton(f, "StartButton", "Start")
-	startButton:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 10, 10)
+    local startButton = core:CreateButton(f, "StartButton", "Start")
+    startButton:SetWidth(80)
+	startButton:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 15, 20)
 	startButton:SetScript("OnClick", function()
 		
 		if not core.LootTable or #core.LootTable == 0 then
@@ -129,8 +130,9 @@ function MLSetupSurvey:CreateFrame()
 	f.StartButton = startButton
 
 	-- Cancel button
-	local cancelButton = core:CreateButton(f, "CancelButton", "Cancel")
-	cancelButton:SetPoint("LEFT", startButton, "RIGHT", 15, 0)
+    local cancelButton = core:CreateButton(f, "CancelButton", "Cancel")
+    cancelButton:SetWidth(80)
+	cancelButton:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -15, 20)
 	cancelButton:SetScript("OnClick", function()
 		core.LootTable = {}
 		self:Cancel()
