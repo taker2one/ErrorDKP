@@ -117,6 +117,15 @@ local function GetNewestData(dkpdb, dkpinfo, importinfo)
     return dkpdb, dkpinfo                                                                                                                                                                                                            
 end
 
+local function FillMissingSettings(dbset, defset)
+    for k,v in pairs(defset) do
+        if dbset[k] == nil then
+            core:PrintDebug("Add missing entry in settings", k)
+            dbset[k] = v
+        end
+    end
+end
+
 local function OnInit()
     core:PrintDebug("Initialize", core.Imports.ItemPriceListInfo["version"])
     RegisterSlashCommands()
@@ -129,6 +138,9 @@ local function OnInit()
     if not ErrorDKPDKPList then ErrorDKPDKPList = {} end 
     if not ErrorDKPPriceList then ErrorDKPPriceList = {} end
     if not ErrorDKPLootQueue then ErrorDKPLootQueue = {} end
+
+    --ValidateSettings
+    FillMissingSettings(ErrorDKPConfig, core.DefaultSettings)
 
     -- Check which data is the newest
     if not ErrorDKPDataInfo.DKPInfo then 

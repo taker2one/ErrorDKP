@@ -78,11 +78,11 @@ local tableDef = {
 function ErrorDKP:CreateDKPScrollingTable()
     UI.DKPTable = ScrollingTable:CreateST(tableDef, 33, nil, nil, UI.Main)
     UI.DKPTable.frame:SetPoint("TOPLEFT", ErrorDKPMainDialogBG, "TOPLEFT", 10, -40);
-    UI.DKPTable.frame:SetPoint("BOTTOMLEFT", ErrorDKPMainDialogBG, "BOTTOMLEFT", 0, 10);
+    UI.DKPTable.frame:SetPoint("BOTTOMLEFT", ErrorDKPMainDialogBG, "BOTTOMLEFT", 0, 27);
     UI.DKPTable:EnableSelection(true)
 
     -- Title
-    local title = UI.DKPTable.frame:CreateFontString("$parent_title")
+    local title = UI.DKPTable.frame:CreateFontString(nil)
     title:SetFontObject("GameFontNormal")
     title:SetText(_LS["TITLE"])
     title:SetPoint("TOPLEFT", UI.DKPTable.frame, "TOPLEFT", 0, 30)

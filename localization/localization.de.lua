@@ -18,7 +18,8 @@ if GetLocale() == "deDE" then
             TITLE = "Loot Historie",
             COLITEMLINK = "Item",
             COLLOOTER = "Looter",
-            COLDKP = "DKP"
+            COLDKP = "DKP",
+            CHECKBTN_SHOWONLYTODAY = "Nur items von Heute"
         },
         DKPPRICE = "DKP Preis",
         MINIMAP = {

@@ -4,13 +4,11 @@
 --#  Author: Manuel "Doktorwho@Venoxis" Ebner
 --#  Description: The survey dialog which gets 
 --#  shown to the raidmembers to make theyr decision
---#  Last Edit: 06.12.2019
+--#  Last Edit: 27.12.2019
 --###############################################
 local addonName, core = ...
 local ErrorDKP = core.ErrorDKP
 local LootSurvey = {}
-
-local ScrollingTable = LibStub("ScrollingTable")
 
 local itemSurveyData
 
@@ -55,6 +53,7 @@ end
 -- Start new LootSurvey
 function LootSurvey:Start(data, countdown)
     self:Show(data)
+    PlaySoundFile("Interface\\AddOns\\ErrorDKP\\media\\sounds\\epic.ogg")
     self:SetupTimerBar(countdown)
 end
 

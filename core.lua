@@ -79,8 +79,13 @@ core.ISettings = {
     ItemTracking_IgnoreEnchantingMats = true
 }
 
+-- Will be overriden in init from db
 core.Settings = {
-  
+}
+
+-- Used to initial fill db settings table
+core.DefaultSettings = {
+    ShowOnlyItemsToday = false
 }
 
 core.UI = {}
@@ -122,7 +127,7 @@ function core:GetGuildRankIndex(player)
 end
 
 function core:ToDateString(t)
-    return date("%m/%d/%Y %H:%M:%S", t)
+    return date("%d/%m/%Y %H:%M:%S", t)
 end
 
 function core:CheckSelfTrusted()
@@ -223,7 +228,13 @@ function core:SplitString(inputstr, sep, doUnpack)
     return t
 end
 
-function core:CreateDefaultFrame(name, title, width, height, addCloseButton)
+function core:CreateDefaultFrame(
+        name, 
+        title, 
+        width, height, 
+        addCloseButton, 
+        savePosition -- Save Position after Drag requires Name!!
+    )
     local f = CreateFrame("Frame", name, UIParent)
     f:SetSize(width,height)
     f:SetBackdrop({
@@ -258,6 +269,24 @@ function core:CreateDefaultFrame(name, title, width, height, addCloseButton)
         f.CloseButton:SetPoint("TOPRIGHT", f, "TOPRIGHT", -5, -5)
     end
 
+    if savePosition then
+        f:SetScript("OnDragStop", function(self, mouseButton)
+            self:StopMovingOrSizing()
+
+            local point, _, relativePoint, x, y = self:GetPoint()
+            core:PrintDebug("StopMoving", f:GetName(), point, relativePoint, x, y)
+
+            core.Settings[name.."PosX"] = x
+            core.Settings[name.."PosY"] = y
+            core.Settings[name.."PosPoint"] = point
+            core.Settings[name.."PosRelativePoint"] = relativePoint
+        end)
+
+        if core.Settings[name.."PosX"] and core.Settings[name.."PosY"] and core.Settings[name.."PosPoint"] and core.Settings[name.."PosRelativePoint"] then
+            f:ClearAllPoints()
+            f:SetPoint(core.Settings[name.."PosPoint"], f:GetParent(), core.Settings[name.."PosRelativePoint"], core.Settings[name.."PosX"], core.Settings[name.."PosY"])
+        end
+    end
     return f
 end
 
@@ -296,3 +325,4 @@ local function Hook_ChatEdit_InsertLink(link)
     ErrorDKP.LootTracker:OnChatEdit_InsertLink(link)
 end
 hooksecurefunc("ChatEdit_InsertLink", Hook_ChatEdit_InsertLink);
+

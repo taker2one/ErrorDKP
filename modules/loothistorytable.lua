@@ -55,15 +55,38 @@ local LootHistoryTableColDef = {
             end)
         end,
     },
-    {["name"] = "", ["width"] = 179},
+    {["name"] = "", ["width"] = 179, ["DoCellUpdate"] = function(rowFrame, cellFrame, data, cols, row, realrow, column, fShow, self, ...)
+        local itemLink = self:GetCell(realrow, column);
+        local timeStamp = self:GetCell(realrow, 5);
+        if not cellFrame.ItemLinkString then
+            cellFrame.ItemLinkString = cellFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+            cellFrame.ItemLinkString:SetPoint("TOPLEFT", cellFrame, "TOPLEFT", 0, -2)
+        end
+        cellFrame.ItemLinkString:SetText(itemLink)
+
+        if not cellFrame.DateString then
+            cellFrame.DateString = cellFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+            cellFrame.DateString:SetPoint("BOTTOMLEFT", cellFrame, "BOTTOMLEFT", 0, 2)
+        end
+        cellFrame.DateString:SetText(date("%d/%m/%Y %H:%M", timeStamp))
+    end},
     {["name"] = _LS["COLLOOTER"], ["width"] = 100},
     {["name"] = _LS["COLDKP"], ["width"] = 50},
-    {["name"] = "", ["width"] = 1} -- invisible column for itemString (needed for tooltip)
+    {["name"] = "", ["width"] = 1} -- invisible Time
 };
 
 local function UpdateDataTimestamp()
     core.DKPDataInfo["LootInfo"]["timestamp"] = core:GenerateTimestamp()
     return core.DKPDataInfo["LootInfo"]["timestamp"]
+end
+
+local function tableFilter(self, row)
+    --if date('%Y-%m-%d', row[5]) == date('%Y-%m-%d', row[5])--date('%Y-%m-%d') ,
+    if not core.Settings.ShowOnlyItemsToday then return true end
+    if core.Settings.ShowOnlyItemsToday and row[5] >= GetServerTime() - 86400 -- 24h
+    then
+        return true
+    end
 end
 
 function ErrorDKP:LootHistoryTableUpdate()
@@ -73,29 +96,10 @@ function ErrorDKP:LootHistoryTableUpdate()
     local index = 1
     for i,v in ipairs(core.LootLog) do
 
-        -- if C_Item.IsItemDataCachedByID(k) then
-        --     core:PrintDebug("Already chached")
-        --     local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(v.itemId)
-
             TableData[index]= { 
                 v.ItemId, v.ItemLink, v.Looter, v.Dkp, v.Time
             }
             index = index + 1
-        -- else
-        --     local alreadyIn = false
-        --     if #pendingItemRequests > 0 then
-        --         for i,v in ipairs(pendingItemRequests) do
-        --             if itemId == v.itemId then
-        --                 alreadyIn = true
-        --             end
-        --         end
-        --     end
-        --     if not alreadyIn then
-        --         core:PrintDebug("Not in chache do rquest")
-        --         C_Item.RequestLoadItemDataByID(k)
-        --         table.insert(pendingItemRequests,{itemId = k})
-        --     end
-        -- end 
     end
     ErrorDKP:GetLootHistoryTable():ClearSelection()
     ErrorDKP:GetLootHistoryTable():SetData(TableData, true)
@@ -124,7 +128,7 @@ local function CreateLootHistoryTable()
     UI.LootHistoryTable  = ScrollingTable:CreateST(LootHistoryTableColDef, 20, 25, nil, UI.Main)
     local t = UI.LootHistoryTable
     t.frame:SetPoint("TOPLEFT", ErrorDKPMainDialogBG, "TOPLEFT", 745, -40);
-    t.frame:SetPoint("BOTTOMLEFT", ErrorDKPMainDialogBG, "BOTTOMLEFT", 0, 10);
+    t.frame:SetPoint("BOTTOMLEFT", ErrorDKPMainDialogBG, "BOTTOMLEFT", 0, 25);
     t.head:SetHeight(15)
     t:EnableSelection(true)
 
@@ -161,13 +165,24 @@ local function CreateLootHistoryTable()
     if core:CheckSelfTrusted() then
         local lootAddBtn = CreateFrame("Button", nil, t.frame, "UIPanelButtonTemplate")
         lootAddBtn:SetSize(109,24)
-        lootAddBtn:SetPoint("TOPLEFT", t.frame, "BOTTOMLEFT", 0,0)
+        lootAddBtn:SetPoint("TOPRIGHT", t.frame, "BOTTOMRIGHT", 0,0)
         lootAddBtn:SetText("Add Item")
         lootAddBtn:SetScript("OnClick", function(self, ...)
             ErrorDKP.LootTracker:Show()
         end)
     end
-    
+
+    local checkBtnToday = CreateFrame("CheckButton", nil, t.frame, "UICheckButtonTemplate")
+    t.CheckButtonToday = checkBtnToday
+    checkBtnToday:SetPoint("TOPLEFT", t.frame, "BOTTOMLEFT", 0, 4);
+    checkBtnToday.text:SetText(_LS["CHECKBTN_SHOWONLYTODAY"])
+    checkBtnToday:SetChecked(core.Settings.ShowOnlyItemsToday)
+    checkBtnToday:SetScript("OnClick", function(self)
+        core.Settings.ShowOnlyItemsToday = self:GetChecked()
+        ErrorDKP:LootHistoryTableUpdate()
+    end)
+
+    t:SetFilter(tableFilter)
 
     ErrorDKP:LootHistoryTableUpdate()
     return t

@@ -22,21 +22,31 @@ function ErrorDKP:CreateMain()
     core.UI.Main = CreateFrame("Frame", "ErrorDKPMain", UIParent, "UIPanelDialogTemplate")
     tinsert(UISpecialFrames, "ErrorDKPMain")  
     local uiMain = core.UI.Main
+    uiMain:Hide()
 
     uiMain:SetFrameLevel(9)
-    uiMain:SetSize(1165, 590) --1000
+    uiMain:SetSize(1165, 607) --1000
     uiMain:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
     uiMain:SetMovable(true)
     uiMain:EnableMouse(true)
     uiMain:RegisterForDrag("LeftButton")
     uiMain:SetScript("OnDragStart", uiMain.StartMoving)
-    uiMain:SetScript("OnDragStop", uiMain.StopMovingOrSizing)
+    uiMain:SetScript("OnDragStop", function(self, mouseButton)
+        self:StopMovingOrSizing()
+
+        local point, _, relativePoint, x, y = self:GetPoint()
+        core:PrintDebug("StopMoving", point, relativePoint, x, y)
+
+        core.Settings.MainFramePosX = x
+        core.Settings.MainFramePosY = y
+        core.Settings.MainFramePoint = point
+        core.Settings.MainFrameRelativePoint = relativePoint
+    end)
     uiMain:SetScript("OnShow", function() 
-        PlaySound(567440) 
-        core:PrintDebug("ErrorDKPMain", "OnShow")
+        PlaySound(80) 
     end)
     uiMain:SetScript("OnHide", function() 
-        PlaySound(567496)
+        PlaySound(89)
     end)
 
     -- Add Title
@@ -60,7 +70,11 @@ function ErrorDKP:CreateMain()
     --
     ErrorDKP:GetLootHistoryTable()
 
-    uiMain:Hide()
+    if core.Settings.MainFramePosX and core.Settings.MainFramePosY and core.Settings.MainFramePoint and core.Settings.MainFrameRelativePoint then
+        uiMain:ClearAllPoints()
+        uiMain:SetPoint(core.Settings.MainFramePoint, uiMain:GetParent(), core.Settings.MainFrameRelativePoint, core.Settings.MainFramePosX, core.Settings.MainFramePosY)
+    end
+
     return uiMain
 
 end

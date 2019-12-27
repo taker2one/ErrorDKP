@@ -17,7 +17,8 @@ local addonName, core = ...;
             TITLE = "Loot History",
             COLITEMLINK = "Item",
             COLLOOTER = "Looter",
-            COLDKP = "DKP"
+            COLDKP = "DKP",
+            CHECKBTN_SHOWONLYTODAY = "Only items from today"
         },
         DKPPRICE = "DKP Price",
         MINIMAP = {

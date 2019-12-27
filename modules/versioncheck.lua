@@ -74,7 +74,7 @@ end
 
 
 function VersionCheck:CreateFrame()
-    local f = core:CreateDefaultFrame("ErrorDKPVersionCheck", "VersionCheck", 500, 400, true)
+    local f = core:CreateDefaultFrame("ErrorDKPVersionCheck", "VersionCheck", 500, 400, true, true)
     core.UI.VersionCheck = f
     f:SetPoint("CENTER", UIParent, "CENTER")
 

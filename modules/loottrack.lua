@@ -370,7 +370,7 @@ local function CreateLootConfirmDialog()
 end
 
 function ErrorDKP:AddToLootHistory(itemLink, itemId, looter, dkp, broadcast)
-    return ErrorDKP:AddItemToHistory(itemLink, itemId, looter, dkp, time(), broadcast)
+    return ErrorDKP:AddItemToHistory(itemLink, itemId, looter, dkp, GetServerTime(), broadcast)
 end
 
 function ErrorDKP:AutoAddLoot(chatmsg)
