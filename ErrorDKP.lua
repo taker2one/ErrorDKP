@@ -20,21 +20,20 @@ function ErrorDKP:CreateMain()
     -- Create The Main Windows
     --
     core.UI.Main = CreateFrame("Frame", "ErrorDKPMain", UIParent, "UIPanelDialogTemplate")
+    tinsert(UISpecialFrames, "ErrorDKPMain")  
     local uiMain = core.UI.Main
 
     uiMain:SetFrameLevel(9)
-    uiMain:SetSize(1165, 590); --1000
-    uiMain:SetPoint("CENTER", UIParent, "CENTER", 0, 0);
-    uiMain:SetMovable(true);
-    uiMain:EnableMouse(true);
-    uiMain:RegisterForDrag("LeftButton");
-    uiMain:SetScript("OnDragStart", uiMain.StartMoving);
-    uiMain:SetScript("OnDragStop", uiMain.StopMovingOrSizing);
-    uiMain:SetScript("OnLoad", function(self) 
-        tinsert(UISpecialFrames, ErrorDKPMain:GetName())  
-    end)
+    uiMain:SetSize(1165, 590) --1000
+    uiMain:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+    uiMain:SetMovable(true)
+    uiMain:EnableMouse(true)
+    uiMain:RegisterForDrag("LeftButton")
+    uiMain:SetScript("OnDragStart", uiMain.StartMoving)
+    uiMain:SetScript("OnDragStop", uiMain.StopMovingOrSizing)
     uiMain:SetScript("OnShow", function() 
         PlaySound(567440) 
+        core:PrintDebug("ErrorDKPMain", "OnShow")
     end)
     uiMain:SetScript("OnHide", function() 
         PlaySound(567496)
