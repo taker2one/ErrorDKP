@@ -85,7 +85,8 @@ core.Settings = {
 
 -- Used to initial fill db settings table
 core.DefaultSettings = {
-    ShowOnlyItemsToday = false
+    ShowOnlyItemsToday = false,
+    ShowOnlyRaidmembers = false
 }
 
 core.UI = {}
@@ -109,6 +110,10 @@ function core:Print(...)
     print("|cff75DAFF"..core.PrintPrefix.."|r", ...)
 end
 
+
+function core:Error(...)
+    print("|cff90EE90"..core.PrintPrefix.."|r", ...)
+end
 
 function core:GetGuildRankIndex(player)
   local name, rank;

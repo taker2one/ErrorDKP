@@ -66,7 +66,7 @@ function Sync:OnCommReceived(prefix, message, channel, sender)
     core:PrintDebug("OnMessageReceived", prefix, channel, sender)
 
     if prefix == "ErrDKPBuildCheck" and sender ~= UnitName("player") then
-        -- Theres someone with a newer Version, mute message for 15 minutes
+        -- Theres someone with a newer Version, print message then mute for 15 minutes
         if time() - core.LastUpdateAvailableMsg > 900 then
             if tonumber(message) > core.Build then
                 core.LastUpdateAvailableMsg = time()
@@ -88,15 +88,18 @@ function Sync:OnCommReceived(prefix, message, channel, sender)
             core:PrintDebug(deserialized.PTS, deserialized.ATS)
             local timestampMatches = CheckDKPTimestamp(deserialized.PTS)
 
-            -- timestamp doesnt match request a full update
             if not timestampMatches then
+                -- timestamp doesnt match request a full update
                 core:Print(_L["MSG_DKPTABLE_OUTOFDATE"])
-                local officer = core:GetOnlineOfficer()
-                if officer then
-                    core.Sync:SendTo("ErrDKPSyncReq", "FULL", officer)
-                else
-                    core:Print("There is currently no online officer")
-                end
+                -- local officer = core:GetOnlineOfficer()
+                -- if officer then
+                --     core.Sync:SendTo("ErrDKPSyncReq", "FULL", officer)
+                -- else
+                --     core:Print("There is currently no online officer")
+                -- end
+
+                -- In dieser Situation lieber direkt vom Sender anfragen da nicht sichergestellt ist, dass die Offiziere die Daten bereits verbucht haben
+                core.Sync:SendTo("ErrDKPSyncReq", "FULL", officer)
             end
 
             local entry;
@@ -126,18 +129,21 @@ function Sync:OnCommReceived(prefix, message, channel, sender)
         -- Data is serialized { PTS, ATS, Data, Item }
         local success, deserialized = Serializer:Deserialize(message)
             if success then
-            core:PrintDebug(deserialized.PTS, deserialized.ATS)
+            core:PrintDebug("ErrDKPAdjPAWI", "sender", deserialized.PTS, deserialized.ATS)
             local timestampMatches = CheckDKPTimestamp(deserialized.PTS)
 
             -- timestamp doesnt match request a full update
             if not timestampMatches then
                 core:Print(_L["MSG_DKPTABLE_OUTOFDATE"])
-                local officer = core:GetOnlineOfficer()
-                if officer then
-                    core.Sync:SendTo("ErrDKPSyncReq", "FULL", officer)
-                else
-                    core:Print("There is currently no online officer")
-                end
+                --local officer = core:GetOnlineOfficer(sender)
+                -- if officer then
+                --     core.Sync:SendTo("ErrDKPSyncReq", "FULL", officer)
+                -- else
+                --     core:Print("There is currently no online officer")
+                -- end
+
+                -- In dieser situation lieber direkt vom Sender anfragen da nicht sichergestellt ist, dass die Offiziere die Daten bereits verbucht haben
+                core.Sync:SendTo("ErrDKPSyncReq", "FULL", officer)
             end
 
             local entry;
@@ -176,7 +182,7 @@ function Sync:OnCommReceived(prefix, message, channel, sender)
             while #core.LootLog > 50 do
                 table.remove(core.LootLog, #core.LootLog)
             end
-            core:SetLootDataTimestamp(deserialized.IATS)
+            core:SetLootDataTimestamp(deserialized.ATS)
             ErrorDKP:LootHistoryTableUpdate()
 
             if deserialized.Item.Looter == "disenchanted" then
@@ -185,8 +191,11 @@ function Sync:OnCommReceived(prefix, message, channel, sender)
                 core:Print(string.format(_L["MSG_LOOT_ADDED"], deserialized.Item.ItemLink))
             end
         else
-            core:Print("Error while deserializing data from message: ", prefix)
+            core:Error("Error while deserializing data from message: ", prefix)
         end
+    --
+    -- Sync
+    --
     elseif prefix == "ErrDKPDKPSync" and sender ~= UnitName("player")  
     then
         if VerifySender(sender) then
@@ -221,17 +230,40 @@ function Sync:OnCommReceived(prefix, message, channel, sender)
             end
             ErrorDKP:LootHistoryTableUpdate()
         end
-    elseif prefix == "ErrDKPSyncReq" and sender ~= UnitName("player")  then
+    --
+    -- Request
+    --
+    elseif prefix == "ErrDKPSyncReq" and sender ~= UnitName("player")
+    then
         if message == "DKP" then
-            core:Print(_L["MSG_BROADCAST_DKP_REQ"], sender)
+            -- Members will send request if there data was out of date after a Broadcast, ingore all requests within 5 seconds
+            if self.LastErrDKPSyncReqDKP and time() - self.LastErrDKPSyncReqDKP < 10 then
+                core:Print(string.format("Ingore DKP Sync request from %s. Last broadcast was done: %s", sender, core:ToDateString(self.LastErrDKPSyncReqDKP)))
+                return
+            end
+            core:Print(_L["MSG_BROADCAST_DKP_REQ"], sender, self.LastErrDKPSyncReqDKP)
+            self.LastErrDKPSyncReqDKP = time()
             ErrorDKP:BroadcastDKPTable()
         end
         if message == "ITEMHISTORY" then
+            -- Members will send request if there data was out of date after a Broadcast, ingore all requests within 5 seconds
+            if self.LastErrDKPSyncReqItemhistory and time() - self.LastErrDKPSyncReqItemhistory < 10 then
+                core:Print(string.format("Ingore Itemhistory Sync request from %s. Last broadcast was done: %s", sender, core:ToDateString(self.LastErrDKPSyncReqItemhistory)))
+                return
+            end
             core:Print(_L["MSG_BROADCAST_LOOT_REQ"], sender)
+            self.LastErrDKPSyncReqItemhistory = time()
             ErrorDKP:BroadcastLootTable()
         end
         if message == "FULL" then
+            -- Members will send request if there data was out of date after an item Broadcast, ingore all requests within 5 seconds
+            if self.LastErrDKPSyncReqFull and time() - self.LastErrDKPSyncReqFull < 10 then
+                core:Print(string.format("Ingore Full Sync request from %s. Last broadcast was done: %s", sender, core:ToDateString(self.LastErrDKPSyncReqFull)))
+                return
+            end
+
             core:Print(_L["MSG_BROADCAST_FULL_REQ"], sender)
+            self.LastErrDKPSyncReqFull = time()
             -- Is this Ok? maybe its neccessary to split some data? We will see
             ErrorDKP:BroadcastDKPTable()
             ErrorDKP:BroadcastLootTable()

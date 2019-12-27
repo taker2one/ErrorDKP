@@ -45,6 +45,25 @@ local menu = {
       end }
   }
 
+-- We need to sort by name casuse name is colored
+function TableSort(table, rowa, rowb, sortbycol)
+    local column = table.cols[sortbycol]
+    local direction = column.sort or column.defaultsort or 1
+    --core:PrintDebug("TableSort", direction)
+    
+    local a, b = string.lower(table:GetCell(rowa, 4)), string.lower(table:GetCell(rowb, 4))
+    if a==b then
+        return false
+    else
+        local direction = column.sort or column.defaultsort or "asc"
+        if direction == "asc" then
+			return a < b;
+		else
+			return a > b;
+		end
+    end
+end
+
 local tableDef = {
   { ["name"] = "", ["width"] = 1 },
   { ["name"] = "", ["width"] = 15, 
@@ -60,20 +79,25 @@ local tableDef = {
 			end
 		end
 	end}, -- classIcon
-  { ["name"] = _LS["COLNAME"], ["width"] = 100,
-  -- ["DoCellUpdate"] = function(rowFrame, cellFrame, data, cols, row, realrow, column, fShow, self, ...)
-  --   cellFrame:SetScript("OnMouseUp", function(self, button)
-  --       if button == 'RightButton' then 
-  --             core:PrintDebug(RightButton)
-  --             ErrorDKP:ConextMenu(menu)
-  --       end
-  --   end)
-  -- end,
-  },
+  { ["name"] = _LS["COLNAME"], ["width"] = 100, ["comparesort"] = TableSort },
   { ["name"] = "", ["width"] = 1}, -- pure playername to append to other dialogs
   { ["name"] = _LS["COLCLASS"], ["width"] = 80},
   { ["name"] = _LS["COLDKP"], ["width"] = 50, ["defaultsort"] = "dsc" }
 }
+
+local function tableFilter(self, row)
+    if not core.Settings.ShowOnlyRaidmembers then return true end 
+    if core.Settings.ShowOnlyRaidmembers
+    then
+        if not UnitInRaid("player") and not UnitInParty("player") then return false end
+        local cnt = GetNumGroupMembers()
+        local i = 1
+        while i < cnt do
+            name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(i)
+            if name == row[4] then return true end
+        end
+    end
+end
 
 function ErrorDKP:CreateDKPScrollingTable()
     UI.DKPTable = ScrollingTable:CreateST(tableDef, 33, nil, nil, UI.Main)
@@ -90,7 +114,7 @@ function ErrorDKP:CreateDKPScrollingTable()
 
     local adjustDKPButton = CreateFrame("Button", nil, UI.DKPTable.frame, "UIPanelButtonTemplate")
     adjustDKPButton:SetSize(109,24)
-    adjustDKPButton:SetPoint("TOPLEFT", UI.DKPTable.frame, "BOTTOMLEFT", 0,0)
+    adjustDKPButton:SetPoint("TOPRIGHT", UI.DKPTable.frame, "BOTTOMRIGHT", 0,0)
     adjustDKPButton:SetText("Adjust")
     adjustDKPButton:SetScript("OnClick", function(self, ...)
       local selection = UI.DKPTable:GetSelection()
@@ -121,16 +145,29 @@ function ErrorDKP:CreateDKPScrollingTable()
       end
     })
 
+    local checkBtnRaid = CreateFrame("CheckButton", nil, UI.DKPTable.frame, "UICheckButtonTemplate")
+    UI.DKPTable.CheckBtnShowOnlyRaidmembers = checkBtnRaid
+    checkBtnRaid:SetPoint("TOPLEFT", UI.DKPTable.frame, "BOTTOMLEFT", 0, 4);
+    checkBtnRaid.text:SetText(_LS["CHECKBTN_SHOWONLYRAIDMEMBERS"])
+    checkBtnRaid:SetChecked(core.Settings.ShowOnlyRaidmembers)
+    checkBtnRaid:SetScript("OnClick", function(self)
+        core.Settings.ShowOnlyRaidmembers = self:GetChecked()
+        ErrorDKP:DKPTableUpdate()
+    end)
+
     if not core:CheckSelfTrusted() then
       adjustDKPButton:Hide()
     end
-
+    UI.DKPTable:SetFilter(tableFilter)
     ErrorDKP:DKPTableUpdate()
+
+    return UI.DKPTable
 end
 
 function ErrorDKP:BroadcastDKPTable()
   if core:CheckSelfTrusted() then
     core.Sync:Send("ErrDKPDKPSync", {ATS=core:GetDKPDataTimestamp(), DataSet=core.DKPTable })
+    --core.Sync:SendTo("ErrDKPDKPSync", {ATS=core:GetDKPDataTimestamp(), DataSet=core.DKPTable }, "Karaffe")
   else
     core:Print(_L["MSG_NOT_ALLOWED"])
   end

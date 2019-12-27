@@ -27,20 +27,42 @@ core.Commands = {
             core:Print("Debug output disabled")
         end
     end,
-    ["broadcast"] = function()
-        ErrorDKP:BroadcastDKPTable()
-    end,
-    ["bl"] = function()
-        ErrorDKP:BroadcastLootTable()
+    ["broadcast"] = function(mode)
+        if not core:CheckSelfTrusted() then return; end
+        if not mode or string.lower(mode) == "full" then
+            core:Print(_L["MSG_BROADCAST_FULL"])
+            ErrorDKP:BroadcastDKPTable()
+            ErrorDKP:BroadcastLootTable()
+        elseif string.lower(mode) == "dkp" then
+            core:Print(_L["MSG_BROADCAST_DKP"])
+            ErrorDKP:BroadcastDKPTable()
+        elseif string.lower(mode) == "items" then
+            core:Print(_L["MSG_BROADCAST_LOOT"])
+            ErrorDKP:BroadcastLootTable() 
+        end
     end,
     ["help"] = function()
-        print(" ");
+        print(" ")
         core:Print("|cff00cc66/edkp|r - ".._L["HELP_EDKP"])
         core:Print("|cff00cc66/edkp help|r - ".._L["HELP_HELP"])
         if core:CheckSelfTrusted() then
-            core:Print("|cff00cc66/edkp broadcast|r - ".._L["HELP_BROADCAST"])
+            print(" ")
+            core:Print("|cff00cc66".._L["HELP_BROADCAST"])
+            core:Print("|cff00cc66/edkp broadcast|r - ".._L["HELP_BROADCAST_FULL"])
+            core:Print("|cff00cc66/edkp broadcast dkp|r - ".._L["HELP_BROADCAST_DKP"])
+            core:Print("|cff00cc66/edkp broadcast items|r - ".._L["HELP_BROADCAST_ITEMS"])
         end
-	end
+    end,
+
+    ["test"] = function(...)
+        if core.Debug == true and core:CheckSelfTrusted() then
+            local fnct, arg1, arg2, arg3 = ...
+            if fnct == "brreq" then
+                core:PrintDebug("Test:",...)
+                core.Sync:SendTo("ErrDKPSyncReq", "FULL", "Karaffe")
+            end
+        end
+    end
 }
 
 -- Slash Command Handler

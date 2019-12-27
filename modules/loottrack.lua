@@ -31,11 +31,6 @@ local function ErrorDKP_LCD_AskCost()
     -- Make Sure LootConfirmDialog exists
     ErrorDKP:GetLootConfirmDialog()
 
-    -- else format text and show "Enter Cost" frame
-    -- local raidNum = core.AskCostQueue[1]["RaidNum"];
-    -- local itemNum = core.AskCostQueue[1]["ItemNum"];
-    -- local itemLink = core.AskCostQueue[1]["ItemLink"]
-    -- gather playerdata and fill drop down menu
     local playerData = {};
     local numRaidMembers = GetNumGroupMembers()
     
@@ -93,15 +88,27 @@ local function ErrorDKP_LCD_AddToItemCostQueue(LootInfo)
 end
 
 local function ErrorDKPAutoAddLootItem(playerName, itemLink, itemCount)
-	if (not playerName) then return; end
-	if (not itemLink) then return; end
-	if (not itemCount) then return; end
+    if (not playerName) then
+        core:Error("Can not add item, playerName is empty", playerName)
+        return
+    elseif (not itemLink) then   
+        core:Error("Can not add item, itemLink is empty", itemLink)
+        return
+    elseif (not itemCount) then  
+        core:Error("Can not add item, itemCount is empty", itemCount)
+        return
+    end
     core:PrintDebug("ErrorDKPAutoAddLootItem called - playerName: "..playerName.." - itemLink: "..itemLink.." - itemCount: "..itemCount);
+
     local itemName, _, itemId, itemString, itemRarity, itemColor, itemLevel, _, itemType, itemSubType, _, _, _, _, itemClassID, itemSubClassID = core:ItemInfo(itemLink);
-    if (not itemName == nil) then core:PrintDebug("Panic! Item information lookup failed horribly. Source: ErrorDKPAutoAddLootItem()"); return; end
+    if (not itemName == nil) then core:Error("Panic! Item information lookup failed horribly. Source: ErrorDKPAutoAddLootItem()"); return; end
+    
     -- check options, if this item should be tracked
     if (core.ISettings.ItemTracking_MinItemQualityToLog > itemRarity) then core:PrintDebug("Item not tracked - quality is too low."); return; end
-    if (core.ISettings["ItemTracking_IgnoreEnchantingMats"] and itemClassID == 7 and itemSubClassID == 12) then core:PrintDebug("Item not tracked - it is a enchanting material and the corresponding ignore option is on."); return; end
+    if (core.ISettings["ItemTracking_IgnoreEnchantingMats"] and itemClassID == 7 and itemSubClassID == 12) then 
+        core:PrintDebug("Item not tracked - it is aa enchanting material and the corresponding ignore option is on."); 
+        return; 
+    end
     
     local dkpValue = 0;
     local lootAction = nil;
@@ -120,7 +127,7 @@ local function ErrorDKPAutoAddLootItem(playerName, itemLink, itemCount)
         end
     end
 
-    -- if code reach this point, we should have valid item information, an active raid and at least one boss kill entry - make a table!
+    -- if code reach this point, we should have valid item information
     local LootInfo = {
         ["ItemLink"] = itemLink,
         ["ItemString"] = itemString,
@@ -130,7 +137,7 @@ local function ErrorDKPAutoAddLootItem(playerName, itemLink, itemCount)
         ["ItemCount"] = itemCount,
         ["Looter"] = playerName,
         ["DKPValue"] = dkpValue,
-        ["Time"] = time(),
+        ["Time"] = GetServerTime(),
         ["Note"] = itemNote,
     };
     -- ask the player for item cost
@@ -194,35 +201,10 @@ local function ErrorDKP_LCD_DropDownList_Toggle()
 end
 
 local function CreateLootConfirmDialog()
-    core.UI.LootConfirmDialog = CreateFrame("Frame", "ErrorDKP_LootConfirmDialog", UIParent)
+    core.UI.LootConfirmDialog = core:CreateDefaultFrame("ErrorDKP_LootConfirmDialog", "Loot-Tracker", 365, 285, true, true)
     local f = core.UI.LootConfirmDialog;
-    f:SetSize(365,285)
-    f:SetMovable(true)
-    f:EnableMouse(true)
     --f:Hide()
     f:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
-    f:SetBackdrop({
-        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-        tile = true,
-        edgeSize = 32,
-        tileSize = 32,
-        insets = { left = 11, right = 12, top = 12, bottom = 11 }
-    })
-    f:RegisterForDrag("LeftButton")
-    f:SetScript("OnDragStart", f.StartMoving)
-    f:SetScript("OnDragStop", f.StopMovingOrSizing)
-
-    local texture = f:CreateTexture(nil, "ARTWORK")
-    texture:SetTexture("Interface\\DialogFrame\\UI-DialogBox-Header")
-    texture:SetSize(300,64)
-    texture:SetPoint("TOP", core.UI.LootConfirmDialog, "TOP", 0, 12)
-
-    -- Title
-    core.UI.LootConfirmDialog.Title = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    local title = core.UI.LootConfirmDialog.Title
-    title:SetPoint("TOP", core.UI.LootConfirmDialog, "TOP", 0, -2)
-    title:SetText("Title")
 
     -- Textlines
     core.UI.LootConfirmDialog.Textline1 = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -373,40 +355,43 @@ function ErrorDKP:AddToLootHistory(itemLink, itemId, looter, dkp, broadcast)
     return ErrorDKP:AddItemToHistory(itemLink, itemId, looter, dkp, GetServerTime(), broadcast)
 end
 
-function ErrorDKP:AutoAddLoot(chatmsg)
-    if core.IsMLooter ~= true then
-        -- only Masterlooter tracks items
-        core:PrintDebug("AutoAddLoot ignored cause you are not the MasterLooter")
-        return
-    end
-    core:PrintDebug("Adding Loot")
-    -- patterns LOOT_ITEM / LOOT_ITEM_SELF are also valid for LOOT_ITEM_MULTIPLE / LOOT_ITEM_SELF_MULTIPLE - but not the other way around - try these first
-    -- first try: somebody else received multiple loot (most parameters)
-    local playerName, itemLink, itemCount = deformat(chatmsg, LOOT_ITEM_MULTIPLE);
-    -- next try: somebody else received single loot
-    if (playerName == nil) then
-        itemCount = 1;
-        playerName, itemLink = deformat(chatmsg, LOOT_ITEM);
-    end
-    -- if player == nil, then next try: player received multiple loot
-    if (playerName == nil) then
-        playerName = UnitName("player");
-        itemLink, itemCount = deformat(chatmsg, LOOT_ITEM_SELF_MULTIPLE);
-    end
-    -- if itemLink == nil, then last try: player received single loot
-    if (itemLink == nil) then
-        itemCount = 1;
-        itemLink = deformat(chatmsg, LOOT_ITEM_SELF);
-    end
-    -- if itemLink == nil, then there was neither a LOOT_ITEM, nor a LOOT_ITEM_SELF message
-    if (itemLink == nil) then 
-        core:PrintDebug("No valid loot event received."); 
-        return; 
-    end
-	-- if code reaches this point, we should have a valid looter and a valid itemLink
-    core:PrintDebug("Item looted - Looter is "..playerName.." and loot is "..itemLink);
-	ErrorDKPAutoAddLootItem(playerName, itemLink, itemCount);
-end	
+--
+-- Replaced cause chat only works when in range
+--
+-- function ErrorDKP:AutoAddLoot(chatmsg)
+--     if core.IsMLooter ~= true then
+--         -- only Masterlooter tracks items
+--         core:PrintDebug("AutoAddLoot ignored cause you are not the MasterLooter")
+--         return
+--     end
+--     core:PrintDebug("Adding Loot")
+--     -- patterns LOOT_ITEM / LOOT_ITEM_SELF are also valid for LOOT_ITEM_MULTIPLE / LOOT_ITEM_SELF_MULTIPLE - but not the other way around - try these first
+--     -- first try: somebody else received multiple loot (most parameters)
+--     local playerName, itemLink, itemCount = deformat(chatmsg, LOOT_ITEM_MULTIPLE);
+--     -- next try: somebody else received single loot
+--     if (playerName == nil) then
+--         itemCount = 1;
+--         playerName, itemLink = deformat(chatmsg, LOOT_ITEM);
+--     end
+--     -- if player == nil, then next try: player received multiple loot
+--     if (playerName == nil) then
+--         playerName = UnitName("player");
+--         itemLink, itemCount = deformat(chatmsg, LOOT_ITEM_SELF_MULTIPLE);
+--     end
+--     -- if itemLink == nil, then last try: player received single loot
+--     if (itemLink == nil) then
+--         itemCount = 1;
+--         itemLink = deformat(chatmsg, LOOT_ITEM_SELF);
+--     end
+--     -- if itemLink == nil, then there was neither a LOOT_ITEM, nor a LOOT_ITEM_SELF message
+--     if (itemLink == nil) then 
+--         core:PrintDebug("No valid loot event received."); 
+--         return; 
+--     end
+-- 	-- if code reaches this point, we should have a valid looter and a valid itemLink
+--     core:PrintDebug("Item looted - Looter is "..playerName.." and loot is "..itemLink);
+-- 	ErrorDKPAutoAddLootItem(playerName, itemLink, itemCount);
+-- end	
 
 function ErrorDKP:AskItemCost()
     ErrorDKP_LCD_AskCost()

@@ -14,10 +14,33 @@ local pendingItemRequests = {}
 
 local ScrollingTable = LibStub("ScrollingTable")
 
+function TableSort(table, rowa, rowb, sortbycol)
+    local column = table.cols[sortbycol]
+    local direction = column.sort or column.defaultsort or 1
+    --core:PrintDebug("TableSort", direction)
+    --local a, b = table:GetRow(rowa), table:GetRow(rowb);
+    
+    local a, b = table:GetCell(rowa, 1), table:GetCell(rowb, 1)
+    if a==b then
+        return false
+    else
+        local direction = column.sort or column.defaultsort or "asc"
+        if direction == "asc" then
+			return a < b;
+		else
+			return a > b;
+		end
+    end
+end
+
 local ItemPriceListTableColDef = {
+    { ["name"] = "", ["width"] = 1 }, -- invisible col with itemname just for sort
     { -- coloumn for Item Icon - need to store ID
         ["name"] = _LS["COLNAME"], 
         ["width"] = 30,
+        ["comparesort"] = TableSort,
+        ["defaultsort"] = "asc",
+        ["sort"] = "asc",
         ["DoCellUpdate"] = function(rowFrame, cellFrame, data, cols, row, realrow, column, fShow, self, ...)
             -- icon handling
             if fShow then 
@@ -34,7 +57,7 @@ local ItemPriceListTableColDef = {
                 cellFrame.cellItemTexture:SetHeight(25);
             end
             -- tooltip handling
-            local itemLink = self:GetCell(realrow, 5);
+            local itemLink = self:GetCell(realrow, 3);
             cellFrame:SetScript("OnEnter", function()
                 ErrorDKP:ShowItemTooltip(cellFrame, itemLink)
             end)
@@ -45,8 +68,7 @@ local ItemPriceListTableColDef = {
     },
     {["name"] = "", ["width"] = 179},
     {["name"] = _LS["COLPRICE"], ["width"] = 30},
-    {["name"] = _LS["COLPRIO"], ["width"] = 150},
-    {["name"] = "", ["width"] = 1} -- invisible column for itemString (needed for tooltip)
+    {["name"] = _LS["COLPRIO"], ["width"] = 150}
 };
 
 
@@ -54,7 +76,7 @@ local function PriceListTable_OnEvent(self, event, itemId, success)
     if event == "ITEM_DATA_LOAD_RESULT" then
         local itemIdString = tostring(itemId)
         if #pendingItemRequests > 0 then
-            core:PrintDebug(event, #pendingItemRequests, itemId)
+            --core:PrintDebug(event, #pendingItemRequests, itemId)
             for i,v in ipairs(pendingItemRequests) do
                 if itemIdString == v.itemId then
                     core:PrintDebug(event, itemId, success)
@@ -81,7 +103,7 @@ function PriceListTableUpdate()
             --core:Print("Does item exist:", C_Item.DoesItemExistByID(k))
             --link = "|cff9d9d9d|Hitem:"..k..":::::::::::::::|h[Fractured Canine]|h|r"
             PriceListTableData[index]= { 
-                k, itemLink, v["price"], v["prio"], itemLink
+                itemName, k, itemLink, v["price"], v["prio"]
             }
             index = index + 1
         else
@@ -94,7 +116,7 @@ function PriceListTableUpdate()
                 end
             end
             if not alreadyIn then
-                core:PrintDebug("Not in chache do rquest")
+                --core:PrintDebug("Not in chache do rquest")
                 C_Item.RequestLoadItemDataByID(k)
                 table.insert(pendingItemRequests,{itemId = k})
             end
@@ -102,6 +124,8 @@ function PriceListTableUpdate()
     end
     UI.PriceListTable:ClearSelection()
     UI.PriceListTable:SetData(PriceListTableData, true)
+    UI.PriceListTable:SortData()
+    UI.PriceListTable:SortData()
 end
 
 function ErrorDKP:CreatePriceListTable()
@@ -110,7 +134,7 @@ function ErrorDKP:CreatePriceListTable()
     UI.PriceListTable.frame:SetPoint("TOPLEFT", ErrorDKPMainDialogBG, "TOPLEFT", 300, -40);
     UI.PriceListTable.frame:SetPoint("BOTTOMLEFT", ErrorDKPMainDialogBG, "BOTTOMLEFT", 0, 10);
     UI.PriceListTable.head:SetHeight(15)
-    UI.PriceListTable:EnableSelection(true)
+    UI.PriceListTable:EnableSelection(false)
 
     -- Title
     local title = UI.PriceListTable.frame:CreateFontString("test123")

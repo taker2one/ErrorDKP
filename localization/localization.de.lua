@@ -12,7 +12,8 @@ if GetLocale() == "deDE" then
             COLNAME = "Name",
             COLDKP = "DKP",
             COLCLASS = "Klasse",
-            TITLE = "DKP-Liste"
+            TITLE = "DKP-Liste",
+            CHECKBTN_SHOWONLYRAIDMEMBERS = "Nur Raidmember anzeigen"
         },
         LOOTHISTORYTABLE = {
             TITLE = "Loot Historie",
@@ -68,6 +69,9 @@ if GetLocale() == "deDE" then
         MSG_BROADCAST_DKP_REQ = "Veteile DKP Table auf Anfrage von ",
         MSG_BROADCAST_LOOT_REQ = "Verteile Loot-Tabelle auf Anfrage von ",
         MSG_BROADCAST_FULL_REQ = "Veteile sämtliche Date auf Anfrage von ",
+        MSG_BROADCAST_DKP = "Veteile DKP Table.",
+        MSG_BROADCAST_LOOT = "Verteile Loot-Tabelle.",
+        MSG_BROADCAST_FULL = "Veteile sämtliche Daten.",
         MSG_SYNC_FINISHED = "Vollständiges %s update von %s erhalten.",
         MSG_LOOT_ADDED = "%s zur Loot-Historie hinzugefügt.",
         MSG_LOOT_DISENCHANTED = "%s wurde entzaubert.",
@@ -76,7 +80,10 @@ if GetLocale() == "deDE" then
 
         HELP_EDKP = "Öffnet das ErrorDKP Fenster.",
         HELP_HELP = "Gibt die aktuelle Hilfeliste aus.",
-        HELP_BROADCAST = "Braodcast der Daten an alle Gildenmitglieder."
+        HELP_BROADCAST = "------Broadcasts------",
+        HELP_BROADCAST_FULL = "Broadcast der Daten an alle Gildenmitglieder.",
+        HELP_BROADCAST_DKP = "Broadcast der DKP-Daten an alle Gildenmitglieder.",
+        HELP_BROADCAST_ITEMS = "Broadcast der Item-Daten an alle Gildenmitglieder.",
     }
 
 end

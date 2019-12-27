@@ -11,7 +11,8 @@ local addonName, core = ...;
             COLNAME = "Name",
             COLDKP = "DKP",
             COLCLASS = "Class",
-            TITLE = "DKP-List"
+            TITLE = "DKP-List",
+            CHECKBTN_SHOWONLYRAIDMEMBERS = "Show only raidmembers"
         },
         LOOTHISTORYTABLE = {
             TITLE = "Loot History",
@@ -67,6 +68,9 @@ local addonName, core = ...;
         MSG_BROADCAST_DKP_REQ = "Broadcasting DKP-Table after request from ",
         MSG_BROADCAST_LOOT_REQ = "Broadcasting Loot-Table after request from ",
         MSG_BROADCAST_FULL_REQ = "Broadcasting all Data after request from ",
+        MSG_BROADCAST_DKP = "Broadcasting DKP-Table.",
+        MSG_BROADCAST_LOOT = "Broadcasting Loot-Table.",
+        MSG_BROADCAST_FULL = "Broadcasting all Data.",
         MSG_SYNC_FINISHED = "Got full %s update from %s.",
         MSG_LOOT_ADDED = "%s added to loot history.",
         MSG_LOOT_DISENCHANTED = "%s got disenchanted.",
@@ -74,6 +78,9 @@ local addonName, core = ...;
         MSG_SURVEY_CANCELLED_BY = "The Item-Survey got cancelled by %s",
 
         HELP_EDKP = "Opens ErrorDKP window.",
-        HELP_HELP = "Prints cuurent help list.",
-        HELP_BROADCAST = "Initiate a table broadcast."
+        HELP_HELP = "Prints current help list.",
+        HELP_BROADCAST = "------Broadcasts------",
+        HELP_BROADCAST_FULL = "Initiate a full data broadcast (DKP+Items).",
+        HELP_BROADCAST_DKP = "Initiate a DKP-Table broadcast to all guild members.",
+        HELP_BROADCAST_ITEMS = "Initiate a Itemhistory-Table broadcast to all guild members.",
     }

@@ -33,7 +33,7 @@ function AdjustDKP(player, dkp)
             end
         end
         if entry then
-            core:PrintDebug("send: ", oldTimestamp, newTimestamp)
+            --core:PrintDebug("send: ", oldTimestamp, newTimestamp)
             core.Sync:Send("ErrDKPAdjP", { PTS = oldTimestamp, ATS = newTimestamp, DataSet = entry, Details = { DKP = dkp } })
             ErrorDKP:DKPTableUpdate()
         else 
@@ -68,7 +68,7 @@ end
 function ErrorDKP:AdjustDKPWithItem(player, dkp, itemHistoryEntry)
     if core:CheckSelfTrusted() then
         --Validate that player exists
-        local entry, oldTimestamp, newTimestamp;
+        local entry, oldTimestamp, newTimestamp
         for i, v in ipairs(core.DKPTable) do
             if v["name"] == player then
                 v["dkp"] = v["dkp"] + dkp

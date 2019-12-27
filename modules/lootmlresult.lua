@@ -68,9 +68,9 @@ local colDef = {
 		if fShow then
 			local class = self:GetCell(realrow, column)
 			if class then
-				cellFrame:SetNormalTexture("Interface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-CLASSES"); -- this is the image containing all class icons
-				local coords = CLASS_ICON_TCOORDS[class]; -- get the coordinates of the class icon we want
-				cellFrame:GetNormalTexture():SetTexCoord(unpack(coords)); -- cut out the region with our class icon according to coords
+				cellFrame:SetNormalTexture("Interface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-CLASSES") 	-- this is the image containing all class icons
+				local coords = CLASS_ICON_TCOORDS[class]														-- get the coordinates of the class icon we want
+				cellFrame:GetNormalTexture():SetTexCoord(unpack(coords)) 										-- cut out the region with our class icon according to coords
 			else -- if there's no class
 				cellFrame:SetNormalTexture("Interface/ICONS/INV_Sigil_Thorim.png")
 			end
@@ -324,16 +324,13 @@ function MLResult:CheckResponsesMissing()
 end
 
 function MLResult:CreateFrame()
-	local f = core:CreateDefaultFrame("MLResultFrame", "Result", 250, 480)
+	local f = core:CreateDefaultFrame("MLResultFrame", "Result", 250, 480, true, true)
 	core.UI.MLResult = f
     f:SetPoint("CENTER", UIParent, "CENTER", 550, 0)
 
     local st = ScrollingTable:CreateST(colDef, 16, 20, nil, f)
     f.ScrollingTable = st
 	st.frame:SetPoint("TOPLEFT", f, "TOPLEFT", 22, -100)
-	
-	local closeButton = CreateFrame("Button", nil, f, "UIPanelCloseButton")
-    closeButton:SetPoint("TOPRIGHT", f, "TOPRIGHT", -5, -5)
 
 	local item = CreateFrame("Button", nil, f)
     item:SetNormalTexture("Interface/ICONS/INV_Misc_QuestionMark")

@@ -81,7 +81,6 @@ local function UpdateDataTimestamp()
 end
 
 local function tableFilter(self, row)
-    --if date('%Y-%m-%d', row[5]) == date('%Y-%m-%d', row[5])--date('%Y-%m-%d') ,
     if not core.Settings.ShowOnlyItemsToday then return true end
     if core.Settings.ShowOnlyItemsToday and row[5] >= GetServerTime() - 86400 -- 24h
     then
@@ -223,6 +222,7 @@ end
 function ErrorDKP:BroadcastLootTable()
     if core:CheckSelfTrusted() then
         core.Sync:Send("ErrDKPLootSync", {ATS=core:GetLootDataTimestamp(), DataSet=core.LootLog })
+        ---core.Sync:SendTo("ErrDKPLootSync", {ATS=core:GetLootDataTimestamp(), DataSet=core.LootLog }, "Karaffe")
     else
         core:Print(_L["MSG_NOT_ALLOWED"])
     end
