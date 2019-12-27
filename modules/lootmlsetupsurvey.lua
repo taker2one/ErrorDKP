@@ -81,7 +81,7 @@ function MLSetupSurvey:Cancel()
 end
 
 function MLSetupSurvey:CreateFrame()
-    core.UI.MLSetupSurvey = core:CreateDefaultFrame("ErrorDKPSetupLootSurvey", "Setup", 260, 305)
+    core.UI.MLSetupSurvey = core:CreateDefaultFrame("ErrorDKPSetupLootSurvey", "Setup", 260, 305, false, true)
     local f = core.UI.MLSetupSurvey
     f:SetPoint("CENTER", UIParent, "CENTER")
 
