@@ -2,7 +2,7 @@
 --#  Project: ErrorDKP
 --#  File: core.lua
 --#  Author: Manuel "Doktorwho@Venoxis" Ebner
---#  Last Edit: 11.12.2019
+--#  Last Edit: 29.12.2019
 --###############################################
 
 local addonName, core = ...;
@@ -15,7 +15,7 @@ local deformat = LibStub("LibDeformat-3.0")
 
 -- Version
 core.Version = GetAddOnMetadata("ErrorDKP", "Version")
-core.Build = 1130301
+core.Build = 1130302
 core.Type = "R" -- R = Release, B = Beta, A = Alpha
 
 --SetCVar("ScriptErrors", 1)
