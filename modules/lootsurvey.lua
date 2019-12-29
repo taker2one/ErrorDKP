@@ -111,9 +111,8 @@ function LootSurvey:EntryOpen()
 end
 
 function LootSurvey:CreateFrame()
-    local f = core:CreateDefaultFrame("ErrorDKPLootSurveyFrame", "Loot Survey", 420, 375)
+    local f = core:CreateDefaultFrame("ErrorDKPLootSurveyFrame", "Loot Survey", 420, 375, false, true)
     core.UI.LootSurvey = f
-    f:SetPoint("CENTER", UIParent, "CENTER")
 
     f.Entries = {}
 

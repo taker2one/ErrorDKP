@@ -7,10 +7,10 @@ multiTable = {
 },
 }
 DKPInfo = {
-	["date"] = "22.12.19 23:04:26",
-	["timestamp"] = "1577055866",
+	["date"] = "29.12.19 11:50:06",
+	["timestamp"] = "1577620206",
 	["process_dkp_ver"] = "3.0",
-	["total_players"] = 56,
+	["total_players"] = 60,
 	["total_items"] = 224,
 	["total_points"] = 0,
 	}
@@ -42,16 +42,6 @@ gdkp = {
 			["dkp_spend"] = 195.0,
 			["dkp_adjust"] = 0,
 			["dkp_current"] = -9.97,
-			["class"] = "Schurke",
-			["rcount"] = 0,
-			}
-		,
-		["Cozy"] = {
-			["DKP"] = -79,
-			["dkp_earned"] = 170.51,
-			["dkp_spend"] = 185.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = -79.04,
 			["class"] = "Schurke",
 			["rcount"] = 0,
 			}
@@ -107,11 +97,11 @@ gdkp = {
 			}
 		,
 		["Errorbank"] = {
-			["DKP"] = 15,
+			["DKP"] = 25,
 			["dkp_earned"] = 239.76,
 			["dkp_spend"] = 300.0,
 			["dkp_adjust"] = 0,
-			["dkp_current"] = 15.84,
+			["dkp_current"] = 25.84,
 			["class"] = "Magier",
 			["rcount"] = 0,
 			}
@@ -136,6 +126,16 @@ gdkp = {
 			["rcount"] = 0,
 			}
 		,
+		["Goon"] = {
+			["DKP"] = 0,
+			["dkp_earned"] = 0.0,
+			["dkp_spend"] = 0.0,
+			["dkp_adjust"] = 0,
+			["dkp_current"] = 0.0,
+			["class"] = "Schurke",
+			["rcount"] = 0,
+			}
+		,
 		["Gromsuk"] = {
 			["DKP"] = 168,
 			["dkp_earned"] = 228.48,
@@ -153,16 +153,6 @@ gdkp = {
 			["dkp_adjust"] = 0,
 			["dkp_current"] = -67.56,
 			["class"] = "Druide",
-			["rcount"] = 0,
-			}
-		,
-		["Hexinger"] = {
-			["DKP"] = 49,
-			["dkp_earned"] = 146.06,
-			["dkp_spend"] = 125.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 49.01,
-			["class"] = "Hexenmeister",
 			["rcount"] = 0,
 			}
 		,
@@ -377,11 +367,11 @@ gdkp = {
 			}
 		,
 		["Scared"] = {
-			["DKP"] = 17,
+			["DKP"] = 7,
 			["dkp_earned"] = 154.35,
 			["dkp_spend"] = 160.0,
 			["dkp_adjust"] = 0,
-			["dkp_current"] = 17.3,
+			["dkp_current"] = 7.3,
 			["class"] = "Magier",
 			["rcount"] = 0,
 			}
@@ -403,16 +393,6 @@ gdkp = {
 			["dkp_adjust"] = 0,
 			["dkp_current"] = -33.57,
 			["class"] = "Schurke",
-			["rcount"] = 0,
-			}
-		,
-		["Watschenbaum"] = {
-			["DKP"] = 119,
-			["dkp_earned"] = 154.35,
-			["dkp_spend"] = 60.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 119.8,
-			["class"] = "Krieger",
 			["rcount"] = 0,
 			}
 		,
@@ -467,12 +447,6 @@ DKP_ITEMS = {
 		,
 		}
 	,
-	["Cozy"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
 	["Davanus"] = {
 		["Items"] = {
 			}
@@ -521,6 +495,12 @@ DKP_ITEMS = {
 		,
 		}
 	,
+	["Goon"] = {
+		["Items"] = {
+			}
+		,
+		}
+	,
 	["Gromsuk"] = {
 		["Items"] = {
 			}
@@ -528,12 +508,6 @@ DKP_ITEMS = {
 		}
 	,
 	["Hasenpfote"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Hexinger"] = {
 		["Items"] = {
 			}
 		,
@@ -678,12 +652,6 @@ DKP_ITEMS = {
 		}
 	,
 	["Stichtag"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Watschenbaum"] = {
 		["Items"] = {
 			}
 		,

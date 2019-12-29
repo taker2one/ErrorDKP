@@ -2,13 +2,13 @@
 --#  Project: ErrorDKP
 --#  File: pricelist.lua
 --#  Author: Manuel "Doktorwho@Venoxis" Ebner
---#  Last Edit: 05.12.2019
+--#  Last Edit: 29.12.2019
 --###############################################
 local addonName, core = ...
 
 local pricelistInfo = {
-    ["version"] = "1.3",
-    ["timestamp"] = "1575554162"
+    ["version"] = "1.4",
+    ["timestamp"] = "1577619920"
 }
 
 local pricelist = {
@@ -157,6 +157,8 @@ local pricelist = {
     ["19145"]= { price = "60" ,prio = "Caster"},
     ["19146"]= { price = "40" ,prio = "Warri & Schami DPS"},
     ["19147"]= { price = "80" ,prio = "Caster"},
+    ["17110"]= { price = "20" ,prio = ""},
+    ["19139"]= { price = "10" ,prio = ""},
 }
 
 core.Imports.ItemPriceList = pricelist

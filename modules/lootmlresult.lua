@@ -250,11 +250,25 @@ function MLResult:SwitchItem(i)
 	self:UpdateScrollTable(players, item.responses, old ~= itemIndex)
 end
 
+local function CountResponses(players, responses)
+	local totalPlayers = core:tcount(players)
+
+	local responseCount = 0
+	if responses then
+		for k,v in pairs(responses) do 
+			if v ~= "PENDING" then
+				-- Pending is not a final respone 
+				responseCount = responseCount + 1
+			end
+		end
+	end
+    return totalPlayers, responseCount
+end
+
 function MLResult:Update(players, responses)
 	--Update Repsone Fontstring upper right corner
 	local f = self:GetFrame()
-	local totalPlayers = core:tcount(players)
-	local responseCnt = core:tcount(responses)
+	local totalPlayers, responseCnt = CountResponses(players, responses)
 	f.ResponseFontString:SetText( _LS["RESPONSES"].." "..responseCnt.."/"..totalPlayers )
 	MLResult:UpdateItemButtons()
 	if core.SurveyInProgress and not self:CheckResponsesMissing() then
@@ -326,7 +340,6 @@ end
 function MLResult:CreateFrame()
 	local f = core:CreateDefaultFrame("MLResultFrame", "Result", 250, 480, true, true)
 	core.UI.MLResult = f
-    f:SetPoint("CENTER", UIParent, "CENTER", 550, 0)
 
     local st = ScrollingTable:CreateST(colDef, 16, 20, nil, f)
     f.ScrollingTable = st

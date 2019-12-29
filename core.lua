@@ -74,7 +74,7 @@ core.ISettings = {
         RowHeight = 18,
         RowCount = 27
     },
-    MasterLootMinQuality = _C.ITEMRARITY.EPIC, 
+    MasterLootMinQuality = _C.ITEMRARITY.EPIC,
     ItemTracking_MinItemQualityToLog = _C.ITEMRARITY.EPIC,
     ItemTracking_IgnoreEnchantingMats = true
 }
@@ -92,7 +92,7 @@ core.DefaultSettings = {
 core.UI = {}
 
 -- Debug
-core.Debug = true --DBG
+core.Debug = false 
 function core:PrintDebug(...)
     if core.Debug then
         print("|cff90EE90<ErrorDKP-Dbg>|r", ...)

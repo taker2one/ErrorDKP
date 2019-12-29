@@ -29,6 +29,8 @@ end
 function LootTracker:Handler(t)
     if t == "CANCEL" then
         self:GetAddFrame():Hide()
+        self:ClearInputs()
+        return
     end
 
     core:PrintDebug(" LootTracker:OnChatEdit_InsertLink("..t..")");
@@ -64,10 +66,18 @@ function LootTracker:Handler(t)
         ErrorDKP:AdjustDKPWithItem("Errorbank", -price, historyEntry)
     elseif t == "DISENCHANTED" then
         ErrorDKP:AddToLootHistory(itemLink, itemId, "disenchanted", 0, true)
-    elseif t == "CANCEL" then
-        self:ResetAddFrame()
-        f:Hide()
     end
+
+    self:GetAddFrame():Hide()
+    self:ClearInputs()
+end
+
+function LootTracker:ClearInputs()
+    local f = self:GetAddFrame()
+
+    f.LooterInput:SetText("")
+    f.PriceInput:SetText("")
+    f.ItemInput:SetText("")
 end
 
 function LootTracker:CreateAddFrame()
@@ -208,19 +218,6 @@ function LootTracker:CreateAddFrame()
     ddButton:SetNormalTexture(ddButton.normalTexture)
     ddButton:SetPushedTexture(ddButton.pushedTexture)
     ddButton:SetHighlightTexture(ddButton.highlightTexture)
-
-    --for tooltip
-    local ttarea = CreateFrame("FRAME", nil, f)
-    f.ttarea = ttarea
-    ttarea:SetSize(100,12)
-    ttarea:EnableMouse(true)
-    ttarea:SetPoint("CENTER", textline2, "CENTER")
-    ttarea:SetScript("OnEnter", function(self)
-        ErrorDKP:ShowItemTooltip(self, f.Textline2:GetText())
-    end)
-    ttarea:SetScript("OnLeave", function()
-        ErrorDKP:HideItemTooltip()
-    end)
 
     return f
 end
