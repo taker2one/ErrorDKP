@@ -92,9 +92,11 @@ local function tableFilter(self, row)
         if not UnitInRaid("player") and not UnitInParty("player") then return false end
         local cnt = GetNumGroupMembers()
         local i = 1
-        while i < cnt do
-            name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(i)
+        while i <= cnt do
+            local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(i)
+            i = i + 1
             if name == row[4] then return true end
+            
         end
     end
 end
