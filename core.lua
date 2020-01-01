@@ -15,7 +15,7 @@ local deformat = LibStub("LibDeformat-3.0")
 
 -- Version
 core.Version = GetAddOnMetadata("ErrorDKP", "Version")
-core.Build = 1130303
+core.Build = 1130304
 core.Type = "R" -- R = Release, B = Beta, A = Alpha
 
 --SetCVar("ScriptErrors", 1)
@@ -286,7 +286,7 @@ function core:CreateDefaultFrame(
             core.Settings[name.."PosPoint"] = point
             core.Settings[name.."PosRelativePoint"] = relativePoint
         end)
-
+        f:SetPoint("CENTER", UIParent, "CENTER")
         if core.Settings[name.."PosX"] and core.Settings[name.."PosY"] and core.Settings[name.."PosPoint"] and core.Settings[name.."PosRelativePoint"] then
             f:ClearAllPoints()
             f:SetPoint(core.Settings[name.."PosPoint"], f:GetParent(), core.Settings[name.."PosRelativePoint"], core.Settings[name.."PosX"], core.Settings[name.."PosY"])

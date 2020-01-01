@@ -7,10 +7,10 @@ multiTable = {
 },
 }
 DKPInfo = {
-	["date"] = "29.12.19 11:50:06",
-	["timestamp"] = "1577620206",
+	["date"] = "30.12.19 17:50:27",
+	["timestamp"] = "1577728227",
 	["process_dkp_ver"] = "3.0",
-	["total_players"] = 60,
+	["total_players"] = 64,
 	["total_items"] = 224,
 	["total_points"] = 0,
 	}
@@ -46,6 +46,16 @@ gdkp = {
 			["rcount"] = 0,
 			}
 		,
+		["Cyless"] = {
+			["DKP"] = 0,
+			["dkp_earned"] = 0.0,
+			["dkp_spend"] = 0.0,
+			["dkp_adjust"] = 0,
+			["dkp_current"] = 0.0,
+			["class"] = "Schurke",
+			["rcount"] = 0,
+			}
+		,
 		["Davanus"] = {
 			["DKP"] = 0,
 			["dkp_earned"] = 167.48,
@@ -73,6 +83,16 @@ gdkp = {
 			["dkp_adjust"] = 0,
 			["dkp_current"] = 13.39,
 			["class"] = "Krieger",
+			["rcount"] = 0,
+			}
+		,
+		["Dep"] = {
+			["DKP"] = 0,
+			["dkp_earned"] = 0.0,
+			["dkp_spend"] = 0.0,
+			["dkp_adjust"] = 0,
+			["dkp_current"] = 0.0,
+			["class"] = "Jäger",
 			["rcount"] = 0,
 			}
 		,
@@ -276,6 +296,16 @@ gdkp = {
 			["rcount"] = 0,
 			}
 		,
+		["Nycrot"] = {
+			["DKP"] = 0,
+			["dkp_earned"] = 0.0,
+			["dkp_spend"] = 0.0,
+			["dkp_adjust"] = 0,
+			["dkp_current"] = 0.0,
+			["class"] = "Hexenmeister",
+			["rcount"] = 0,
+			}
+		,
 		["Näider"] = {
 			["DKP"] = 1,
 			["dkp_earned"] = 256.28,
@@ -293,6 +323,16 @@ gdkp = {
 			["dkp_adjust"] = 0,
 			["dkp_current"] = 127.43,
 			["class"] = "Druide",
+			["rcount"] = 0,
+			}
+		,
+		["Paletti"] = {
+			["DKP"] = 0,
+			["dkp_earned"] = 0.0,
+			["dkp_spend"] = 0.0,
+			["dkp_adjust"] = 0,
+			["dkp_current"] = 0.0,
+			["class"] = "Magier",
 			["rcount"] = 0,
 			}
 		,
@@ -426,6 +466,16 @@ gdkp = {
 			["rcount"] = 0,
 			}
 		,
+		["Zypnek"] = {
+			["DKP"] = 0,
+			["dkp_earned"] = 0.0,
+			["dkp_spend"] = 0.0,
+			["dkp_adjust"] = 0,
+			["dkp_current"] = 0.0,
+			["class"] = "Magier",
+			["rcount"] = 0,
+			}
+		,
 		}
 	}
 DKP_ITEMS = {
@@ -447,6 +497,12 @@ DKP_ITEMS = {
 		,
 		}
 	,
+	["Cyless"] = {
+		["Items"] = {
+			}
+		,
+		}
+	,
 	["Davanus"] = {
 		["Items"] = {
 			}
@@ -460,6 +516,12 @@ DKP_ITEMS = {
 		}
 	,
 	["Deobodyspray"] = {
+		["Items"] = {
+			}
+		,
+		}
+	,
+	["Dep"] = {
 		["Items"] = {
 			}
 		,
@@ -585,6 +647,12 @@ DKP_ITEMS = {
 		,
 		}
 	,
+	["Nycrot"] = {
+		["Items"] = {
+			}
+		,
+		}
+	,
 	["Näider"] = {
 		["Items"] = {
 			}
@@ -592,6 +660,12 @@ DKP_ITEMS = {
 		}
 	,
 	["Okat"] = {
+		["Items"] = {
+			}
+		,
+		}
+	,
+	["Paletti"] = {
 		["Items"] = {
 			}
 		,
@@ -670,6 +744,12 @@ DKP_ITEMS = {
 		}
 	,
 	["Zelu"] = {
+		["Items"] = {
+			}
+		,
+		}
+	,
+	["Zypnek"] = {
 		["Items"] = {
 			}
 		,
