@@ -223,6 +223,7 @@ function ErrorDKP_OnEventHandler(self, event, ...)
         ErrorDKP:AskItemCost()
     elseif event == "PLAYER_ENTERING_WORLD" then
         self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+        self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
         if IsInGuild() then
             core.Sync:Send("ErrDKPBuildCheck", tostring(core.Build))
         end
@@ -245,6 +246,9 @@ function ErrorDKP_OnEventHandler(self, event, ...)
         -- members goes offline triggers this?
         core:PrintDebug("RAID_ROSTER_UPDATE", ...)
         core.IsMLooter = core:CheckMasterLooter()
+        if not self:IsEventRegistered("COMBAT_LOG_EVENT_UNFILTERED") then
+            self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+        end
     --elseif (event == "OPEN_MASTER_LOOT_LIST") then 
     --    core:PrintDebug(event, ...)
     elseif (event == "LOOT_SLOT_CLEARED")  then
@@ -256,11 +260,23 @@ function ErrorDKP_OnEventHandler(self, event, ...)
         ErrorDKP:BuidLootSlotInfo()
     elseif (event == "ENCOUNTER_LOOT_RECEIVED") then
         core:PrintDebug(event, ...)
-    elseif (event == "GUILD_ROSTER_UPDATE") then
-        core:PrintDebug(event, ...)
+    --elseif (event == "GUILD_ROSTER_UPDATE") then
+      --  core:PrintDebug(event, ...)
     elseif (event == "LOOT_OPENED") then
         core:PrintDebug(event, ...)
         ErrorDKP:OnLootOpened()
+    elseif (event == "COMBAT_LOG_EVENT_UNFILTERED") then
+        if not UnitInRaid("player") then
+            self:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+            return
+        end
+        local timestamp, subevent, _, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, destName = CombatLogGetCurrentEventInfo()
+        if subevent == "UNIT_DIED" then
+            core:PrintDebug(subevent, destName, destGUID)
+            C_Timer.After(1, function()
+                core:HandleUnitDiedLogEvent(destName, destGUID)
+            end) -- wait a bit till loot is ready
+        end
     end
 end
 

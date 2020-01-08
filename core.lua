@@ -34,6 +34,11 @@ core.LootLog = {}
 core.LootQueue = {}
 core.PendingMLI = nil -- Master Loot detected but waiting for LOOT_SLOT_CLEARED
 
+core.CreatureIdsSkinning = { -- Ids of creatures that can be skinned in raid
+    11673,
+    11671
+}
+
 core.LastUpdateAvailableMsg = 0
 core.AskCostQueueRunning = false
 --
@@ -92,7 +97,7 @@ core.DefaultSettings = {
 core.UI = {}
 
 -- Debug
-core.Debug = false 
+core.Debug = true 
 function core:PrintDebug(...)
     if core.Debug then
         print("|cff90EE90<ErrorDKP-Dbg>|r", ...)
@@ -160,6 +165,20 @@ function core:CheckMasterLooter()
       end
     --end
     return nil
+end
+
+function core:HandleUnitDiedLogEvent(creatureName, creatureGUID)
+  --CreatureIdsSkinning
+    core:PrintDebug("Can loot unit", CanLootUnit(creatureGUID))
+    local hasLoot, canLoot = CanLootUnit(creatureGUID)
+    if hasLoot and canLoot then
+        local _, _, _, _, _, npcId = strsplit("-", creatureGuid)
+        for i,v in ipairs(core.CreatureIdsSkinning) do
+            if v == npcId then
+                core.Sync:SendRaid("CanLootSkinNpc", { ["guid"] = creatureGUID, ["id"] = npcId, ["name"] = creatureName })
+            end
+        end
+    end
 end
 
 function core:ToEQDKPTime(timestamp)

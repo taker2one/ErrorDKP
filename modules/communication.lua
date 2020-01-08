@@ -52,12 +52,14 @@ function Sync:OnEnable()
     self:RegisterComm("ErrDKPSurvAnsw")        -- Answer for an item survey
     self:RegisterComm("ErrDKPSurvClosed")      -- Item survey is closed
     self:RegisterComm("ErrDKPSurvCancel")      -- Item survey canceled
+    self:RegisterComm("CanLootSkinNpc")        -- Player report he can loot a skinnable creature
 
     --Mixed
     self:RegisterComm("VerCheck")        -- Request Version from every Group/Guild member
     self:RegisterComm("VerResp")         -- Response to Versionrequest
+    self:RegisterComm("ItemCheck")       -- Request Item amount of every Group/Guild member
+    self:RegisterComm("ItemCheckResp")   -- Response to ItemCheck request
 end
-
 
 --###############################################
 --# Message Implementation
@@ -303,14 +305,26 @@ function Sync:OnCommReceived(prefix, message, channel, sender)
         end
     end
 
+    if prefix == "ItemCheck" then
+        if VerifySender(sender) then
+            core:PrintDebug("Got Itemcheck request from",sender, message)
+            self:SendTo("ItemCheckResp", tostring(GetItemCount(message)), sender)
+        end
+    elseif prefix == "ItemCheckResp" then
+        ErrorDKP.ItemCheck:OnCommResponse(sender, message)
+    elseif prefix == "CanLootSkinNpc" then
+        local success, deserialized = Serializer:Deserialize(message)
+        if success then
+            core:Print(string.format(_L["MSG_LOOT_SKIN_REQUIRED"], sender, deserialized.name))
+        end
+    end
+
     if prefix == "VerCheck" then
         if VerifySender(sender) then
             core:PrintDebug("Got Version request from ", sender)
             self:SendTo("VerResp", tostring(core.Build..core.Type), sender)
         end
-    end
-
-    if prefix == "VerResp" then
+    elseif prefix == "VerResp" then
         ErrorDKP.VersionCheck:OnCommResponse(sender, message)
     end
 end

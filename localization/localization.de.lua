@@ -28,7 +28,8 @@ if GetLocale() == "deDE" then
             MENU_SELECT = "Wähle aus",
             MENU_TOGGLE_ERRORDKP = "ErrorDKP Ein-/Ausblenden",
             MENU_ML_VOTE = "Lootabstimmung-Ergebnis",
-            MENU_VERSIONCHECK = "Versionscheck"
+            MENU_VERSIONCHECK = "Versionscheck",
+            MENU_ITEMCHECK = "Itemcheck"
         },
         EXPORTDIALOG = {
             TITLE = "Exportieren",
@@ -77,6 +78,7 @@ if GetLocale() == "deDE" then
         MSG_LOOT_DISENCHANTED = "%s wurde entzaubert.",
         MSG_SURVEY_CLOSED_BY = "Die Lootumfrage wurde von %s geschlossen.",
         MSG_SURVEY_CANCELLED_BY = "Die Lootumfrage wurde von %s abgebrochen.",
+        MSG_LOOT_SKIN_REQUIRED = "%s muss % plündern!",
 
         HELP_EDKP = "Öffnet das ErrorDKP Fenster.",
         HELP_HELP = "Gibt die aktuelle Hilfeliste aus.",

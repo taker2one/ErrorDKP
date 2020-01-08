@@ -42,6 +42,7 @@ modules\lootsurvey.lua
 modules\lootmlresult.lua
 modules\versioncheck.lua
 modules\lootadd.lua
+modules\itemcheck.lua
 
 widgets\iconbutton.lua
 # modules\DropDownMenu\DropDownMenuTemplates.xml
