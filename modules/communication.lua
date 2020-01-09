@@ -315,7 +315,20 @@ function Sync:OnCommReceived(prefix, message, channel, sender)
     elseif prefix == "CanLootSkinNpc" then
         local success, deserialized = Serializer:Deserialize(message)
         if success then
-            core:Print(string.format(_L["MSG_LOOT_SKIN_REQUIRED"], sender, deserialized.name))
+            if core.CanLootMessages["LastChange"] and time() - core.CanLootMessages["LastChange"] > 10 then
+                table.wipe(core.CanLootMessages)
+            end
+            if not core.CanLootMessages[deserialized.guid] then
+                core:PrintDebug("Got first CanLootSkinNpc", core:tcount(core.CanLootMessages))
+                core.CanLootMessages[deserialized.guid] = 1
+                core.CanLootMessages["LastChange"] = time()
+                C_Timer.After(1, function()
+                    core:ValidateCanLoot(core.CanLootMessages[deserialized.guid], deserialized.name, sender)
+                end)
+            else
+                core.CanLootMessages[deserialized.guid] =  core.CanLootMessages[deserialized.guid] + 1
+                core.CanLootMessages["LastChange"] = time()
+            end
         end
     end
 

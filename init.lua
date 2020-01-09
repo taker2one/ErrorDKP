@@ -221,6 +221,7 @@ function ErrorDKP_OnEventHandler(self, event, ...)
         -- Ask if items in queue
         core.IsMLooter = core:CheckMasterLooter()
         ErrorDKP:AskItemCost()
+        if core.TestMode then core:Print("Testmode is enabled!") end
     elseif event == "PLAYER_ENTERING_WORLD" then
         self:UnregisterEvent("PLAYER_ENTERING_WORLD")
         self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
@@ -247,6 +248,7 @@ function ErrorDKP_OnEventHandler(self, event, ...)
         core:PrintDebug("RAID_ROSTER_UPDATE", ...)
         core.IsMLooter = core:CheckMasterLooter()
         if not self:IsEventRegistered("COMBAT_LOG_EVENT_UNFILTERED") then
+            core:PrintDebug("COMBAT_LOG_EVENT_UNFILTERED is not registered => do it")
             self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
         end
     --elseif (event == "OPEN_MASTER_LOOT_LIST") then 
@@ -266,7 +268,7 @@ function ErrorDKP_OnEventHandler(self, event, ...)
         core:PrintDebug(event, ...)
         ErrorDKP:OnLootOpened()
     elseif (event == "COMBAT_LOG_EVENT_UNFILTERED") then
-        if not UnitInRaid("player") then
+        if not UnitInRaid("player") and not core.TestMode then
             self:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
             return
         end

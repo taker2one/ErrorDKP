@@ -10,6 +10,7 @@ local addonName, core = ...;
 core.ErrorDKP = {}
 local ErrorDKP = core.ErrorDKP
 local _C = core.CONSTANTS
+local _L = core._L
 
 local deformat = LibStub("LibDeformat-3.0")
 
@@ -37,6 +38,9 @@ core.PendingMLI = nil -- Master Loot detected but waiting for LOOT_SLOT_CLEARED
 core.CreatureIdsSkinning = { -- Ids of creatures that can be skinned in raid
     11673,
     11671
+}
+core.CanLootMessages = { -- save the messages from other members that they can loot something
+
 }
 
 core.LastUpdateAvailableMsg = 0
@@ -97,7 +101,8 @@ core.DefaultSettings = {
 core.UI = {}
 
 -- Debug
-core.Debug = true 
+core.TestMode = true -- tesmode for some features -- DBG
+core.Debug = true -- Enable debug output -- DBG
 function core:PrintDebug(...)
     if core.Debug then
         print("|cff90EE90<ErrorDKP-Dbg>|r", ...)
@@ -171,14 +176,34 @@ function core:HandleUnitDiedLogEvent(creatureName, creatureGUID)
   --CreatureIdsSkinning
     core:PrintDebug("Can loot unit", CanLootUnit(creatureGUID))
     local hasLoot, canLoot = CanLootUnit(creatureGUID)
-    if hasLoot and canLoot then
-        local _, _, _, _, _, npcId = strsplit("-", creatureGuid)
+    if hasLoot then
+        local _, _, _, _, _, npcId = strsplit("-", creatureGUID)
         for i,v in ipairs(core.CreatureIdsSkinning) do
-            if v == npcId then
+            if v == npcId then -- is in skinnable list, inform raid
                 core.Sync:SendRaid("CanLootSkinNpc", { ["guid"] = creatureGUID, ["id"] = npcId, ["name"] = creatureName })
+                return
+            elseif core.TestMode then
+                core:PrintDebug("Send CanLootSkinNpc to Karaffe cause addon is in TestMode!")
+                core.Sync:SendTo("CanLootSkinNpc", { ["guid"] = creatureGUID, ["id"] = npcId, ["name"] = creatureName }, GetUnitName("player"))
+                return
             end
         end
     end
+end
+
+function core:ValidateCanLoot(messageCnt, creatureName, sender)
+    if messageCnt == 1 then -- Only 1 person can loot, write to chat
+        if GetUnitName("player") == sender then
+            core:Print(string.format(_L["MSG_LOOT_SKIN_REQUIRED_YOU"], creatureName))
+        else
+            core:Print(string.format(_L["MSG_LOOT_SKIN_REQUIRED"], sender, creatureName))
+        end
+    elseif messageCnt > 1 then -- More then 1 person can loot, ignore
+        
+    end
+
+    -- Clean table
+    
 end
 
 function core:ToEQDKPTime(timestamp)

@@ -78,7 +78,8 @@ if GetLocale() == "deDE" then
         MSG_LOOT_DISENCHANTED = "%s wurde entzaubert.",
         MSG_SURVEY_CLOSED_BY = "Die Lootumfrage wurde von %s geschlossen.",
         MSG_SURVEY_CANCELLED_BY = "Die Lootumfrage wurde von %s abgebrochen.",
-        MSG_LOOT_SKIN_REQUIRED = "%s muss % plündern!",
+        MSG_LOOT_SKIN_REQUIRED = "%s muss %s plündern!",
+        MSG_LOOT_SKIN_REQUIRED_YOU = "Du musst %s plündern!",
 
         HELP_EDKP = "Öffnet das ErrorDKP Fenster.",
         HELP_HELP = "Gibt die aktuelle Hilfeliste aus.",

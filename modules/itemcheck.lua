@@ -59,8 +59,7 @@ end
 function ItemCheck:CreateFrame()
     local f = core:CreateDefaultFrame("ErrorDKPItemCheck", "ItemCheck", 500, 400, true, true)
     core.UI.ItemCheck = f
-    f:SetPoint("CENTER", UIParent, "CENTER")
-
+    tinsert(UISpecialFrames, "ErrorDKPItemCheck")  
     f.GroupCheckButton = core:CreateButton(f, "ErrorDKPItemCheckAQ", "Aqual Quintessence")
     f.GroupCheckButton:SetWidth(130)
     f.GroupCheckButton:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 12, 20)
