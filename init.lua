@@ -27,6 +27,15 @@ core.Commands = {
             core:Print("Debug output disabled")
         end
     end,
+    ["testmode"] = function(enable)
+        if enable then
+            core.TestMode = true
+            core:Print("TestMode enabled")
+        else
+            core.TestMode = false
+            core:Print("TestMode disabled")
+        end
+    end,
     ["broadcast"] = function(mode)
         if not core:CheckSelfTrusted() then return; end
         if not mode or string.lower(mode) == "full" then

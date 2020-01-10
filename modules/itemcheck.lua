@@ -33,7 +33,7 @@ end
 function ItemCheck:Start(item, channel)
     core:PrintDebug("Start Item check in ", channel, item)
     table.wipe(players)
-	if not channel or channel == "GUILD" then --DBG
+	if channel == "GUILD" then
 		GuildRoster()
 		for i = 1, GetNumGuildMembers() do
             local name, rank, _,_,_,_,_,_, online,_, class = GetGuildRosterInfo(i)
@@ -49,11 +49,9 @@ function ItemCheck:Start(item, channel)
 			local name, _, _, _, _, class, _, online = GetRaidRosterInfo(i)
 			self:AddPlayer(name, online)
         end
-        --core.Sync:SendRaid("ItemCheck", tostring(item)) DBG
-        core.Sync:Send("ItemCheck", tostring(item))
+        core.Sync:SendRaid("ItemCheck", tostring(item))
     end
     self:UpdateTable(players)
-	--self:ScheduleTimer("QueryTimer", 5)
 end
 
 function ItemCheck:CreateFrame()
