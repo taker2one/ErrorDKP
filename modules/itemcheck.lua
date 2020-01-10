@@ -30,7 +30,7 @@ function ItemCheck:AddPlayer(name)
     table.insert(players, p)
 end
 
-function ItemCheck:Start(item, channel)
+function ItemCheck:Start(item, channel, itemText)
     core:PrintDebug("Start Item check in ", channel, item)
     table.wipe(players)
 	if channel == "GUILD" then
@@ -38,7 +38,7 @@ function ItemCheck:Start(item, channel)
 		for i = 1, GetNumGuildMembers() do
             local name, rank, _,_,_,_,_,_, online,_, class = GetGuildRosterInfo(i)
             local name, realm = core:SplitString(name, "-", true)
-            core:PrintDebug("VersionCheckGuild", name, realm, online)
+            core:PrintDebug("ItemCheck Guild", name, realm, online)
 			if online then
 				self:AddPlayer(name, online)
 			end
@@ -51,25 +51,26 @@ function ItemCheck:Start(item, channel)
         end
         core.Sync:SendRaid("ItemCheck", tostring(item))
     end
-    self:UpdateTable(players)
+    self:UpdateTable(players, itemText)
 end
 
 function ItemCheck:CreateFrame()
     local f = core:CreateDefaultFrame("ErrorDKPItemCheck", "ItemCheck", 500, 400, true, true)
     core.UI.ItemCheck = f
     tinsert(UISpecialFrames, "ErrorDKPItemCheck")  
+
     f.GroupCheckButton = core:CreateButton(f, "ErrorDKPItemCheckAQ", "Aqual Quintessence")
     f.GroupCheckButton:SetWidth(130)
     f.GroupCheckButton:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 12, 20)
-    f.GroupCheckButton:SetScript("OnClick", function() 
-        self:Start(17333) -- Aqual Quintessence
+    f.GroupCheckButton:SetScript("OnClick", function(button) 
+        self:Start(17333, nil, button:GetText()) -- Aqual Quintessence
     end)
 
     f.OnyBagCheckButton = core:CreateButton(f, "ErrorDKPItemCheckAQ", "Ony Bag")
     f.OnyBagCheckButton:SetWidth(100)
     f.OnyBagCheckButton:SetPoint("BOTTOMLEFT", f.GroupCheckButton, "BOTTOMRIGHT", 10, 0)
-    f.OnyBagCheckButton:SetScript("OnClick", function() 
-        self:Start(17966) -- Onyxia Bag
+    f.OnyBagCheckButton:SetScript("OnClick", function(button) 
+        self:Start(17966, nil, button:GetText()) -- Onyxia Bag
     end)
 
     -- f.GuildCheckButton = core:CreateButton(f, "ErrorDKPItemCheckGuildButton", "Check in Guild")
@@ -81,11 +82,16 @@ function ItemCheck:CreateFrame()
     -- Ony Bag 17966
 
     local st = ScrollingTable:CreateST(colDef, 12, 20, nil, f)
-    st.frame:SetPoint("TOPLEFT",f,"TOPLEFT",12,-50)
-    st.frame:SetPoint("TOPRIGHT",f,"TOPRIGHT",-12,-50)
+    st.frame:SetPoint("TOPLEFT",f,"TOPLEFT",12,-80)
+    st.frame:SetPoint("TOPRIGHT",f,"TOPRIGHT",-12,-80)
     f:SetWidth(st.frame:GetWidth()+20)
 	f.rows = {}
     f.ScrollingTable = st
+
+    st.Title = st.frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    st.Title:SetPoint("BOTTOMLEFT", st.frame, "TOPLEFT", 5, 25)
+    st.Title:SetText("No check active")
+    
     
     f:SetScript("OnUpdate", function(self, elapsed) 
         self.TimeSinceLastUpdate = (self.TimeSinceLastUpdate or 0) + elapsed
@@ -101,18 +107,19 @@ function ItemCheck:CreateFrame()
     return f
 end
 
-function ItemCheck:UpdateTable(playerList, online)
+function ItemCheck:UpdateTable(playerList, itemText)
     local st = self:GetFrame().ScrollingTable
+    if itemText then
+        st.Title:SetText(itemText)
+    end
     local d = {}
-    local amount = "Offline"
-    if online then amount = "Pending" end
     
 
     for i, v in ipairs(playerList) do
         local entry = {
             " ",
             v.name,
-            v["amount"] or amount
+            v["amount"] or "Offline"
         }
         table.insert(d, entry)
     end

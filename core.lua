@@ -201,9 +201,6 @@ function core:ValidateCanLoot(messageCnt, creatureName, sender)
     elseif messageCnt > 1 then -- More then 1 person can loot, ignore
         
     end
-
-    -- Clean table
-    
 end
 
 function core:ToEQDKPTime(timestamp)
