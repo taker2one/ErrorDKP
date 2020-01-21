@@ -222,7 +222,6 @@ end
 -- Event Handler
 function ErrorDKP_OnEventHandler(self, event, ...)
     local arg1, arg2, arg3, arg4 = ...
-
     if event == "ADDON_LOADED" and arg1 == addonName then
         core:PrintDebug(event)
         OnInit()
@@ -262,6 +261,11 @@ function ErrorDKP_OnEventHandler(self, event, ...)
         end
     --elseif (event == "OPEN_MASTER_LOOT_LIST") then 
     --    core:PrintDebug(event, ...)
+    elseif (event == "RAID_INSTANCE_WELCOME") then
+        if not self:IsEventRegistered("COMBAT_LOG_EVENT_UNFILTERED") then
+            core:PrintDebug("COMBAT_LOG_EVENT_UNFILTERED is not registered => do it")
+            self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+        end
     elseif (event == "LOOT_SLOT_CLEARED")  then
         ErrorDKP:AddPendingMasterLoot(arg1)
     elseif (event == "LOOT_CLOSED") then 
@@ -278,6 +282,7 @@ function ErrorDKP_OnEventHandler(self, event, ...)
         ErrorDKP:OnLootOpened()
     elseif (event == "COMBAT_LOG_EVENT_UNFILTERED") then
         if not UnitInRaid("player") and not core.TestMode then
+            core:PrintDebug("Not in a raid, unregister: COMBAT_LOG_EVENT_UNFILTERED")
             self:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
             return
         end
@@ -298,6 +303,7 @@ event:RegisterEvent("PLAYER_ENTERING_WORLD")
 event:RegisterEvent("CHAT_MSG_LOOT")
 event:RegisterEvent("RAID_ROSTER_UPDATE")
 event:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
+event:RegisterEvent("RAID_INSTANCE_WELCOME")
 event:RegisterEvent("LOOT_SLOT_CLEARED")
 event:RegisterEvent("LOOT_CLOSED")
 event:RegisterEvent("LOOT_READY")

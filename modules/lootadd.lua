@@ -42,7 +42,11 @@ function LootTracker:Handler(t)
     local price = f.PriceInput:GetText()
     local item = f.ItemInput:GetText()
 
-    if not tonumber(price) then price = 0 end
+    if not tonumber(price) then 
+        price = 0 
+    else
+        price = tonumber(price)
+    end
 
     -- First check item cause this is need in any case
     local itemName, itemLink, itemId, itemString, itemRarity, itemColor, itemLevel, itemMinLevel, itemType, 
