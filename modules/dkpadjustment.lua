@@ -24,7 +24,7 @@ function AdjustDKP(player, dkp)
         --Validate that player exists
         local entry, oldTimestamp, newTimestamp;
         for i, v in ipairs(core.DKPTable) do
-            if v["name"] == player then
+            if string.lower(v["name"]) == string.lower(player) then
                 v["dkp"] = v["dkp"] + dkp
                 entry = v
                 oldTimestamp = core:GetDKPDataTimestamp()
@@ -47,7 +47,7 @@ function ErrorDKP:AutoAdjustDKP(player, dkp, itemLink)
         --Validate that player exists
         local entry, oldTimestamp, newTimestamp;
         for i, v in ipairs(core.DKPTable) do
-            if v["name"] == player then
+            if string.lower(v["name"]) == string.lower(player) then
                 v["dkp"] = v["dkp"] + dkp
                 entry = v
                 oldTimestamp = core:GetDKPDataTimestamp()
@@ -70,7 +70,7 @@ function ErrorDKP:AdjustDKPWithItem(player, dkp, itemHistoryEntry)
         --Validate that player exists
         local entry, oldTimestamp, newTimestamp
         for i, v in ipairs(core.DKPTable) do
-            if v["name"] == player then
+            if string.lower(v["name"]) == string.lower(player) then
                 v["dkp"] = v["dkp"] + dkp
                 entry = v
                 oldTimestamp = core:GetDKPDataTimestamp()

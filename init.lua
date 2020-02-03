@@ -64,12 +64,9 @@ core.Commands = {
     end,
 
     ["test"] = function(...)
-        if core.Debug == true and core:CheckSelfTrusted() then
-            local fnct, arg1, arg2, arg3 = ...
-            if fnct == "brreq" then
-                core:PrintDebug("Test:",...)
-                core.Sync:SendTo("ErrDKPSyncReq", "FULL", "Karaffe")
-            end
+        if core:CheckSelfTrusted() then
+            local registered = ErrorDKP.EventFrame:IsEventRegistered("COMBAT_LOG_EVENT_UNFILTERED")
+            core:Print("IsEventRegistered(COMBAT_LOG_EVENT_UNFILTERED)", registered)
         end
     end
 }
@@ -203,13 +200,6 @@ local function OnInit()
     
     -- Create MiniMapIcon
     ErrorDKP:CreateMiniMapIcon()
-
-    --ErrorDKP:GetLootSurveyDialog()
-    -- local testButton = ErrorDKP:CreateIconButton(UIParent, nil, nil)
-    -- testButton:SetPoint("CENTER", UIParent, "CENTER")
-    -- testButton:SetBorderColor("purple")
-    --ErrorDKP.LootSurvey:Start({}, 120)
-    --ErrorDKP.MLResult:Start(20)
 end
 
 
@@ -281,7 +271,9 @@ function ErrorDKP_OnEventHandler(self, event, ...)
         core:PrintDebug(event, ...)
         ErrorDKP:OnLootOpened()
     elseif (event == "COMBAT_LOG_EVENT_UNFILTERED") then
-        if not UnitInRaid("player") and not core.TestMode then
+        if 
+        not UnitInRaid("player") and 
+        not core.TestMode then
             core:PrintDebug("Not in a raid, unregister: COMBAT_LOG_EVENT_UNFILTERED")
             self:UnregisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
             return
@@ -298,6 +290,7 @@ end
 
 -- Register Events
 local event = CreateFrame("Frame", "EventFrame")
+ErrorDKP.EventFrame = event
 event:RegisterEvent("ADDON_LOADED")
 event:RegisterEvent("PLAYER_ENTERING_WORLD")
 event:RegisterEvent("CHAT_MSG_LOOT")

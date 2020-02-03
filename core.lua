@@ -2,7 +2,7 @@
 --#  Project: ErrorDKP
 --#  File: core.lua
 --#  Author: Manuel "Doktorwho@Venoxis" Ebner
---#  Last Edit: 29.12.2019
+--#  Last Edit: 03.02.2019
 --###############################################
 
 local addonName, core = ...;
@@ -16,7 +16,7 @@ local deformat = LibStub("LibDeformat-3.0")
 
 -- Version
 core.Version = GetAddOnMetadata("ErrorDKP", "Version")
-core.Build = 1130306
+core.Build = 1130307
 core.Type = "R" -- R = Release, B = Beta, A = Alpha
 
 --SetCVar("ScriptErrors", 1)
@@ -178,14 +178,19 @@ function core:HandleUnitDiedLogEvent(creatureName, creatureGUID)
     local hasLoot, canLoot = CanLootUnit(creatureGUID)
     if hasLoot then
         local _, _, _, _, _, npcId = strsplit("-", creatureGUID)
-        for i,v in ipairs(core.CreatureIdsSkinning) do
-            if v == npcId then -- is in skinnable list, inform raid
-                core.Sync:SendRaid("CanLootSkinNpc", { ["guid"] = creatureGUID, ["id"] = npcId, ["name"] = creatureName })
-                return
-            elseif core.TestMode then
-                core:PrintDebug("Send CanLootSkinNpc to Karaffe cause addon is in TestMode!")
-                core.Sync:SendTo("CanLootSkinNpc", { ["guid"] = creatureGUID, ["id"] = npcId, ["name"] = creatureName }, GetUnitName("player"))
-                return
+        npcId = tonumber(npcId)
+        if npcId then
+            for i,v in ipairs(core.CreatureIdsSkinning) do
+                core:PrintDebug(v, npcId)
+                if v == npcId then -- is in skinnable list, inform raid
+                    core:PrintDebug("NPC is lootable and in list, inform raid")
+                    core.Sync:SendRaid("CanLootSkinNpc", { ["guid"] = creatureGUID, ["id"] = npcId, ["name"] = creatureName })
+                    return
+                elseif core.TestMode then
+                    core:PrintDebug("Send CanLootSkinNpc to Karaffe cause addon is in TestMode!")
+                    core.Sync:SendTo("CanLootSkinNpc", { ["guid"] = creatureGUID, ["id"] = npcId, ["name"] = creatureName }, GetUnitName("player"))
+                    return
+                end
             end
         end
     end

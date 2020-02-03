@@ -91,6 +91,11 @@ function ItemCheck:CreateFrame()
     st.Title = st.frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     st.Title:SetPoint("BOTTOMLEFT", st.frame, "TOPLEFT", 5, 25)
     st.Title:SetText("No check active")
+
+    local sum = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	sum:SetPoint("TOPLEFT", st.Title, "TOPRIGHT", 0, 0)
+	sum:SetText("(0)")
+	f.Sum = sum
     
     
     f:SetScript("OnUpdate", function(self, elapsed) 
@@ -113,6 +118,7 @@ function ItemCheck:UpdateTable(playerList, itemText)
         st.Title:SetText(itemText)
     end
     local d = {}
+    local sum = 0
     
 
     for i, v in ipairs(playerList) do
@@ -122,9 +128,10 @@ function ItemCheck:UpdateTable(playerList, itemText)
             v["amount"] or "Offline"
         }
         table.insert(d, entry)
+        sum = sum + tonumber(entry["amount"])
     end
     st:SetData(d, true)
-
+    self:GetFrame().Sum:SetText("(" .. sum .. ")")
 end
 
 function ItemCheck:GetFrame()
