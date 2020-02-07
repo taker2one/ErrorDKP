@@ -102,7 +102,7 @@ core.UI = {}
 
 -- Debug
 core.TestMode = false -- TestMode for some features -- DBG
-core.Debug = false -- Enable debug output -- DBG
+core.Debug = true -- Enable debug output -- DBG
 function core:PrintDebug(...)
     if core.Debug then
         print("|cff90EE90<ErrorDKP-Dbg>|r", ...)
@@ -278,6 +278,11 @@ function core:SplitString(inputstr, sep, doUnpack)
     if doUnpack then return unpack(t) end
     return t
 end
+
+function core:ltrim(s)
+    if not s then return end
+    return (s:gsub("^%s*(.-)%s*$", "%1"))
+ end
 
 function core:CreateDefaultFrame(
         name, 

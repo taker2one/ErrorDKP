@@ -17,7 +17,7 @@ embeds.xml
 constants.lua
 # core module
 core.lua
-imports\pricelist.lua
+imports\pricelist-bwl.lua
 imports\dkplist.lua
 
 init.lua
