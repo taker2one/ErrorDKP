@@ -66,11 +66,18 @@ function ItemCheck:CreateFrame()
         self:Start(17333, nil, button:GetText()) -- Aqual Quintessence
     end)
 
-    f.OnyBagCheckButton = core:CreateButton(f, "ErrorDKPItemCheckAQ", "Ony Bag")
+    f.OnyBagCheckButton = core:CreateButton(f, "ErrorDKPItemCheckOB", "Ony Bag")
     f.OnyBagCheckButton:SetWidth(100)
     f.OnyBagCheckButton:SetPoint("BOTTOMLEFT", f.GroupCheckButton, "BOTTOMRIGHT", 10, 0)
     f.OnyBagCheckButton:SetScript("OnClick", function(button) 
         self:Start(17966, nil, button:GetText()) -- Onyxia Bag
+    end)
+
+    f.OnyCloakCheckButton = core:CreateButton(f, "ErrorDKPItemCheckOC", "Ony Cloak")
+    f.OnyCloakCheckButton:SetWidth(100)
+    f.OnyCloakCheckButton:SetPoint("BOTTOMLEFT", f.OnyBagCheckButton, "BOTTOMRIGHT", 10, 0)
+    f.OnyCloakCheckButton:SetScript("OnClick", function(button) 
+        self:Start(15138, nil, button:GetText()) -- Onyxia Scale CLoak
     end)
 
     -- f.GuildCheckButton = core:CreateButton(f, "ErrorDKPItemCheckGuildButton", "Check in Guild")
@@ -128,7 +135,7 @@ function ItemCheck:UpdateTable(playerList, itemText)
             v["amount"] or "Offline"
         }
         table.insert(d, entry)
-        sum = sum + tonumber(entry["amount"])
+        sum = sum + ( tonumber(entry["amount"]) or 0 )
     end
     st:SetData(d, true)
     self:GetFrame().Sum:SetText("(" .. sum .. ")")
