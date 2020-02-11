@@ -55,10 +55,37 @@ local function addEdkpTooltip(self, id)
         addHeadLine(self, " ")
         addHeadLine(self, "Error DKP")
         addLine(self, core.ItemPriceList[id].price, core._L["DKPPRICE"])
-        addLine(self, prio or _L["TOOLTIP_PRIO_NONE"], _L["TOOLTIP_PRIO_LABEL"]  )
+
+        if prio and #prio > 0 then
+            -- Check for > in prios
+            local prioSeqTable = core:SplitString(prio, ">")
+            if #prioSeqTable > 1 then
+                for i, v in ipairs(prioSeqTable) do
+                    local prioTable = core:SplitString(v, ",")
+                    for i1, v1 in ipairs(prioTable) do
+                        if i1 == 1 then
+                            addLine(self, core:ltrim(v1) or _L["TOOLTIP_PRIO_NONE"], _L["TOOLTIP_PRIO_LABEL"] )
+                        else
+                            addLine(self, i..". "..core:ltrim(v1))
+                        end
+                    end
+                end
+            else
+                local prioTable = core:SplitString(prio, ",")
+                for i, v in ipairs(prioTable) do
+                    if i == 1 then
+                        addLine(self, core:ltrim(v) or _L["TOOLTIP_PRIO_NONE"], _L["TOOLTIP_PRIO_LABEL"] )
+                    else
+                        addLine(self, core:ltrim(v) or _L["TOOLTIP_PRIO_NONE"], "" )
+                    end
+                end
+            end
+        else
+            addLine(self, _L["TOOLTIP_PRIO_NONE"], _L["TOOLTIP_PRIO_LABEL"] )
+        end
 
         --BiS
-        if bis then
+        if bis and #bis > 0 then
             local bisTable = core:SplitString(bis, ",")
             for i, v in ipairs(bisTable) do
                 if i == 1 then
@@ -71,42 +98,43 @@ local function addEdkpTooltip(self, id)
             addLine(self, _L["TOOLTIP_PRIO_NONE"], "BiS" )
         end
 
-        if alt then
-            local altTable = core:SplitString(alt, ",")
-            for i, v in ipairs(altTable) do
-                if timer and C_Item.IsItemDataCachedByID(v) then
-                    core:PrintDebug("Already chached")
-                    local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(v)
-                    if i == 1 then
-                        addLine(self, itemLink, "Alternate")
-                    else
-                        addLine(self, itemLink)
-                    end
-                else
-                    C_Item.RequestLoadItemDataByID(v)
-                    if not timer or timer._cancelled then
-                        core:PrintDebug("New Timer ")
-                        timer = C_Timer.NewTimer(1, function()
-                            redrawTooltip(self)
-                        end)
-                    elseif timer then
-                        core:PrintDebug("Cancel and New Timer ", timer._cancelled)
-                        timer:Cancel()
-                        timer = C_Timer.NewTimer(1, function()
-                            redrawTooltip(self)
-                        end)
-                    end
+        -- Alternate not needed at the moment
+        -- if alt then
+        --     local altTable = core:SplitString(alt, ",")
+        --     for i, v in ipairs(altTable) do
+        --         if timer and C_Item.IsItemDataCachedByID(v) then
+        --             core:PrintDebug("Already chached")
+        --             local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(v)
+        --             if i == 1 then
+        --                 addLine(self, itemLink, "Alternate")
+        --             else
+        --                 addLine(self, itemLink)
+        --             end
+        --         else
+        --             C_Item.RequestLoadItemDataByID(v)
+        --             if not timer or timer._cancelled then
+        --                 core:PrintDebug("New Timer ")
+        --                 timer = C_Timer.NewTimer(1, function()
+        --                     redrawTooltip(self)
+        --                 end)
+        --             elseif timer then
+        --                 core:PrintDebug("Cancel and New Timer ", timer._cancelled)
+        --                 timer:Cancel()
+        --                 timer = C_Timer.NewTimer(1, function()
+        --                     redrawTooltip(self)
+        --                 end)
+        --             end
 
-                    if i == 1 then
-                        addLine(self, v, "Alternate")
-                    else
-                        addLine(self, v, "")
-                    end
-                end 
-            end
-        else 
-            addLine(self, _L["TOOLTIP_PRIO_NONE"], "Alternate")
-        end
+        --             if i == 1 then
+        --                 addLine(self, v, "Alternate")
+        --             else
+        --                 addLine(self, v, "")
+        --             end
+        --         end 
+        --     end
+        -- else 
+        --     addLine(self, _L["TOOLTIP_PRIO_NONE"], "Alternate")
+        -- end
     end
 end
 

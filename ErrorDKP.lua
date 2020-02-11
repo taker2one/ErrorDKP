@@ -53,7 +53,7 @@ function ErrorDKP:CreateMain()
     uiMain.Title:ClearAllPoints()
     uiMain.Title:SetFontObject("GameFontHighlight")
     uiMain.Title:SetPoint("CENTER", ErrorDKPMainTitleBG, "CENTER", 5 , 0)
-    uiMain.Title:SetText("WoW Error - Venoxis DKP")
+    uiMain.Title:SetText("WoW Error - Venoxis DKP - "..core.Version)
 
     ---
     -- Append DKP Table
