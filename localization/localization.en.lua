@@ -77,7 +77,7 @@ local addonName, core = ...;
         MSG_LOOT_DISENCHANTED = "%s got disenchanted.",
         MSG_SURVEY_CLOSED_BY = "The Item-Survey got closed by %s",
         MSG_SURVEY_CANCELLED_BY = "The Item-Survey got cancelled by %s",
-        MSG_LOOT_SKIN_REQUIRED = "%s need to loot %s!",
+        MSG_LOOT_SKIN_REQUIRED = "%s needs to loot %s!",
         MSG_LOOT_SKIN_REQUIRED_YOU = "You need to loot %s!",
 
         HELP_EDKP = "Opens ErrorDKP window.",

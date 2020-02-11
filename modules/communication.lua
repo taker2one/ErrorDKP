@@ -308,7 +308,12 @@ function Sync:OnCommReceived(prefix, message, channel, sender)
     if prefix == "ItemCheck" then
         if VerifySender(sender) then
             core:PrintDebug("Got Itemcheck request from",sender, message)
-            self:SendTo("ItemCheckResp", tostring(GetItemCount(message)), sender)
+            -- For combatibility reasons do this here and check bank too for ony bags
+            if message == tostring(179661) then
+                self:SendTo("ItemCheckResp", tostring(GetItemCount(message, true)), sender)
+            else
+                self:SendTo("ItemCheckResp", tostring(GetItemCount(message)), sender)
+            end
         end
     elseif prefix == "ItemCheckResp" then
         ErrorDKP.ItemCheck:OnCommResponse(sender, message)
