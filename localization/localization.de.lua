@@ -4,7 +4,7 @@ if GetLocale() == "deDE" then
         PRICELISTTABLE = {
             COLICON = "Icon",
             COLNAME = "Item",
-            COLPRICE = "Preis",
+            COLPRICE = "Preis(BiS)",
             COLPRIO = "Priorität",
             TITLE = "Item-Preisliste"
         },
@@ -22,7 +22,8 @@ if GetLocale() == "deDE" then
             COLDKP = "DKP",
             CHECKBTN_SHOWONLYTODAY = "Nur items von Heute"
         },
-        DKPPRICE = "DKP Preis",
+        DKPPRICE = "Preis",
+        DKPPRICEBIS = "BiS Preis",
         MINIMAP = {
             DESCRLCLICK = "Linke Maustaste - Öffne Fenster",
             MENU_SELECT = "Wähle aus",

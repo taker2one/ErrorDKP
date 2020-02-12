@@ -3,7 +3,7 @@ local addonName, core = ...;
         PRICELISTTABLE = {
             COLICON = "Icon",
             COLNAME = "Item",
-            COLPRICE = "Price",
+            COLPRICE = "Price(BiS)",
             COLPRIO = "Priority",
             TITLE = "Itempricelist"
         },
@@ -21,7 +21,8 @@ local addonName, core = ...;
             COLDKP = "DKP",
             CHECKBTN_SHOWONLYTODAY = "Only items from today"
         },
-        DKPPRICE = "DKP Price",
+        DKPPRICE = "Price",
+        DKPPRICEBIS = "BiS Price",
         MINIMAP = {
             DESCRLCLICK = "Left Click - Open Window",
             MENU_SELECT = "Select an option:",

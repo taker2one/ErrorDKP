@@ -67,8 +67,8 @@ local ItemPriceListTableColDef = {
         end,
     },
     {["name"] = "", ["width"] = 179},
-    {["name"] = _LS["COLPRICE"], ["width"] = 30},
-    {["name"] = _LS["COLPRIO"], ["width"] = 150}
+    {["name"] = _LS["COLPRICE"], ["width"] = 60},
+    {["name"] = _LS["COLPRIO"], ["width"] = 120}
 };
 
 
@@ -99,11 +99,15 @@ function PriceListTableUpdate()
             --core:PrintDebug("Already chached")
             local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(k)
 
+            local priceString = v["price"]
+            if v["pricebis"] and #v["pricebis"] > 0 then
+                priceString = priceString .. "("..v["pricebis"]..")"
+            end
             -- TODO: we should get itemdata only once not on every update!
             --core:Print("Does item exist:", C_Item.DoesItemExistByID(k))
             --link = "|cff9d9d9d|Hitem:"..k..":::::::::::::::|h[Fractured Canine]|h|r"
             PriceListTableData[index]= { 
-                itemName, k, itemLink, v["price"], v["prio"]
+                itemName, k, itemLink, priceString, v["prio"]
             }
             index = index + 1
         else

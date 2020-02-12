@@ -55,6 +55,7 @@ local function addEdkpTooltip(self, id)
         addHeadLine(self, " ")
         addHeadLine(self, "Error DKP")
         addLine(self, core.ItemPriceList[id].price, core._L["DKPPRICE"])
+        addLine(self, core.ItemPriceList[id].pricebis, core._L["DKPPRICEBIS"])
 
         if prio and #prio > 0 then
             -- Check for > in prios
