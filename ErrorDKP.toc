@@ -2,7 +2,7 @@
 ## Title: ErrorDKP
 ## Author: Manuel "Doktorwho@Venoxis" Ebner
 ## Notes:  DKP and raid utility for Guild WoW-Error@Venoxis
-## Version: 1.13.3.8
+## Version: 1.13.3.9
 ## DefaultState: enabled
 ## SavedVariables: ErrorDKPConfig, ErrorDKPDB, ErrorDKPDKPList, ErrorDKPDataInfo, ErrorDKPPriceList, ErrorDKPLootLog, ErrorDKPLootQueue
 
@@ -17,7 +17,7 @@ embeds.xml
 constants.lua
 # core module
 core.lua
-imports\pricelist-bwl.lua
+imports\pricelist.lua
 imports\dkplist.lua
 
 init.lua

@@ -98,11 +98,22 @@ function BuildSurveyData()
     -- Players
     local cntPlayers = GetNumGroupMembers();
     for i=1, cntPlayers do
-        name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(i);
+        local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(i);
+        local race, raceEn, gender
+        if UnitInRaid("PLAYER") then
+            race, raceEn = UnitRace("raid"..i)
+            gender = UnitSex("raid"..i)
+        elseif UnitInParty("PLAYER") then
+            race, raceEn = UnitRace("party"..i)
+            gender = UnitSex("party"..i)
+        end
+
         core:PrintDebug("Add player to survey ", name)
         local player = {
             ["name"] = name,
             ["classFileName"] = fileName,
+            ["race"] = raceEn,
+            ["gender"] = gender,
             ["dkp"] = ErrorDKP:GetPlayerDKP(name)
         }
         table.insert(survey.players, player)
@@ -145,11 +156,11 @@ function ErrorDKP:OnCommReceived_SurvAnsw(sender, data)
         -- Client responds survey received
         -- We have multiple items in a survey but only geht one reveived so set it for all items
         for i,v in ipairs(core.ActiveSurveyData["items"]) do
-            v.responses[sender] = "PENDING"--data["response"]
+            v.responses[sender] = { "PENDING", -1 } --data["response"]
         end
         ErrorDKP.MLResult:SetVisualUpdateRequired()
      else
-        core.ActiveSurveyData.items[data["itemIndex"]].responses[sender] = data["response"]
+        core.ActiveSurveyData.items[data["itemIndex"]].responses[sender] = { data["response"], data["hasItem"] }
         ErrorDKP.MLResult:SetVisualUpdateRequired(data["itemIndex"])
      end
 

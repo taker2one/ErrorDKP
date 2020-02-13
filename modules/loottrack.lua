@@ -53,7 +53,7 @@ local function ErrorDKP_LCD_AskCost()
         ddt:SetDisplayRows(8, 15);
     end
     ddt.frame:Hide();
-   
+
     -- set up rest of the frame
     local lcd = core.UI.LootConfirmDialog or ErrorDKP:CreateLootConfirmDialog()
     lcd.Textline1:SetText(_L["LCD_ENTERCOSTFOR"])
@@ -111,6 +111,7 @@ local function ErrorDKPAutoAddLootItem(playerName, itemLink, itemCount)
     end
     
     local dkpValue = 0;
+    local bisValue = 0;
     local lootAction = nil;
     local itemNote = nil;
     local supressCostDialog = nil;
@@ -125,6 +126,13 @@ local function ErrorDKPAutoAddLootItem(playerName, itemLink, itemCount)
         else
             dkpvalue = 0
         end
+
+        local bisPriceListPrice = tonumber(priceListItem.pricebis)
+        if bisPriceListPrice then
+            bisValue = bisPriceListPrice
+        else
+            bisValue = 0
+        end
     end
 
     -- if code reach this point, we should have valid item information
@@ -137,6 +145,7 @@ local function ErrorDKPAutoAddLootItem(playerName, itemLink, itemCount)
         ["ItemCount"] = itemCount,
         ["Looter"] = playerName,
         ["DKPValue"] = dkpValue,
+        ["BisValue"] = bisValue,
         ["Time"] = GetServerTime(),
         ["Note"] = itemNote,
     };
@@ -146,10 +155,20 @@ end
 
 local function ErrorDKP_LCD_Handler(button)
     core:PrintDebug("LCDFrame: "..button.." pressed.");
-    -- if OK was pressed, check input data
+
     local LootInfo = core.LootQueue[1]
     local dkpValue = nil;
     local lootNote = UI.LootConfirmDialog.NoteText:GetText();
+
+    --Only Pricebutton was pressed, just change text in Price field
+    if(button == "NORMALPRICE" or button == "BISPRICE") then
+        if(button == "NORMALPRICE") then
+            UI.LootConfirmDialog.PriceInput:SetText(LootInfo["DKPValue"])
+        elseif (button == "BISPRICE") then
+            UI.LootConfirmDialog.PriceInput:SetText(LootInfo["BisValue"])
+        end
+        return
+    end
 
     if (button == "OK" or button == "BANK") then
         if (UI.LootConfirmDialog.PriceInput:GetText() == "") then
@@ -174,8 +193,8 @@ local function ErrorDKP_LCD_Handler(button)
     elseif (button == "Cancel") then
     elseif (button == "Delete") then
     elseif (button == "BANK") then
-        local historyEntry = ErrorDKP:AddToLootHistory(LootInfo.ItemLink, LootInfo.ItemId, "Errorbank", dkpValue)
-        ErrorDKP:AdjustDKPWithItem("Errorbank", -dkpValue, historyEntry)
+        local historyEntry = ErrorDKP:AddToLootHistory(LootInfo.ItemLink, LootInfo.ItemId, "bank", 0, true)
+        --ErrorDKP:AdjustDKPWithItem("Errorbank", -dkpValue, historyEntry)
     elseif (button == "DISENCHANTED") then
         core:PrintDebug("ErrorDKP_LCD_Handler: DISENCHANTED")
         ErrorDKP:AddToLootHistory(LootInfo.ItemLink, LootInfo.ItemId, "disenchanted", 0, true)
@@ -250,6 +269,20 @@ local function CreateLootConfirmDialog()
         core.UI.LootConfirmDialog.NoteInput:SetFocus()
     end)
 
+      -- Price Buttons
+    --Normal
+    core.UI.LootConfirmDialog.NormalPriceBtn = core:CreateButton(core.UI.LootConfirmDialog, "ErrorDKP_LCD_NormalPriceBtn", "Normal-Price")
+    core.UI.LootConfirmDialog.NormalPriceBtn:SetPoint("TOPLEFT", priceinput, "BOTTOMLEFT", -6, 0)
+    core.UI.LootConfirmDialog.NormalPriceBtn:SetScript("OnClick", function()
+        ErrorDKP_LCD_Handler("NORMALPRICE")
+    end)
+    -- BiS
+    core.UI.LootConfirmDialog.BisPriceBtn = core:CreateButton(core.UI.LootConfirmDialog, "ErrorDKP_LCD_BiSPriceBtn", "BiS-Price")
+    core.UI.LootConfirmDialog.BisPriceBtn:SetPoint("TOPLEFT", core.UI.LootConfirmDialog.NormalPriceBtn, "TOPRIGHT")
+    core.UI.LootConfirmDialog.BisPriceBtn:SetScript("OnClick", function()
+        ErrorDKP_LCD_Handler("BISPRICE")
+    end)
+
     -- note input
     core.UI.LootConfirmDialog.NoteInput = CreateFrame("EditBox", nil, f, "InputBoxTemplate")
     local noteinput = core.UI.LootConfirmDialog.NoteInput
@@ -265,6 +298,7 @@ local function CreateLootConfirmDialog()
     noteinput:SetScript("OnTabPressed", function()
         core.UI.LootConfirmDialog.PriceInput:SetFocus()
     end)
+    noteinput:Hide()
 
     --Buttons
     local okButton = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
@@ -464,7 +498,7 @@ end
 hooksecurefunc("GiveMasterLoot", GiveMasterLootHook)
 
 function ErrorDKP:AddPendingMasterLoot(slot)
-    core:PrintDebug("AddPendingMasterLoot", slot)
+    core:PrintDebug("AddPendingMasterLoot", slot, core.PendingMLI)
     if core.PendingMLI and core.PendingMLI["slot"] == slot then
         ErrorDKPAutoAddLootItem(core.PendingMLI["charName"], core.PendingMLI["itemLink"], core.PendingMLI["lootQuantity"])
         ErrorDKP:ClearPedingMasterLoot()

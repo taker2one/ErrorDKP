@@ -30,14 +30,48 @@ local responseSortOrder = {
 	["OFFLINE"] = 4
 }
 
+local RACE_ICON_TCOORDS = {
+	["HUMAN_2"]		= {0, 0.25, 0, 0.25},
+	["DWARF_2"]		= {0.25, 0.5, 0, 0.25},
+	["GNOME_2"]		= {0.5, 0.75, 0, 0.25},
+	["NIGHTELF_2"]	= {0.75, 1.0, 0, 0.25},
+	
+	["TAUREN_2"]		= {0, 0.25, 0.25, 0.5},
+	["SCOURGE_2"]	= {0.25, 0.5, 0.25, 0.5},
+	["TROLL_2"]		= {0.5, 0.75, 0.25, 0.5},
+	["ORC_2"]		= {0.75, 1.0, 0.25, 0.5},
+
+	["HUMAN_3"]	= {0, 0.25, 0.5, 0.75},  
+	["DWARF_3"]	= {0.25, 0.5, 0.5, 0.75},
+	["GNOME_3"]	= {0.5, 0.75, 0.5, 0.75},
+	["NIGHTELF_3"]	= {0.75, 1.0, 0.5, 0.75},
+	
+	["TAUREN_3"]	= {0, 0.25, 0.75, 1.0},   
+	["SCOURGE_3"]	= {0.25, 0.5, 0.75, 1.0}, 
+	["TROLL_3"]	= {0.5, 0.75, 0.75, 1.0}, 
+	["ORC_3"]		= {0.75, 1.0, 0.75, 1.0}, 
+}
+
+
+
 function ResponseSort(table, rowa, rowb, sortbycol)
-	--core:PrintDebug("ResponseSort")
 
 	local column = table.cols[sortbycol]
 	local a, b = table:GetRow(rowa), table:GetRow(rowb);
-	a, b = responseSortOrder[core.ActiveSurveyData.items[itemIndex].responses[a[2]] or "OFFLINE"],
-			responseSortOrder[core.ActiveSurveyData.items[itemIndex].responses[b[2]] or "OFFLINE"]
-	core:PrintDebug("ResponseSort:", a, b)
+	--a
+	if core.ActiveSurveyData.items[itemIndex].responses[a[3]] then
+		a = responseSortOrder[core.ActiveSurveyData.items[itemIndex].responses[a[3]][1]]
+	else
+		a = responseSortOrder["OFFLINE"]
+	end
+	--b
+	if core.ActiveSurveyData.items[itemIndex].responses[b[3]] then
+		b = responseSortOrder[core.ActiveSurveyData.items[itemIndex].responses[b[3]][1]]
+	else
+		b = responseSortOrder["OFFLINE"]
+	end
+
+	core:PrintDebug("ResponseSort",a,b)
 
 	if a == b then
 		if column.sortnext then
@@ -76,11 +110,45 @@ local colDef = {
 			end
 		end
 	end}, -- classIcon
+	{ ["name"] = "", ["width"] = 20,
+	["DoCellUpdate"] = function(rowFrame, cellFrame, data, cols, row, realrow, column, fShow, self, ...) 
+		if fShow then
+			local racegender = self:GetCell(realrow, column)
+			core:PrintDebug("racegender", racegender[1], racegender[2] )
+			if racegender and racegender[1] and racegender[2] then
+				local genderText
+				cellFrame:SetNormalTexture("Interface\\GLUES\\CHARACTERCREATE\\UI-CHARACTERCREATE-RACES") 	-- this is the image containing all race icons
+				local coords = RACE_ICON_TCOORDS[strupper(racegender[1]).."_"..racegender[2]]							-- get the coordinates of the race icon we want
+
+				if coords then
+					cellFrame:GetNormalTexture():SetTexCoord(unpack(coords)) 	-- cut out the region with our class icon according to coords
+				else
+					cellFrame:SetNormalTexture("Interface/ICONS/INV_Misc_QuestionMark")
+				end
+			else -- if there's no class
+				cellFrame:SetNormalTexture("Interface/ICONS/INV_Misc_QuestionMark")
+			end
+		end
+	end}, -- raceIcon
     { ["name"] = _LS["COLPLAYER"], ["width"] = 150 }, -- PlayerName
    -- { ["name"] = "", ["width"] = 20 }, -- Guild Rank
     { ["name"] = "", ["width"] = 1}, -- ResponseType
-	{ ["name"] = _LS["COLRESPONSE"], ["width"] = 200, ["comparesort"]=ResponseSort, ["sortnext"] = 5, ["defaultsort"] = "asc"  }, -- Answer
-	{ ["name"] = _LS["COLDKP"], ["width"] = 60 }
+	{ ["name"] = _LS["COLRESPONSE"], ["width"] = 200, ["comparesort"]=ResponseSort, ["sortnext"] = 6, ["defaultsort"] = "asc"  }, -- Answer
+	{ ["name"] = _LS["COLDKP"], ["width"] = 60 },
+	{ ["name"] = _LS["COLHASITEM"], ["width"] = 60,
+	["DoCellUpdate"] = function(rowFrame, cellFrame, data, cols, row, realrow, column, fShow, self, ...) 
+		if fShow then
+			local hasItem = self:GetCell(realrow, column)
+			if tonumber(hasItem) > 0 then 
+				cellFrame.text:SetText(_LS["HASITEM"])
+			elseif tonumber(hasItem) == 0 then
+				cellFrame.text:SetText(_LS["HASNOTITEM"])
+			else
+				cellFrame.text:SetText(" ")
+			end
+		end
+	end 
+	}
 }
 
 local DemoSurveyData = {
@@ -102,8 +170,8 @@ local DemoSurveyData = {
             ["quality"] = 4,
 			["icon"] = "Interface\\Icons\\inv_gauntlets_10",
 			["responses"] = {
-				["Rassputin"] = "MAIN",
-				["Doktorwho"] = "SECOND"
+				["Rassputin"] = { "MAIN", 1 },
+				["Doktorwho"] = { "SECOND", 0 }
 			},
 			["closed"] = true
         },
@@ -114,7 +182,8 @@ local DemoSurveyData = {
             ["quality"] = 4,
 			["icon"] = "Interface\\Icons\\inv_jewelry_ring_21",
 			["responses"] = {
-				["Doktorwho"] = "MAIN"
+				["Doktorwho"] = { "MAIN", 0 },
+				["Rassputin"] = { "SECOND", 1 },
 			},
 			["closed"] = nil
         },
@@ -124,14 +193,20 @@ local DemoSurveyData = {
 		{
 			["name"] = "Doktorwho",
 			["classFileName"] = "PRIEST",
+			["race"] = "Troll",
+			["gender"] = "2"
 		},
 		{
 			["name"] = "Repa",
 			["classFileName"] = "MAGE",
+			["race"] = "Scourge",
+			["gender"] = "2"
 		},
 		{
 			["name"] = "Rassputin",
 			["classFileName"] = "MAGE",
+			["race"] = "Scourge",
+			["gender"] = "2"
 		},
 	}
 }
@@ -256,7 +331,7 @@ local function CountResponses(players, responses)
 	local responseCount = 0
 	if responses then
 		for k,v in pairs(responses) do 
-			if v ~= "PENDING" then
+			if v[1] ~= "PENDING" then
 				-- Pending is not a final respone 
 				responseCount = responseCount + 1
 			end
@@ -282,13 +357,23 @@ function MLResult:UpdateScrollTable(players, responses, resetSorting)
 	local st = MLResult:GetFrame().ScrollingTable
 
 	for i, v in ipairs(players) do
-		local responseType = responses[v.name] or "OFFLINE"
+		local responseType, hasItem
+		if responses[v.name] then
+			responseType = responses[v.name][1]
+			hasItem =  responses[v.name][2] or -1
+		else
+			responseType = "OFFLINE"
+			hasItem = -1
+		end
+
 		local row = {
 			v.classFileName, --icon
+			{v.race, v.gender},
 			v.name,
 			responseType,
 			_LS["RESPONSE_"..responseType] or responseType,
-			ErrorDKP:GetPlayerDKP(v.name) or 0
+			ErrorDKP:GetPlayerDKP(v.name) or 0,
+			hasItem
 		}
 		table.insert(rows, row)
 	end
@@ -299,7 +384,7 @@ function MLResult:UpdateScrollTable(players, responses, resetSorting)
 		for i in ipairs(st.cols) do
 			st.cols[i].sort = nil
 		end
-		st.cols[4].sort = 1	
+		st.cols[5].sort = 1	
 	end
 
 	st:SetData(rows, true)
@@ -322,8 +407,8 @@ function MLResult:CheckResponsesMissing()
 	for i,v in ipairs(core.ActiveSurveyData.items) do
 		if not v["closed"] then
 			local cnt = 0
-			for k, v in pairs(v["responses"]) do
-				if v ~= "PENDING" then
+			for k, v1 in pairs(v["responses"]) do
+				if v1[1] ~= "PENDING" then
 					cnt = cnt + 1
 				end 
 			end
@@ -338,7 +423,7 @@ function MLResult:CheckResponsesMissing()
 end
 
 function MLResult:CreateFrame()
-	local f = core:CreateDefaultFrame("MLResultFrame", "Result", 250, 480, true, true)
+	local f = core:CreateDefaultFrame("MLResultFrame", "Result", 310, 480, true, true)
 	core.UI.MLResult = f
 
     local st = ScrollingTable:CreateST(colDef, 16, 20, nil, f)
@@ -497,8 +582,8 @@ function MLResult:FinishSurvey()
 	for i,v in  ipairs(core.ActiveSurveyData["items"]) do
 		for i1,v1 in ipairs(core.ActiveSurveyData["players"]) do
 			local resp = v["responses"][v1["name"]]
-			if resp and resp == "PENDING" then
-				v["responses"][v1["name"]] = "TIMEOUT"
+			if resp and resp[1] == "PENDING" then
+				v["responses"][v1["name"]][1] = "TIMEOUT"
 			end
 		end
 	end

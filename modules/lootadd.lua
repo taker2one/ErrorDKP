@@ -65,9 +65,9 @@ function LootTracker:Handler(t)
             core:Print(string.format("Player: %s not in DKP List", player))
             return
         end
-    elseif t == "BANK" then
-        local historyEntry = ErrorDKP:AddToLootHistory(itemLink, itemId, "Errorbank", price)
-        ErrorDKP:AdjustDKPWithItem("Errorbank", -price, historyEntry)
+    elseif (button == "BANK") then
+        local historyEntry = ErrorDKP:AddToLootHistory(LootInfo.ItemLink, LootInfo.ItemId, "bank", 0, true)
+        --ErrorDKP:AdjustDKPWithItem("Errorbank", -dkpValue, historyEntry)
     elseif t == "DISENCHANTED" then
         ErrorDKP:AddToLootHistory(itemLink, itemId, "disenchanted", 0, true)
     end

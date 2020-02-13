@@ -135,7 +135,7 @@ function ItemCheck:UpdateTable(playerList, itemText)
             v["amount"] or "Offline"
         }
         table.insert(d, entry)
-        sum = sum + ( tonumber(entry["amount"]) or 0 )
+        sum = sum + ( tonumber(entry[3]) or 0 )
     end
     st:SetData(d, true)
     self:GetFrame().Sum:SetText("(" .. sum .. ")")

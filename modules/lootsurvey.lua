@@ -8,36 +8,37 @@
 --###############################################
 local addonName, core = ...
 local ErrorDKP = core.ErrorDKP
+local _LS = core._L["LOOT_SURVEY"]
 local LootSurvey = {}
 
 local itemSurveyData
 
--- local DemoSurveyData = {
---     id = "157564448499",
---     items = {
---         {
---             ["index"] = 1,
---             ["name"] = "Nemesis Leggings",
---             ["itemLink"] = "|cffa335ee|Hitem:16930::::::::60:::::::|h[Nemesis Leggings]|h|r",
---             ["quality"] = 4,
---             ["icon"] = "Interface\\Icons\\inv_pants_07"
---         },
---         {
---             ["index"] = 2,
---             ["name"] = "Giantstalker's Gloves",
---             ["itemLink"] = "|cffa335ee|Hitem:16852::::::::60:::::::|h[Giantstalker's Gloves]|h|r",
---             ["quality"] = 4,
---             ["icon"] = "Interface\\Icons\\inv_gauntlets_10"
---         },
---         {
---             ["index"] = 3,
---             ["name"] = "Seal of the Archmagus",
---             ["itemLink"] = "|cffa335ee|Hitem:17110::::::::60:::::::|h[Seal of the Archmagus]|h|r",
---             ["quality"] = 4,
---             ["icon"] = "Interface\\Icons\\inv_jewelry_ring_21"
---         }
---     }
--- }
+local DemoSurveyData = {
+    id = "157564448499",
+    items = {
+        {
+            ["index"] = 1,
+            ["name"] = "Nemesis Leggings",
+            ["itemLink"] = "|cffa335ee|Hitem:16930::::::::60:::::::|h[Nemesis Leggings]|h|r",
+            ["quality"] = 4,
+            ["icon"] = "Interface\\Icons\\inv_pants_07"
+        },
+        {
+            ["index"] = 2,
+            ["name"] = "Giantstalker's Gloves",
+            ["itemLink"] = "|cffa335ee|Hitem:16852::::::::60:::::::|h[Giantstalker's Gloves]|h|r",
+            ["quality"] = 4,
+            ["icon"] = "Interface\\Icons\\inv_gauntlets_10"
+        },
+        {
+            ["index"] = 3,
+            ["name"] = "Seal of the Archmagus",
+            ["itemLink"] = "|cffa335ee|Hitem:17110::::::::60:::::::|h[Seal of the Archmagus]|h|r",
+            ["quality"] = 4,
+            ["icon"] = "Interface\\Icons\\inv_jewelry_ring_21"
+        }
+    }
+}
 
 function LootSurvey:Show(data)
     local d = data
@@ -86,12 +87,15 @@ function LootSurvey:OnClickEntryButton(button, index)
         return
     end
 
-    if not entry.responded then 
+    if not entry.responded then
+        --local hasItem = GetItemCount((tonumber(itemSurveyData["id"]) or 0), true)
+        core:Print(GetItemCount(entry.itemLink, true))
         --  { ["id"], ["itemIndex"], ["response"]  } 
         core.Sync:SendRaid("ErrDKPSurvAnsw", {
             ["id"] = itemSurveyData["id"],
             ["itemIndex"] = index,
-            ["response"] = button
+            ["response"] = button,
+            ["hasItem"] = GetItemCount(entry.itemLink, true)
         })
 
         entry.responded = true
@@ -207,11 +211,15 @@ function LootSurvey:CreateEntry(name)
     f.ItemText:SetPoint("TOPLEFT", f, "TOPLEFT", 85, -15)
     
 
-    f.MainBtn = core:CreateButton(f, "MainSpecBtn", "Main")
+    f.MainBtn = core:CreateButton(f, "MainSpecBtn", _LS["BTN_NEED"])
     f.MainBtn:SetPoint("TOPLEFT", f, "TOPLEFT", 85, -40)
+    
+    -- Currently not available in the new loot system
     f.SecBtn = core:CreateButton(f, "SecSpecBtn", "Second")
     f.SecBtn:SetPoint("LEFT", f.MainBtn, "RIGHT")
-    f.PassBtn = core:CreateButton(f, "PassBtn", "Pass")
+    f.SecBtn:Hide()
+    
+    f.PassBtn = core:CreateButton(f, "PassBtn", _LS["BTN_PASS"])
     f.PassBtn:SetPoint("LEFT", f.SecBtn, "RIGHT")
 
     f.MainBtn:SetScript("OnClick", function()

@@ -63,12 +63,30 @@ core.Commands = {
         end
     end,
 
-    ["test"] = function(...)
-        if core:CheckSelfTrusted() then
-            local registered = ErrorDKP.EventFrame:IsEventRegistered("COMBAT_LOG_EVENT_UNFILTERED")
-            core:Print("IsEventRegistered(COMBAT_LOG_EVENT_UNFILTERED)", registered)
+    ["test"] = {
+        ["corehound"] = function(...)
+            if core:CheckSelfTrusted() then
+                local registered = ErrorDKP.EventFrame:IsEventRegistered("COMBAT_LOG_EVENT_UNFILTERED")
+                core:Print("IsEventRegistered(COMBAT_LOG_EVENT_UNFILTERED)", registered)
+            end
+        end,
+        ["lootsurvey"] = function(...)
+            if core:CheckSelfTrusted() then
+                core:Print("Test lootsurvey")
+                ErrorDKP.LootSurvey:Start({}, 120)
+            end
+        end,
+        ["loottrack"] = function(...)
+            core:Print("Test loottrack")
+            core.PendingMLI = {
+                ["slot"] = 1,
+                ["charName"] = "Testchar",
+                ["itemLink"] = "|cffa335ee|Hitem:16930::::::::60:::::::|h[Nemesis Leggings]|h|r",
+                ["lootQuantity"] = 1
+            }
+            ErrorDKP:AddPendingMasterLoot(1)
         end
-    end
+    }
 }
 
 -- Slash Command Handler

@@ -36,6 +36,10 @@ if GetLocale() == "deDE" then
             TITLE = "Exportieren",
             HELPTEXT = "STRG+C um Inhalt zu kopieren\r\nESC um Fenster zu schliessen."
         },
+        LOOT_SURVEY = {
+            BTN_NEED = "Bedarf",
+            BTN_PASS = "Passe"
+        },
         ML_SURVEY_RESULT = {
             TITLE = "Ergebnis",
             RESPONSE_OFFLINE = "|cFFBDBDBDOffline oder Addon nicht installiert|r",
@@ -48,6 +52,9 @@ if GetLocale() == "deDE" then
             COLPLAYER = "Spieler",
             COLRESPONSE = "Antwort",
             COLDKP = "DKP",
+            COLHASITEM = "Hat Item",
+            HASITEM = "Ja",
+            HASNOTITEM = "Nein",
             RESPONSES = "Antworten",
             SURVEYCLOSED = "Umfrage geschlossen"
         },

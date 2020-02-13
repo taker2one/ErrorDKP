@@ -16,7 +16,7 @@ local deformat = LibStub("LibDeformat-3.0")
 
 -- Version
 core.Version = GetAddOnMetadata("ErrorDKP", "Version")
-core.Build = 1130308
+core.Build = 1130309
 core.Type = "R" -- R = Release, B = Beta, A = Alpha
 
 --SetCVar("ScriptErrors", 1)
@@ -102,7 +102,7 @@ core.UI = {}
 
 -- Debug
 core.TestMode = false -- TestMode for some features -- DBG
-core.Debug = true -- Enable debug output -- DBG
+core.Debug = false -- Enable debug output -- DBG
 function core:PrintDebug(...)
     if core.Debug then
         print("|cff90EE90<ErrorDKP-Dbg>|r", ...)

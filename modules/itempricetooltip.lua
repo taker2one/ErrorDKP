@@ -64,8 +64,8 @@ local function addEdkpTooltip(self, id)
                 for i, v in ipairs(prioSeqTable) do
                     local prioTable = core:SplitString(v, ",")
                     for i1, v1 in ipairs(prioTable) do
-                        if i1 == 1 then
-                            addLine(self, core:ltrim(v1) or _L["TOOLTIP_PRIO_NONE"], _L["TOOLTIP_PRIO_LABEL"] )
+                        if i == 1 and i1 == 1 then
+                            addLine(self, i..". "..core:ltrim(v1) or _L["TOOLTIP_PRIO_NONE"], _L["TOOLTIP_PRIO_LABEL"] )
                         else
                             addLine(self, i..". "..core:ltrim(v1))
                         end
@@ -87,12 +87,27 @@ local function addEdkpTooltip(self, id)
 
         --BiS
         if bis and #bis > 0 then
-            local bisTable = core:SplitString(bis, ",")
-            for i, v in ipairs(bisTable) do
-                if i == 1 then
-                    addLine(self, core:ltrim(v) or _L["TOOLTIP_PRIO_NONE"], "BiS" )
-                else
-                    addLine(self, core:ltrim(v) or _L["TOOLTIP_PRIO_NONE"], "" )
+            -- Check for > in prios
+            local bisSeqTable = core:SplitString(bis, ">")
+            if #bisSeqTable > 1 then
+                for i, v in ipairs(bisSeqTable) do
+                    local bisTable = core:SplitString(v, ",")
+                    for i1, v1 in ipairs(bisTable) do
+                        if i == 1 and i1 == 1 then
+                            addLine(self, i..". "..core:ltrim(v1) or _L["TOOLTIP_PRIO_NONE"], "BiS" )
+                        else
+                            addLine(self, i..". "..core:ltrim(v1))
+                        end
+                    end
+                end
+            else
+                local bisTable = core:SplitString(bis, ",")
+                for i, v in ipairs(bisTable) do
+                    if i == 1 then
+                        addLine(self, core:ltrim(v) or _L["TOOLTIP_PRIO_NONE"], "BiS" )
+                    else
+                        addLine(self, core:ltrim(v) or _L["TOOLTIP_PRIO_NONE"], "" )
+                    end
                 end
             end
         else
@@ -142,7 +157,6 @@ end
 function AttachErrorDKPItemTooltip(self)
     local link = select(2, self:GetItem())
     if not link then return end
-  
     local itemString = string.match(link, "item:([%-?%d:]+)")
     if not itemString then return end
   
@@ -172,14 +186,13 @@ function AttachErrorDKPItemTooltip(self)
         end
       end
     end
-  
     addEdkpTooltip(self, id)
 end
 
 local function onSetHyperlink(self, link)
     
     local kind, id = string.match(link,"^(%a+):(%d+)")
-    --core:PrintDebug("onSetHyperlink", link, kind)
+    core:PrintDebug("onSetHyperlink", link, kind)
     if kind == "item" then
         addEdkpTooltip(self,id)
     end

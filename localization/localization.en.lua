@@ -35,6 +35,10 @@ local addonName, core = ...;
             TITLE = "Export",
             HELPTEXT = "CRTL+C to copy content.\r\n ESC to close window."
         },
+        LOOT_SURVEY = {
+            BTN_NEED = "Need",
+            BTN_PASS = "Pass"
+        },
         ML_SURVEY_RESULT = {
             TITLE = "Result",
             RESPONSE_OFFLINE = "|cFFBDBDBDOffline or addon not installed|r",
@@ -47,6 +51,9 @@ local addonName, core = ...;
             COLPLAYER = "Player",
             COLRESPONSE = "Response",
             COLDKP = "DKP",
+            COLHASITEM = "Has Item",
+            HASITEM = "Yes",
+            HASNOTITEM = "No",
             RESPONSES = "Responses",
             SURVEYCLOSED = "Survey closed"
         },
