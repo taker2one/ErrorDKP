@@ -55,7 +55,7 @@ core.Commands = {
         core:Print("|cff00cc66/edkp|r - ".._L["HELP_EDKP"])
         core:Print("|cff00cc66/edkp help|r - ".._L["HELP_HELP"])
         if core:CheckSelfTrusted() then
-            print(" ")
+            core:Print(" ")
             core:Print("|cff00cc66".._L["HELP_BROADCAST"])
             core:Print("|cff00cc66/edkp broadcast|r - ".._L["HELP_BROADCAST_FULL"])
             core:Print("|cff00cc66/edkp broadcast dkp|r - ".._L["HELP_BROADCAST_DKP"])

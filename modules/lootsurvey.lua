@@ -89,7 +89,6 @@ function LootSurvey:OnClickEntryButton(button, index)
 
     if not entry.responded then
         --local hasItem = GetItemCount((tonumber(itemSurveyData["id"]) or 0), true)
-        core:Print(GetItemCount(entry.itemLink, true))
         --  { ["id"], ["itemIndex"], ["response"]  } 
         core.Sync:SendRaid("ErrDKPSurvAnsw", {
             ["id"] = itemSurveyData["id"],
