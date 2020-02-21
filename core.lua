@@ -2,7 +2,7 @@
 --#  Project: ErrorDKP
 --#  File: core.lua
 --#  Author: Manuel "Doktorwho@Venoxis" Ebner
---#  Last Edit: 03.02.2019
+--#  Last Edit: 21.02.2020
 --###############################################
 
 local addonName, core = ...;
@@ -16,7 +16,7 @@ local deformat = LibStub("LibDeformat-3.0")
 
 -- Version
 core.Version = GetAddOnMetadata("ErrorDKP", "Version")
-core.Build = 1130310
+core.Build = 1130311
 core.Type = "R" -- R = Release, B = Beta, A = Alpha
 
 --SetCVar("ScriptErrors", 1)
@@ -122,7 +122,7 @@ end
 
 
 function core:Error(...)
-    print("|cff90EE90"..core.PrintPrefix.."|r", ...)
+    print("|cffFF0000"..core.PrintPrefix.."|r", ...)
 end
 
 function core:GetGuildRankIndex(player)

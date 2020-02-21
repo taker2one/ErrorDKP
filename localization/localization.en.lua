@@ -94,4 +94,5 @@ local addonName, core = ...;
         HELP_BROADCAST_FULL = "Initiate a full data broadcast (DKP+Items).",
         HELP_BROADCAST_DKP = "Initiate a DKP-Table broadcast to all guild members.",
         HELP_BROADCAST_ITEMS = "Initiate a Itemhistory-Table broadcast to all guild members.",
+        HELP_SWAP = "Swap raidgroups of <player1> and <player2> (requires assist!)"
     }

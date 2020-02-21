@@ -50,10 +50,15 @@ core.Commands = {
             ErrorDKP:BroadcastLootTable() 
         end
     end,
+    ["swap"] = function(p1,p2)
+        ErrorDKP.GroupSwap:Swap(p1, p2)
+    end,
+
     ["help"] = function()
         print(" ")
         core:Print("|cff00cc66/edkp|r - ".._L["HELP_EDKP"])
         core:Print("|cff00cc66/edkp help|r - ".._L["HELP_HELP"])
+        core:Print("|cff00cc66/edkp swap <player1> <player2>|r - ".._L["HELP_SWAP"])
         if core:CheckSelfTrusted() then
             core:Print(" ")
             core:Print("|cff00cc66".._L["HELP_BROADCAST"])

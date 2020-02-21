@@ -95,6 +95,7 @@ if GetLocale() == "deDE" then
         HELP_BROADCAST_FULL = "Broadcast der Daten an alle Gildenmitglieder.",
         HELP_BROADCAST_DKP = "Broadcast der DKP-Daten an alle Gildenmitglieder.",
         HELP_BROADCAST_ITEMS = "Broadcast der Item-Daten an alle Gildenmitglieder.",
+        HELP_SWAP = "Tauscht Raidgruppen von <player1> und <player2> (benötigt Assist!)"
     }
 
 end
