@@ -122,8 +122,8 @@ function BuildSurveyData()
     return survey
 end
 
-function ErrorDKP:StartSurvey()
-    core:PrintDebug("ErrorDKP:StartSurvey")
+function ErrorDKP:StartSurvey(timeout)
+    core:PrintDebug("ErrorDKP:StartSurvey with timeout ".. tostring(timeout))
     
     if core.SurveyInProgress then
         -- Lootumfrage bereits aktiv, aktuell können wir nur eine gleichzeitig
@@ -131,7 +131,7 @@ function ErrorDKP:StartSurvey()
         return
     end
 
-    local countdown = 60
+    local countdown = timeout or 120
 
     core.ActiveSurveyData = BuildSurveyData()
     core.Sync:SendRaid("ErrDKPSurvStart", { ["id"] = core.ActiveSurveyData.id, ["items"] = core.ActiveSurveyData.items, ["countdown"] = countdown })

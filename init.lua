@@ -90,6 +90,9 @@ core.Commands = {
                 ["lootQuantity"] = 1
             }
             ErrorDKP:AddPendingMasterLoot(1)
+        end,
+        ["lootsurveysetup"] = function(...)
+            ErrorDKP.MLSetupSurvey:Show({})
         end
     }
 }

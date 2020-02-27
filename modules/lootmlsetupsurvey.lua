@@ -96,10 +96,24 @@ function MLSetupSurvey:CreateFrame()
     })
     f.ScrollingTable = scrollingTable
     
-    local startButton = core:CreateButton(f, "StartButton", "Start")
-    startButton:SetWidth(80)
-	startButton:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 15, 20)
+    local startButton = core:CreateButton(f, "StartButton", "Start 60 sec")
+    startButton:SetWidth(100)
+	startButton:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 15, 50)
 	startButton:SetScript("OnClick", function()
+		
+		if not core.LootTable or #core.LootTable == 0 then
+			core:Print("Its not possible to start survey with empty list.")
+			return
+		end
+        ErrorDKP:StartSurvey(60)
+		self:Cancel()
+	end)
+    f.StartButton = startButton
+    
+    local longStartButton = core:CreateButton(f, "LongStartButton", "Start 120 sec")
+    longStartButton:SetWidth(100)
+	longStartButton:SetPoint("LEFT", startButton, "RIGHT", 0, 0)
+	longStartButton:SetScript("OnClick", function()
 		
 		if not core.LootTable or #core.LootTable == 0 then
 			core:Print("Its not possible to start survey with empty list.")
@@ -108,7 +122,7 @@ function MLSetupSurvey:CreateFrame()
         ErrorDKP:StartSurvey()
 		self:Cancel()
 	end)
-	f.StartButton = startButton
+	f.LongStartButton = longStartButton
 
 	-- Cancel button
     local cancelButton = core:CreateButton(f, "CancelButton", "Cancel")
