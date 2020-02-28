@@ -102,7 +102,7 @@ core.UI = {}
 
 -- Debug
 core.TestMode = false -- TestMode for some features -- DBG
-core.Debug = false -- Enable debug output -- DBG
+core.Debug = true -- Enable debug output -- DBG
 function core:PrintDebug(...)
     if core.Debug then
         print("|cff90EE90<ErrorDKP-Dbg>|r", ...)
@@ -160,6 +160,21 @@ function core:CheckTrusted(player)
         end
     end
     return nil
+end
+
+function core:CheckOfficer() 
+	if core.IsOfficer == nil then
+		if IsInGuild() then
+			local curPlayerRank = core:GetGuildRankIndex(UnitName("player"))
+			if curPlayerRank then
+				core.IsOfficer = C_GuildInfo.GuildControlGetRankFlags(curPlayerRank)[12]
+			end
+		else
+			core.IsOfficer = false;
+		end
+    end
+    
+    return core.IsOfficer
 end
 
 function core:CheckMasterLooter()

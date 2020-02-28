@@ -44,6 +44,7 @@ modules\versioncheck.lua
 modules\lootadd.lua
 modules\itemcheck.lua
 modules\groupswap.lua
+modules\gnotedkp.lua
 
 widgets\iconbutton.lua
 # modules\DropDownMenu\DropDownMenuTemplates.xml

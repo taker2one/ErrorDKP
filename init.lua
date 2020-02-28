@@ -93,6 +93,12 @@ core.Commands = {
         end,
         ["lootsurveysetup"] = function(...)
             ErrorDKP.MLSetupSurvey:Show({})
+        end,
+        ["notedkp"] = function(...)
+            ErrorDKP.GNoteDKP:GetAll()
+        end,
+        ["writenote"] = function(...)
+            ErrorDKP.GNoteDKP:UpdateNote("Kräuterlisl", "{125.12}")
         end
     }
 }
@@ -226,6 +232,9 @@ local function OnInit()
     
     -- Create MiniMapIcon
     ErrorDKP:CreateMiniMapIcon()
+
+    --DBG
+    ErrorDKP.GNoteDKP:GetAll()
 end
 
 
