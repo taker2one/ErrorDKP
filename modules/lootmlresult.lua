@@ -2,7 +2,7 @@
 --#  Project: ErrorDKP
 --#  File: lootmlsetupsurvey.lua
 --#  Author: Manuel "Doktorwho@Venoxis" Ebner
---#  Last Edit: 06.12.2019
+--#  Last Edit: 11.03.2020
 --###############################################
 local addonName, core = ...
 local ErrorDKP = core.ErrorDKP

@@ -36,7 +36,8 @@ local addonName, core = ...;
             HELPTEXT = "CRTL+C to copy content.\r\n ESC to close window."
         },
         LOOT_SURVEY = {
-            BTN_NEED = "Need",
+            BTN_NEED = "High Prio",
+            BTN_GREED = "Low Prio",
             BTN_PASS = "Pass"
         },
         ML_SURVEY_RESULT = {
@@ -44,8 +45,8 @@ local addonName, core = ...;
             RESPONSE_OFFLINE = "|cFFBDBDBDOffline or addon not installed|r",
             RESPONSE_PENDING = "|cFFBDBDBDPending|r",
             RESPONSE_PASS = "|cFFB2B2B2Pass|r",
-            RESPONSE_SECOND = "|cFFFF4F00Second|r",
-            RESPONSE_MAIN = "|cFF00FF00Main/Need|r",
+            RESPONSE_SECOND = "|cFFFF4F00Low Priority|r",
+            RESPONSE_MAIN = "|cFF00FF00High Priority|r",
             RESPONSE_TIMEOUT = "|cFF0000FFPlayer didn't respond in time|r",
             RESPONSE_AUTOPASS = "|cFFB2B2B2Autopass|r",
             COLPLAYER = "Player",

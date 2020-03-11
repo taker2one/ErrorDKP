@@ -37,7 +37,8 @@ if GetLocale() == "deDE" then
             HELPTEXT = "STRG+C um Inhalt zu kopieren\r\nESC um Fenster zu schliessen."
         },
         LOOT_SURVEY = {
-            BTN_NEED = "Bedarf",
+            BTN_NEED = "Hohe Prio",
+            BTN_GREED = "Niedrige Prio",
             BTN_PASS = "Passe"
         },
         ML_SURVEY_RESULT = {
@@ -45,8 +46,8 @@ if GetLocale() == "deDE" then
             RESPONSE_OFFLINE = "|cFFBDBDBDOffline oder Addon nicht installiert|r",
             RESPONSE_PENDING = "|cFFBDBDBDAustehend|r",
             RESPONSE_PASS = "|cFFB2B2B2Gepasst|r",
-            RESPONSE_SECOND = "|cFFFF4F00Second|r",
-            RESPONSE_MAIN = "|cFF00FF00Main/Need|r",
+            RESPONSE_SECOND = "|cFFFF4F00Niedrige Priorität|r",
+            RESPONSE_MAIN = "|cFF00FF00Hohe Priorität|r",
             RESPONSE_TIMEOUT = "|cFF0000FFSpieler hat nicht geantwortet|r",
             RESPONSE_AUTOPASS = "|cFFB2B2B2Autopass|r",
             COLPLAYER = "Spieler",
