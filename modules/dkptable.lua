@@ -3,7 +3,7 @@
 --#  File: dkptable.lua
 --#  Author: Manuel "Doktorwho@Venoxis" Ebner
 --#  Description: Create and manage the dkp table
---#  Last Edit: 21.11.2019
+--#  Last Edit: 11.03.2020
 --###############################################
 local addonName, core = ...;
 local ErrorDKP = core.ErrorDKP;
@@ -95,7 +95,7 @@ local function tableFilter(self, row)
         while i <= cnt do
             local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(i)
             i = i + 1
-            if name == row[4] then return true end
+            if string.lower(name) == string.lower(row[4]) then return true end
             
         end
     end
@@ -177,7 +177,7 @@ end
 
 function ErrorDKP:GetPlayerDKP(playerName)
   for i, v in ipairs(core.DKPTable) do
-      if v.name == playerName then return v.dkp end
+      if string.lower(v.name) == string.lower(playerName) then return v.dkp end
   end
   return nil
 end

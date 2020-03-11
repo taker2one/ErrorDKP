@@ -7,8 +7,8 @@
 local addonName, core = ...
 
 local pricelistInfo = {
-    ["version"] = "2.2",
-    ["timestamp"] = "1582286375"
+    ["version"] = "2.3",
+    ["timestamp"] = "1583922662"
 }
 
 local pricelist = {
@@ -20,17 +20,12 @@ local pricelist = {
     ["19434"] = { price = "10", pricebis = "100", prio = "Hexer, Shadow", bis = "Hexer, Shadow" },
     ["19354"] = { price = "10", pricebis = "", prio = "Meele", bis = "" },
     ["19438"] = { price = "5", pricebis = "100", prio = "Magier", bis = "Magier" },
-    
-    
-    
-    
-    
-    
+
     ["16926"] = { price = "5", pricebis = "100", prio = "Heal Priester", bis = "Heal Priester" },
     ["16935"] = { price = "5", pricebis = "", prio = "Jäger", bis = "" },
     ["16911"] = { price = "5", pricebis = "100", prio = "Schurke", bis = "Schurke" },
     ["16959"] = { price = "5", pricebis = "", prio = "KriegerTank", bis = "" },
-    ["16918"] = { price = "5", pricebis = "100", prio = "Magier", bis = "" },
+    ["16918"] = { price = "5", pricebis = "", prio = "Magier", bis = "" },
     ["16934"] = { price = "5", pricebis = "", prio = "Hexer", bis = "" },
     ["16904"] = { price = "5", pricebis = "100", prio = "Heal Druide", bis = "Heal Druide" },
     ["16943"] = { price = "5", pricebis = "100", prio = "Heal Schamane", bis = "Heal Schamane" },
@@ -41,11 +36,7 @@ local pricelist = {
     ["19369"] = { price = "5", pricebis = "", prio = "Healer", bis = "" },
     ["19370"] = { price = "5", pricebis = "100", prio = "Hexer, Magier, Shadow", bis = "Hexer, Magier, Shadow" },
     ["19334"] = { price = "20", pricebis = "", prio = "Meele", bis = "" },
-    
-    
-    
-    
-    
+
     ["16910"] = { price = "5", pricebis = "100", prio = "Schurke", bis = "Schurke" },
     ["16903"] = { price = "5", pricebis = "", prio = "Heal Druide", bis = "" },
     ["16960"] = { price = "5", pricebis = "", prio = "KriegerTank", bis = "" },
@@ -61,11 +52,7 @@ local pricelist = {
     ["19371"] = { price = "10", pricebis = "100", prio = "Heal Schamane", bis = "Heal Schamane" },
     ["19346"] = { price = "20", pricebis = "100", prio = "Krieger Tank (gloves)", bis = "Krieger Tank (gloves)" },
     ["19372"] = { price = "5", pricebis = "", prio = "KriegerTank", bis = "" },
-    
-    
-    
-    
-    
+
     ["16965"] = { price = "5", pricebis = "", prio = "KriegerTank", bis = "" },
     ["16912"] = { price = "5", pricebis = "", prio = "Magier", bis = "" },
     ["16941"] = { price = "5", pricebis = "", prio = "Jäger", bis = "" },
@@ -83,11 +70,7 @@ local pricelist = {
     ["19351"] = { price = "10", pricebis = "100", prio = "FuryTank Warri (beide Bindings & Edgemasters)> Sword Rogue, nonOrc Warri (rotiert)", bis = "FuryTank Warri (beide Bindings & Edgemasters)> Sword Rogue, nonOrc Warri (rotiert)" },
     
     ["20383"] = { price = "roll", pricebis = "", prio = "Heiler die sich die Quest-chain antun wollen & Hexer (Shadow resi gear)", bis = "" },
-    
-    
-    
-    
-    
+
     ["16964"] = { price = "5", pricebis = "", prio = "KriegerTank", bis = "" },
     ["16920"] = { price = "100", pricebis = "100", prio = "Heal Priester", bis = "Heal Priester" },
     ["16928"] = { price = "5", pricebis = "", prio = "Hexer", bis = "" },
@@ -111,11 +94,7 @@ local pricelist = {
     ["19353"] = { price = "20", pricebis = "200", prio = "Orc Krieger, Orc EnSchamane", bis = "Orc Krieger, Orc EnSchamane" },
     ["19397"] = { price = "10", pricebis = "100", prio = "Heal Schamane", bis = "Heal Schamane" },
     ["19396"] = { price = "5", pricebis = "", prio = "Meele", bis = "" },
-    
-    
-    
-    
-    
+
     ["16964"] = { price = "5", pricebis = "", prio = "KriegerTank", bis = "" },
     ["16920"] = { price = "100", pricebis = "100", prio = "Heal Priester", bis = "Heal Priester" },
     ["16928"] = { price = "5", pricebis = "", prio = "Hexer", bis = "" },
@@ -137,11 +116,7 @@ local pricelist = {
     ["19353"] = { price = "20", pricebis = "200", prio = "Orc Krieger, Orc EnSchamane", bis = "Orc Krieger, Orc EnSchamane" },
     ["19397"] = { price = "10", pricebis = "100", prio = "Heal Schamane", bis = "Heal Schamane" },
     ["19396"] = { price = "5", pricebis = "", prio = "Meele", bis = "" },
-    
-    
-    
-    
-    
+
     ["16964"] = { price = "5", pricebis = "", prio = "KriegerTank", bis = "" },
     ["16920"] = { price = "5", pricebis = "100", prio = "Heal Priester", bis = "Heal Priester" },
     ["16928"] = { price = "5", pricebis = "", prio = "Hexer", bis = "" },
@@ -164,11 +139,7 @@ local pricelist = {
     ["19353"] = { price = "20", pricebis = "200", prio = "Orc Krieger, Orc EnSchamane", bis = "Orc Krieger, Orc EnSchamane" },
     ["19397"] = { price = "10", pricebis = "100", prio = "Heal Schamane", bis = "Heal Schamane" },
     ["19396"] = { price = "5", pricebis = "", prio = "Meele", bis = "" },
-    
-    
-    
-    
-    
+
     ["16917"] = { price = "5", pricebis = "", prio = "Magier", bis = "" },
     ["16937"] = { price = "5", pricebis = "", prio = "Jäger", bis = "" },
     ["16961"] = { price = "5", pricebis = "", prio = "KriegerTank", bis = "" },
@@ -180,7 +151,7 @@ local pricelist = {
     
     ["19352"] = { price = "10", pricebis = "100", prio = "Schurke, non Orc Krieger DPS (rotiert)", bis = "Schurke, non Orc Krieger DPS (rotiert)" },
     ["19393"] = { price = "5", pricebis = "", prio = "Ele > Schami", bis = "" },
-    ["19347"] = { price = "20", pricebis = "", prio = "Caster & Healer", bis = "" },
+    ["19347"] = { price = "60", pricebis = "", prio = "Caster & Healer", bis = "" },
     ["19361"] = { price = "20", pricebis = "200", prio = "Jäger", bis = "Jäger" },
     ["19349"] = { price = "10", pricebis = "", prio = "Deff KriegerTank", bis = "" },
     ["19388"] = { price = "5", pricebis = "", prio = "Caster", bis = "" },
@@ -191,11 +162,7 @@ local pricelist = {
     ["19386"] = { price = "5", pricebis = "", prio = "Tank", bis = "" },
     ["19392"] = { price = "5", pricebis = "", prio = "Meele", bis = "" },
     ["19385"] = { price = "5", pricebis = "100", prio = "Heal Druide", bis = "Heal Druide" },
-    
-    
-    
-    
-    
+
     ["16942"] = { price = "5", pricebis = "100", prio = "Jäger", bis = "Jäger" },
     ["16916"] = { price = "5", pricebis = "100", prio = "Magier", bis = "Magier" },
     ["16905"] = { price = "5", pricebis = "100", prio = "Schurke", bis = "Schurke" },
@@ -218,27 +185,27 @@ local pricelist = {
     ["19363"] = { price = "10", pricebis = "100", prio = "Orc KriegerDPS", bis = "Orc KriegerDPS" },
     ["19360"] = { price = "10", pricebis = "100", prio = "Heal Schamane, Heal Druide, Heal Priester, Shadow", bis = "Heal Schamane, Heal Druide, Heal Priester, Shadow" },
     
-    ["19003"] = { price = "10", pricebis = "100", prio = "Tank,Schurke, Shadow, Hunter, EnSchamane, KriegerDPS", bis = "Tank,Schurke, Shadow, Hunter, EnSchamane, KriegerDPS" },
+    ["19003"] = { price = "10", pricebis = "100", prio = "Schurke, Shadow, Hunter, EnSchamane, KriegerDPS", bis = "Schurke, Shadow, Hunter, EnSchamane, KriegerDPS" },
 
 --------------
 --MC
 --------------
 ["17067"] = { price = "1", pricebis = "", prio = "DKP", bis = "" },
-["16908"] = { price = "75", pricebis = "75", prio = "Schurke", bis = "Schurke" },
-["17068"] = { price = "100", pricebis = "100", prio = "Orc KriegerDPS", bis = "Orc KriegerDPS" },
-["16939"] = { price = "", pricebis = "", prio = "Jäger", bis = "" },
+["16908"] = { price = "4", pricebis = "75", prio = "Schurke", bis = "Schurke" },
+["17068"] = { price = "10", pricebis = "100", prio = "Orc KriegerDPS", bis = "Orc KriegerDPS" },
+["16939"] = { price = "4", pricebis = "", prio = "Jäger", bis = "" },
 ["18205"] = { price = "1", pricebis = "", prio = "Meele", bis = "" },
-["16921"] = { price = "75", pricebis = "75", prio = "Heal Priester", bis = "Heal Priester" },
+["16921"] = { price = "4", pricebis = "75", prio = "Heal Priester", bis = "Heal Priester" },
 ["18423"] = { price = "verrollt", pricebis = "", prio = "KriegerDPS, Fury KriegerTank, Deff KriegerTank, EnSchamane", bis = "KriegerDPS, Fury KriegerTank, Deff KriegerTank, EnSchamane" },
 ["16963"] = { price = "4", pricebis = "", prio = "Krieger Tank", bis = "" },
-["16947"] = { price = "75", pricebis = "75", prio = "Heal Schamane", bis = "Heal Schamane" },
+["16947"] = { price = "4", pricebis = "75", prio = "Heal Schamane", bis = "Heal Schamane" },
 ["18705"] = { price = "verrollt", pricebis = "", prio = "Jäger", bis = "" },
 ["16929"] = { price = "4", pricebis = "", prio = "Hexer", bis = "" },
 ["16914"] = { price = "4", pricebis = "", prio = "Magier", bis = "Magier" },
 ["18813"] = { price = "1", pricebis = "", prio = "DKP", bis = "" },
 ["17078"] = { price = "4", pricebis = "", prio = "Caster, Heiler", bis = "" },
-["17064"] = { price = "60", pricebis = "60", prio = "HealPriester, HealSchamane, HealDruide", bis = "HealPriester, HealSchamane, HealDruide" },
-["16900"] = { price = "75", pricebis = "75", prio = "HealDruide", bis = "HealDruide" },
+["17064"] = { price = "6", pricebis = "60", prio = "HealPriester, HealSchamane, HealDruide", bis = "HealPriester, HealSchamane, HealDruide" },
+["16900"] = { price = "4", pricebis = "75", prio = "HealDruide", bis = "HealDruide" },
 ["17075"] = { price = "10", pricebis = "", prio = "Non Orc Krieger, Schurke", bis = "" },
 
 
@@ -267,11 +234,11 @@ local pricelist = {
 ["18203"] = { price = "6", pricebis = "", prio = "Meele, Tank", bis = "" },
 ["16810"] = { price = "3", pricebis = "", prio = "Hexer", bis = "" },
 ["19142"] = { price = "4", pricebis = "", prio = "Caster, Healer", bis = "" },
-["19143"] = { price = "60", pricebis = "60", prio = "KriegerDPS", bis = "KriegerDPS" },
+["19143"] = { price = "6", pricebis = "60", prio = "KriegerDPS", bis = "KriegerDPS" },
 ["18861"] = { price = "4", pricebis = "", prio = "Tank", bis = "" },
 ["16847"] = { price = "3", pricebis = "", prio = "Jäger", bis = "" },
 ["16867"] = { price = "3", pricebis = "", prio = "Krieger Tank", bis = "" },
-["19136"] = { price = "60", pricebis = "60", prio = "Magier", bis = "Magier" },
+["19136"] = { price = "6", pricebis = "60", prio = "Magier", bis = "Magier" },
 ["17065"] = { price = "4", pricebis = "", prio = "Tank", bis = "" },
 ["16822"] = { price = "3", pricebis = "", prio = "Schurke", bis = "" },
 ["18822"] = { price = "10", pricebis = "", prio = "Meele", bis = "" },
@@ -340,7 +307,7 @@ local pricelist = {
 
 
 ["18564"] = { price = "LootCouncil", pricebis = "", prio = "Lootcouncil", bis = "" },
-["18823"] = { price = "4", pricebis = "40", prio = "DolchSchurke, KriegerDPS", bis = "DolchSchurke, KriegerDPS" },
+["18823"] = { price = "6", pricebis = "60", prio = "DolchSchurke, KriegerDPS", bis = "DolchSchurke, KriegerDPS" },
 ["16797"] = { price = "3", pricebis = "", prio = "Magier", bis = "" },
 ["16836"] = { price = "3", pricebis = "", prio = "Druide Heal", bis = "" },
 ["16844"] = { price = "3", pricebis = "", prio = "Schami Heal", bis = "" },
@@ -358,7 +325,7 @@ local pricelist = {
 
 ["18823"] = { price = "6", pricebis = "60", prio = "DolchSchurke, KriegerDPS", bis = "DolchSchurke, KriegerDPS" },
 ["16798"] = { price = "3", pricebis = "", prio = "Magier", bis = "" },
-["17103"] = { price = "10", pricebis = "", prio = "Magier, Hexer", bis = "" },
+["17103"] = { price = "40", pricebis = "", prio = "Magier, Hexer", bis = "" },
 ["17072"] = { price = "6", pricebis = "", prio = "Meele", bis = "" },
 ["16865"] = { price = "3", pricebis = "", prio = "Krieger Tank", bis = "" },
 ["16833"] = { price = "3", pricebis = "", prio = "Druide Heal", bis = "" },
@@ -425,8 +392,8 @@ local pricelist = {
 ["17106"] = { price = "4", pricebis = "", prio = "Healer", bis = "" },
 ["19137"] = { price = "6", pricebis = "60", prio = "Fury KriegerTank, Deff KriegerTank -> KriegerDPS", bis = "Fury KriegerTank, Deff KriegerTank -> KriegerDPS" },
 ["17082"] = { price = "1", pricebis = "", prio = "DKP", bis = "" },
-["17104"] = { price = "15", pricebis = "", prio = "Orc Meele", bis = "" },
-["17076"] = { price = "15", pricebis = "", prio = "Meele", bis = "" },
+["17104"] = { price = "75", pricebis = "", prio = "Orc Meele", bis = "" },
+["17076"] = { price = "75", pricebis = "", prio = "Meele", bis = "" },
 ["16946"] = { price = "5", pricebis = "", prio = "Ele, HealSchamane", bis = "" },
 ["17102"] = { price = "4", pricebis = "", prio = "Meele", bis = "" },
 

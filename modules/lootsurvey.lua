@@ -10,10 +10,11 @@ local addonName, core = ...
 local ErrorDKP = core.ErrorDKP
 local _LS = core._L["LOOT_SURVEY"]
 local LootSurvey = {}
+ErrorDKP.LootSurvey = LootSurvey
 
 local itemSurveyData
 
-local DemoSurveyData = {
+LootSurvey.DemoSurveyData = {
     id = "157564448499",
     items = {
         {
@@ -41,11 +42,11 @@ local DemoSurveyData = {
 }
 
 function LootSurvey:Show(data)
-    local d = data
-    if not d and not itemSurveyData then 
+    if not data and not itemSurveyData then 
         core:Print("Cant show survey cause there is no data")
+        return
     end
-    itemSurveyData = d
+    itemSurveyData = data
     core:PrintDebug("LootSurvey:Show")
     self:GetFrame():Show()
     LootSurvey:Update(itemSurveyData)
@@ -214,9 +215,8 @@ function LootSurvey:CreateEntry(name)
     f.MainBtn:SetPoint("TOPLEFT", f, "TOPLEFT", 85, -40)
     
     -- Currently not available in the new loot system
-    f.SecBtn = core:CreateButton(f, "SecSpecBtn", "Second")
+    f.SecBtn = core:CreateButton(f, "SecSpecBtn", _LS["BTN_GREED"])
     f.SecBtn:SetPoint("LEFT", f.MainBtn, "RIGHT")
-    f.SecBtn:Hide()
     
     f.PassBtn = core:CreateButton(f, "PassBtn", _LS["BTN_PASS"])
     f.PassBtn:SetPoint("LEFT", f.SecBtn, "RIGHT")
@@ -271,5 +271,3 @@ function LootSurvey:OnCommCloseReceived(closeType)
         self:FinishSurvey() -- i think this should be enough
     end
 end
-
-ErrorDKP.LootSurvey = LootSurvey

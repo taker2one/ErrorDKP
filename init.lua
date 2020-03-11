@@ -78,7 +78,7 @@ core.Commands = {
         ["lootsurvey"] = function(...)
             if core:CheckSelfTrusted() then
                 core:Print("Test lootsurvey")
-                ErrorDKP.LootSurvey:Start({}, 120)
+                ErrorDKP.LootSurvey:Start(ErrorDKP.LootSurvey.DemoSurveyData, 120)
             end
         end,
         ["loottrack"] = function(...)
