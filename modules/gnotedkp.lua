@@ -11,6 +11,7 @@ ErrorDKP.GNoteDKP = {}
 local GNoteDKP = ErrorDKP.GNoteDKP
 
 local OFFICER_NOTE_LENGTH = 31
+local GUILD_INFO_LENGTH = 500
 
 function GNoteDKP:GetAll()
     local memberCnt = GetNumGuildMembers()
@@ -22,26 +23,32 @@ function GNoteDKP:GetAll()
 
 
     local dkplist = {}
+    if canView then
+        for i = 1, memberCnt do
+            name, rank, rankIndex, level, class, zone, note, officernote, online, status, classFileName = GetGuildRosterInfo(i)
 
-    for i = 1, memberCnt do
-        name, rank, rankIndex, level, class, zone, note, officernote, online, status, classFileName = GetGuildRosterInfo(i)
-
-        local points = self:ExtractPoints(officernote)
-
-        if points ~= nil then
-            local member = {
-                Name = gsub(name, "%-[^|]+", ""), -- remove Realm
-                DKP = points,
-                GuildRank = rank
-            }
-            
-            table.insert(dkplist, member)
+            local points = GNoteDKP:ExtractPoints(officernote)
+            core:Error(name, classFileName)
+            if points ~= nil then
+                local member = {
+                    name = gsub(name, "%-[^|]+", ""), -- remove Realm
+                    dkp = points,
+                    classFilename = classFileName,
+                    classId = core:classFileNameToId(classFileName),
+                    GuildRank = rank
+                }
+                
+                table.insert(dkplist, member)
+            end
+            if name == "Dichterin-Venoxis" then --DBG
+                core:Error("Dichterin-Venoxis", points)
+            end
         end
+        return dkplist
+    else
+        return nil
     end
-
-    for i,v in ipairs(dkplist) do
-        core:PrintDebug("Name: ", v.Name, " Points: ", v.DKP, " Rank: ", v.GuildRank)
-    end
+   
 end
 
 function GNoteDKP:BuildDKPNote(points)
@@ -91,6 +98,72 @@ function GNoteDKP:ExtractPoints(note)
             -- error
             core:Error("Error converting points")
         end        
+    end
+end
+
+function GNoteDKP:GetGInfoData()
+    local text = GetGuildInfoText()
+    local info = self:ExtractGInfoData(text)
+    
+    return info
+end
+
+function GNoteDKP:BuildDKPInfo(timestamp)
+    return "{" .. tostring(timestamp) .. "}"
+end
+
+function GNoteDKP:UpdateGInfoData(dkpinfo)
+    if not dkpinfo then
+        core:Error("UpdateGInfoData: invalid data.")
+        return
+    end
+    local text = GetGuildInfoText()
+
+    local newInfo = string.gsub(text, "{.*}", "")
+    if string.len(newInfo) + string.len(dkpinfo) <= GUILD_INFO_LENGTH then
+        -- Length is ok
+        newInfo = newInfo .. dkpinfo
+    else
+        -- Cut existing info
+        local diff = string.len(newInfo) + string.len(dkpinfo) - GUILD_INFO_LENGTH
+        newInfo = string.sub(newInfo, 1, string.len(newInfo)-diff) .. dkpinfo
+    end
+    SetGuildInfoText(newInfo)
+end
+
+function GNoteDKP:GetTimestamp()
+    local a = self:GetGInfoData()
+    return a and a.Timestamp or nil
+end
+
+function GNoteDKP:IsUpdateRequired()
+    local d = self:GetGInfoData()
+
+    if d and d.timestamp then
+        if tonumber(d.timestamp) > tonumber(core.DKPDataInfo.DKPInfo.timestamp) then
+            return true
+        end
+    end
+end
+
+function GNoteDKP:ExtractGInfoData(ginfotext)
+    if not ginfotext then return nil end
+    local p = string.match(ginfotext, "{.*}")
+
+    if p then
+        -- remove {} brackets
+        local timeString = string.sub(p,2,string.len(p)-1)
+        -- convert to number
+        local dkpTime = tonumber(timeString)
+
+        if dkpTime ~= nil then
+            -- everything is fine
+            return { timestamp = dkpTime }
+        else
+            -- error
+            core:Error("Error getting time")
+            -- This means there is currently no
+        end
     end
 end
 

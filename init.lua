@@ -11,6 +11,32 @@ local ErrorDKP = core.ErrorDKP
 local _L = core._L
 
 
+local function mapImportDKPData()
+    local imported = {}
+    local index = 1
+
+    local timestamp = core.ErrorDKP.GNoteDKP:GetTimestamp()
+    local importDataTimestamp = DKPInfo["timestamp"]
+
+    if (not timestamp and tonumber(importDataTimestamp)) or tonumber(importDataTimestamp) > timestamp then
+        -- fine
+        for k,v in pairs(gdkp["players"]) do
+            local note = core.ErrorDKP.GNoteDKP:BuildDKPNote(v["dkp_current"])
+            core.ErrorDKP.GNoteDKP:UpdateNote(k, note)
+
+            -- local classFilename, classId = core:LocalizedClassToEng(v["class"])
+            -- imported[index] = { name = k, dkp = v["dkp_current"], classFilename = classFilename, classId = classId  }
+            -- index = index + 1
+        end
+
+        local newInfo = core.ErrorDKP.GNoteDKP:BuildDKPInfo(importDataTimestamp)
+        core.ErrorDKP.GNoteDKP:UpdateGInfoData(newInfo)
+    else
+        core:Print("The timestamp of the data you want to import is older than the dkp data in the guild info")
+    end
+    --return imported
+end
+
 -------------------------------------------------------------------
 --
 --    Slash Commands    
@@ -68,6 +94,13 @@ core.Commands = {
         end
     end,
 
+    ["import"] = {
+        ["dkp"] = function(...)
+            if core:CheckOfficer() then
+                mapImportDKPData()
+            end
+        end
+    },
     ["test"] = {
         ["corehound"] = function(...)
             if core:CheckSelfTrusted() then
@@ -187,7 +220,7 @@ local function FillMissingSettings(dbset, defset)
 end
 
 local function OnInit()
-    core:PrintDebug("Initialize", core.Imports.ItemPriceListInfo["version"])
+    core:PrintDebug("Initialize")
     RegisterSlashCommands()
     core:Print(addonName, core.Version)
     --Load Saved Data
@@ -203,11 +236,11 @@ local function OnInit()
     FillMissingSettings(ErrorDKPConfig, core.DefaultSettings)
 
     -- Check which data is the newest
-    if not ErrorDKPDataInfo.DKPInfo then 
-        ErrorDKPDataInfo.DKPInfo = {} 
-        core:PrintDebug("No ErrorDKPDataInfo.DKPInfo, create it")
-    end
-    ErrorDKPDKPList, ErrorDKPDataInfo.DKPInfo = GetNewestData(ErrorDKPDKPList, ErrorDKPDataInfo.DKPInfo, DKPInfo) --DKP is global from the jdkp export
+    -- if not ErrorDKPDataInfo.DKPInfo then 
+    --     ErrorDKPDataInfo.DKPInfo = {} 
+    --     core:PrintDebug("No ErrorDKPDataInfo.DKPInfo, create it")
+    -- end
+    -- ErrorDKPDKPList, ErrorDKPDataInfo.DKPInfo = GetNewestData(ErrorDKPDKPList, ErrorDKPDataInfo.DKPInfo, DKPInfo) --DKP is global from the jdkp export
     -- Same for itemprices
     if not ErrorDKPDataInfo.PriceListInfo then ErrorDKPDataInfo.PriceListInfo = {} end
     if core:IsTableEmpty(ErrorDKPPriceList) or (ErrorDKPDataInfo.PriceListInfo["timestamp"] < core.Imports.ItemPriceListInfo["timestamp"]) then
@@ -219,9 +252,21 @@ local function OnInit()
     -- Same for loothistory
     if not ErrorDKPDataInfo.LootInfo then ErrorDKPDataInfo.LootInfo = {} end
 
+    -- Get DKP Info
+    local noteDkpTable
+    local dkpDataInfo = core.ErrorDKP.GNoteDKP:GetGInfoData()
+    if dkpDataInfo then
+        core:PrintDebug("Dkp-Data-Timestamp: ", dkpDataInfo.Timestamp)
+        noteDkpTable = core.ErrorDKP.GNoteDKP.GetAll()
+        ErrorDKPDKPList = noteDkpTable and noteDkpTable or ErrorDKPDKPList
+        ErrorDKPDataInfo.DKPInfo = dkpDataInfo and dkpDataInfo or ErrorDKPDataInfo.DKPInfo
+    else
+        core:PrintDebug("Dkp-Data-Timestamp: ", "no timestamp found")
+    end
+
     --Apply to core
-    core.DKPTable = ErrorDKPDKPList                     -- the dkp table
-    core.DKPDataInfo = ErrorDKPDataInfo              -- contains info about the data like last sync, last full import
+    core.DKPTable = ErrorDKPDKPList    -- the dkp table
+    core.DKPDataInfo = ErrorDKPDataInfo  -- contains info about the data like last sync, last full import
     core.ItemPriceList = ErrorDKPPriceList
     core.Settings = ErrorDKPConfig
     core.LootLog = ErrorDKPLootLog
@@ -232,9 +277,6 @@ local function OnInit()
     
     -- Create MiniMapIcon
     ErrorDKP:CreateMiniMapIcon()
-
-    --DBG
-    ErrorDKP.GNoteDKP:GetAll()
 end
 
 
@@ -300,8 +342,13 @@ function ErrorDKP_OnEventHandler(self, event, ...)
         ErrorDKP:BuidLootSlotInfo()
     elseif (event == "ENCOUNTER_LOOT_RECEIVED") then
         core:PrintDebug(event, ...)
-    --elseif (event == "GUILD_ROSTER_UPDATE") then
-      --  core:PrintDebug(event, ...)
+    elseif (event == "GUILD_ROSTER_UPDATE") then
+        core:PrintDebug(event, ...)
+        if ErrorDKP.GNoteDKP:IsUpdateRequired() then
+            core:PrintDebug("Local dkp-table update required")
+        else
+            core:PrintDebug("No local dkp-table updat required")
+        end
     elseif (event == "LOOT_OPENED") then
         core:PrintDebug(event, ...)
         ErrorDKP:OnLootOpened()

@@ -53,3 +53,7 @@ function core:LocalizedClassToEng(localizedClassString)
 
     return a,b
 end
+
+function core:classFileNameToId(classFileName)
+    return ClassFileNameIdTable[classFileName]
+end

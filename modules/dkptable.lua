@@ -21,6 +21,7 @@ function ErrorDKP:DKPTableUpdate()
   local DKPTableData = {}
   local index = 1
   for i, v in ipairs(core.DKPTable) do
+    core:PrintDebug(v.name, v.classFilename, v.classId)
     local classInfo = C_CreatureInfo.GetClassInfo(v.classId)
     local classColor = core.ClassColors[v["classFilename"]].hex
     local classString = string.format("|cFF%s%s|r", classColor, classInfo.className)
