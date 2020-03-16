@@ -17,6 +17,7 @@ function GNoteDKP:GetAll()
     local memberCnt = GetNumGuildMembers()
     local canEdit = CanEditOfficerNote()
     local canView = CanViewOfficerNote()
+    local canEditNote = CanEditPublicNote()
     local canEditGuildInfo = CanEditGuildInfo()
 
     core:PrintDebug("Total guildmembers = ", memberCnt, "Canedit: ", canEdit)
@@ -27,8 +28,8 @@ function GNoteDKP:GetAll()
         for i = 1, memberCnt do
             name, rank, rankIndex, level, class, zone, note, officernote, online, status, classFileName = GetGuildRosterInfo(i)
 
-            local points = GNoteDKP:ExtractPoints(officernote)
-            core:Error(name, classFileName)
+            local points = GNoteDKP:ExtractPoints(note)
+            --core:Error(name, classFileName)
             if points ~= nil then
                 local member = {
                     name = gsub(name, "%-[^|]+", ""), -- remove Realm
@@ -51,6 +52,41 @@ function GNoteDKP:GetAll()
    
 end
 
+function GNoteDKP:GetPlayerDKP(playerName)
+    local memberCnt = GetNumGuildMembers()
+  
+    if not core:CheckDKPOfficer() then
+        core:Error("Cannot update points you are no DKP-Officer")
+        return
+    end
+
+    for i = 1, memberCnt do
+        name, rank, rankIndex, level, class, zone, note, officernote, online, status, classFileName = GetGuildRosterInfo(i)
+        if string.lower(gsub(name, "%-[^|]+", "")) == string.lower(playerName) then
+            core:PrintDebug("Found player")
+            local points = GNoteDKP:ExtractPoints(note)
+            if points == nil then 
+                return 0 
+            else 
+                return points 
+            end
+        end
+    end
+    return nil
+end
+
+function GNoteDKP:ChangePlayerDKP(playerName, dkp)
+    core:PrintDebug("GNoteDKP:ChangePlayerDKP", playerName, dkp)
+    local oldPoints = self:GetPlayerDKP(playerName)
+    if oldPoints == nil then
+        core:Error("Player is not in Guild, cannot update DKP in note.")
+        return
+    end
+    local newPoints = oldPoints + dkp
+    local note = self:BuildDKPNote(newPoints)
+    self:UpdateNote(playerName, note)
+end
+
 function GNoteDKP:BuildDKPNote(points)
     return "{" .. tostring(points) .. "}"
 end
@@ -60,6 +96,32 @@ function GNoteDKP:UpdateNote(playerName, dkpnote)
     for i = 1, memberCnt do
         name, rank, rankIndex, level, class, zone, note, officernote, online, status, classFileName = GetGuildRosterInfo(i)
 
+        if string.lower(gsub(name, "%-[^|]+", "")) == string.lower(playerName) then
+            -- remove old dkp
+            local newNote = string.gsub(note, "{.*}", "")
+
+            if string.len(newNote) + string.len(dkpnote) <= OFFICER_NOTE_LENGTH then
+                -- Length is ok
+                newNote = newNote .. dkpnote
+            else
+                -- Cut existing note
+                local diff = string.len(newNote) + string.len(dkpnote) - OFFICER_NOTE_LENGTH
+                newNote = string.sub(newNote, 1, string.len(newNote)-diff) .. dkpnote
+            end
+
+            --GuildRosterSetOfficerNote(i, newNote) Use Public note
+            GuildRosterSetPublicNote(i, newNote)
+            core:PrintDebug("GNoteDKP:UpdateNote ", newNote)
+            return
+        end
+    end
+    -- If We reach this point player is not in guild
+end
+
+function GNoteDKP:UpdateOfficersNote(playerName, dkpnote)
+    local memberCnt = GetNumGuildMembers()
+    for i = 1, memberCnt do
+        name, rank, rankIndex, level, class, zone, note, officernote, online, status, classFileName = GetGuildRosterInfo(i)
         if string.lower(gsub(name, "%-[^|]+", "")) == string.lower(playerName) then
             -- remove old dkp
             local newNote = string.gsub(officernote, "{.*}", "")
@@ -133,20 +195,25 @@ end
 
 function GNoteDKP:GetTimestamp()
     local a = self:GetGInfoData()
-    return a and a.Timestamp or nil
+    return a and a.timestamp or nil
 end
 
 function GNoteDKP:IsUpdateRequired()
     local d = self:GetGInfoData()
 
+    if not tonumber(core:GetLocalDKPDataTimestamp()) then
+        return true
+    end
+
     if d and d.timestamp then
-        if tonumber(d.timestamp) > tonumber(core.DKPDataInfo.DKPInfo.timestamp) then
+        if tonumber(d.timestamp) > tonumber(core:GetLocalDKPDataTimestamp()) then
             return true
         end
     end
 end
 
 function GNoteDKP:ExtractGInfoData(ginfotext)
+    core:PrintDebug("ExtractGInfoData", string.len(ginfotext))
     if not ginfotext then return nil end
     local p = string.match(ginfotext, "{.*}")
 
@@ -188,6 +255,18 @@ local function ExtractNum(str, keys)
       end
     end
     return value
+end
+
+function GNoteDKP:RefreshLocalDKPTable()
+    core:PrintDebug("GNoteDKP:RefreshLocalDKPTable", self:GetTimestamp())
+    local dkptable = self:GetAll()
+    table.wipe(core.DKPTable)
+    
+    for k,v in pairs(dkptable) do
+        core.DKPTable[k] = v
+    end
+
+    core:SetLocalDKPDataTimestamp(self:GetTimestamp())
 end
 
   function QDKP2_MakeNote(incNet, incTotal, incSpent, incHours)

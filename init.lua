@@ -101,6 +101,13 @@ core.Commands = {
             end
         end
     },
+    ["print"] = {
+        ["stat"] = function(...)
+            core:Print("==========Stats=========")
+            local ts = ErrorDKP.GNoteDKP:GetTimestamp()
+            core:Print("Local DKP-Timestamp:", ts)
+        end
+    },
     ["test"] = {
         ["corehound"] = function(...)
             if core:CheckSelfTrusted() then
@@ -253,16 +260,16 @@ local function OnInit()
     if not ErrorDKPDataInfo.LootInfo then ErrorDKPDataInfo.LootInfo = {} end
 
     -- Get DKP Info
-    local noteDkpTable
-    local dkpDataInfo = core.ErrorDKP.GNoteDKP:GetGInfoData()
-    if dkpDataInfo then
-        core:PrintDebug("Dkp-Data-Timestamp: ", dkpDataInfo.Timestamp)
-        noteDkpTable = core.ErrorDKP.GNoteDKP.GetAll()
-        ErrorDKPDKPList = noteDkpTable and noteDkpTable or ErrorDKPDKPList
-        ErrorDKPDataInfo.DKPInfo = dkpDataInfo and dkpDataInfo or ErrorDKPDataInfo.DKPInfo
-    else
-        core:PrintDebug("Dkp-Data-Timestamp: ", "no timestamp found")
-    end
+    -- local noteDkpTable
+    -- local dkpDataInfo = core.ErrorDKP.GNoteDKP:GetGInfoData()
+    -- if dkpDataInfo then
+    --     core:PrintDebug("Dkp-Data-Timestamp: ", dkpDataInfo.Timestamp)
+    --     noteDkpTable = core.ErrorDKP.GNoteDKP.GetAll()
+    --     ErrorDKPDKPList = noteDkpTable and noteDkpTable or ErrorDKPDKPList
+    --     ErrorDKPDataInfo.DKPInfo = dkpDataInfo and dkpDataInfo or ErrorDKPDataInfo.DKPInfo
+    -- else
+    --     core:PrintDebug("Dkp-Data-Timestamp: ", "no timestamp found")
+    -- end
 
     --Apply to core
     core.DKPTable = ErrorDKPDKPList    -- the dkp table
@@ -277,6 +284,9 @@ local function OnInit()
     
     -- Create MiniMapIcon
     ErrorDKP:CreateMiniMapIcon()
+
+    core.Initialized = true
+    GuildRoster()
 end
 
 
@@ -343,11 +353,17 @@ function ErrorDKP_OnEventHandler(self, event, ...)
     elseif (event == "ENCOUNTER_LOOT_RECEIVED") then
         core:PrintDebug(event, ...)
     elseif (event == "GUILD_ROSTER_UPDATE") then
+        local rosterUpdatePossible = ...
         core:PrintDebug(event, ...)
-        if ErrorDKP.GNoteDKP:IsUpdateRequired() then
+        if not core.Initialized then
+            core:PrintDebug("Addon not initalized, cannot update dkp from guildroster")
+            return
+        end
+        if rosterUpdatePossible then
+            GuildRoster()
+        elseif ErrorDKP.GNoteDKP:IsUpdateRequired() then
             core:PrintDebug("Local dkp-table update required")
-        else
-            core:PrintDebug("No local dkp-table updat required")
+            ErrorDKP.GNoteDKP:RefreshLocalDKPTable()
         end
     elseif (event == "LOOT_OPENED") then
         core:PrintDebug(event, ...)

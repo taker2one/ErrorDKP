@@ -93,13 +93,7 @@ function Sync:OnCommReceived(prefix, message, channel, sender)
             if not timestampMatches then
                 -- timestamp doesnt match request a full update
                 core:Print(_L["MSG_DKPTABLE_OUTOFDATE"])
-                -- local officer = core:GetOnlineOfficer()
-                -- if officer then
-                --     core.Sync:SendTo("ErrDKPSyncReq", "FULL", officer)
-                -- else
-                --     core:Print("There is currently no online officer")
-                -- end
-
+             
                 -- In dieser Situation lieber direkt vom Sender anfragen da nicht sichergestellt ist, dass die Offiziere die Daten bereits verbucht haben
                 core.Sync:SendTo("ErrDKPSyncReq", "FULL", officer)
             end

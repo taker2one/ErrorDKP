@@ -33,6 +33,7 @@ function AdjustDKP(player, dkp)
             end
         end
         if entry then
+            ErrorDKP.GNoteDKP:ChangePlayerDKP(player, dkp)
             --core:PrintDebug("send: ", oldTimestamp, newTimestamp)
             core.Sync:Send("ErrDKPAdjP", { PTS = oldTimestamp, ATS = newTimestamp, DataSet = entry, Details = { DKP = dkp } })
             ErrorDKP:DKPTableUpdate()

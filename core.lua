@@ -21,6 +21,8 @@ core.Type = "R" -- R = Release, B = Beta, A = Alpha
 
 --SetCVar("ScriptErrors", 1)
 
+core.Initialized = false
+
 -- Defaults
 core.PrintPrefix = "<ErrorDKP>"
 
@@ -177,6 +179,20 @@ function core:CheckOfficer()
     return core.IsOfficer
 end
 
+function core:CheckDKPOfficer()
+    if core.IsDKPOfficer == nil then
+        core:PrintDebug(CheckDKPOfficer)
+        local canEditNote = CanEditPublicNote()
+        local canEditGuildInfo = CanEditGuildInfo()
+
+        core.IsDKPOfficer = canEditNote and canEditGuildInfo
+
+        core:PrintDebug("CheckDKPOfficer", core.IsDKPOfficer)
+    end
+    
+    return core.IsDKPOfficer
+end
+
 function core:CheckMasterLooter()
     --if IsInRaid() then
       local lootmethod, masterlooterPartyID, masterlooterRaidID = GetLootMethod()
@@ -233,12 +249,21 @@ function core:GenerateTimestamp()
 end
 
 function core:GetDKPDataTimestamp()
-  return core.DKPDataInfo["DKPInfo"]["timestamp"]
+    return core.DKPDataInfo["DKPInfo"]["timestamp"]
+end
+
+-- Just alias for GetDKPDataTimestamp
+function core:GetLocalDKPDataTimestamp()
+    return core.DKPDataInfo["DKPInfo"]["timestamp"]
 end
 
 -- this is used after received dkp update message
 function core:SetDKPDataTimestamp(timestamp)
-  core.DKPDataInfo["DKPInfo"]["timestamp"] = timestamp
+    core.DKPDataInfo["DKPInfo"]["timestamp"] = timestamp
+end
+
+function core:SetLocalDKPDataTimestamp(timestamp)
+    core.DKPDataInfo["DKPInfo"]["timestamp"] = timestamp
 end
 
 function core:GetLootDataTimestamp()
