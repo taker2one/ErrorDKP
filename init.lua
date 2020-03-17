@@ -10,7 +10,6 @@ local addonName, core = ...
 local ErrorDKP = core.ErrorDKP
 local _L = core._L
 
-
 local function mapImportDKPData()
     local imported = {}
     local index = 1
@@ -272,8 +271,11 @@ local function OnInit()
     -- end
 
     --Apply to core
-    core.DKPTable = ErrorDKPDKPList    -- the dkp table
-    core.DKPDataInfo = ErrorDKPDataInfo  -- contains info about the data like last sync, last full import
+    
+    -- Do not save Table anymore cause we rebuild it from GuildNotes anyway
+    --core.DKPTable = ErrorDKPDKPList    -- the dkp table
+    --core.DKPDataInfo = ErrorDKPDataInfo  -- contains info about the data like last sync, last full import
+
     core.ItemPriceList = ErrorDKPPriceList
     core.Settings = ErrorDKPConfig
     core.LootLog = ErrorDKPLootLog
@@ -359,11 +361,15 @@ function ErrorDKP_OnEventHandler(self, event, ...)
             core:PrintDebug("Addon not initalized, cannot update dkp from guildroster")
             return
         end
-        if rosterUpdatePossible then
+        if ErrorDKP.GNoteDKP:IsGuildDataAvailable() then         
+            if ErrorDKP.GNoteDKP:IsUpdateRequired() then
+                core:PrintDebug("Local dkp-table update required")
+                ErrorDKP.GNoteDKP:RefreshLocalDKPTable()
+                ErrorDKP:DKPTableUpdate()
+            end
+        else
             GuildRoster()
-        elseif ErrorDKP.GNoteDKP:IsUpdateRequired() then
-            core:PrintDebug("Local dkp-table update required")
-            ErrorDKP.GNoteDKP:RefreshLocalDKPTable()
+            core:PrintDebug("Guild Data Cache not filled yet, wait....")
         end
     elseif (event == "LOOT_OPENED") then
         core:PrintDebug(event, ...)

@@ -29,7 +29,9 @@ core.PrintPrefix = "<ErrorDKP>"
 -- Variables
 core.Imports = {}
 core.DKPTable = {}
-core.DKPDataInfo = {}
+core.DKPDataInfo = {
+    DKPInfo = {}
+}
 core.ItemPriceList = {} -- From saved data
 core.WorkItemPriceList = {} 
 core.ItemInfosLoaded = {}
@@ -254,7 +256,7 @@ end
 
 -- Just alias for GetDKPDataTimestamp
 function core:GetLocalDKPDataTimestamp()
-    return core.DKPDataInfo["DKPInfo"]["timestamp"]
+    return core.DKPDataInfo["DKPInfo"] and core.DKPDataInfo["DKPInfo"]["timestamp"] or nil
 end
 
 -- this is used after received dkp update message

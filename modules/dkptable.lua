@@ -13,27 +13,36 @@ local _LS = _L.DKPLISTTABLE
 
 local ScrollingTable = LibStub("ScrollingTable")
 
+local TableUpdatePending = true
 
+function ErrorDKP:DKPTableUpdateIfPending()
+    if TableUpdatePending then
+        TableUpdatePending = false
+        ErrorDKP:DKPTableUpdate()
+    end
+end
 
 function ErrorDKP:DKPTableUpdate()
-  if not UI.DKPTable then return end -- UI not created yet, no need to update table
+    if not UI.DKPTable or not UI.DKPTable.frame:IsShown() then 
+        TableUpdatePending = true
+        return 
+    end -- UI not created yet, no need to update table
 
-  local DKPTableData = {}
-  local index = 1
-  for i, v in ipairs(core.DKPTable) do
-    core:PrintDebug(v.name, v.classFilename, v.classId)
-    local classInfo = C_CreatureInfo.GetClassInfo(v.classId)
-    local classColor = core.ClassColors[v["classFilename"]].hex
-    local classString = string.format("|cFF%s%s|r", classColor, classInfo.className)
-    local playerNameColored = string.format("|cFF%s%s|r", classColor, v["name"])
-    
+    local DKPTableData = {}
+    local index = 1
+    for i, v in ipairs(core.DKPTable) do
+        local classInfo = C_CreatureInfo.GetClassInfo(v.classId)
+        local classColor = core.ClassColors[v["classFilename"]].hex
+        local classString = string.format("|cFF%s%s|r", classColor, classInfo.className)
+        local playerNameColored = string.format("|cFF%s%s|r", classColor, v["name"])
+        
 
-    DKPTableData[index] = { index,  classInfo.classFile, playerNameColored, v.name, classString , v.dkp}
-    index = index + 1
-  end
-  table.sort(DKPTableData, function(a, b) return (a[6] > b[6]); end);
-  UI.DKPTable:ClearSelection()
-  UI.DKPTable:SetData(DKPTableData, true)
+        DKPTableData[index] = { index,  classInfo.classFile, playerNameColored, v.name, classString , v.dkp}
+        index = index + 1
+    end
+    table.sort(DKPTableData, function(a, b) return (a[6] > b[6]); end);
+    UI.DKPTable:ClearSelection()
+    UI.DKPTable:SetData(DKPTableData, true)
 end
 
 local menu = {
@@ -46,7 +55,8 @@ local menu = {
       end }
   }
 
--- We need to sort by name casuse name is colored
+
+  -- We need to sort by name cause name is colored
 function TableSort(table, rowa, rowb, sortbycol)
     local column = table.cols[sortbycol]
     local direction = column.sort or column.defaultsort or 1

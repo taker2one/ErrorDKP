@@ -57,6 +57,7 @@ function ErrorDKP:AutoAdjustDKP(player, dkp, itemLink)
             end
         end
         if entry then
+            ErrorDKP.GNoteDKP:ChangePlayerDKP(player, dkp)
             core.Sync:Send("ErrDKPAdjPA", { PTS = oldTimestamp, ATS = newTimestamp, DataSet = entry, Details = { DKP = dkp, ItemLink = itemLink }})
             core:Print(string.format(_L["MSG_DKP_ADJUST_AUTO"], player, dkp, itemLink ))
             ErrorDKP:DKPTableUpdate()
@@ -80,6 +81,7 @@ function ErrorDKP:AdjustDKPWithItem(player, dkp, itemHistoryEntry)
             end
         end
         if entry then                     -- Previous Timestamp, ActualTimestam, ActualTimestamp Lootlog,                  PlayerENtry,     ItemEntry
+            ErrorDKP.GNoteDKP:ChangePlayerDKP(player, dkp)
             core.Sync:Send("ErrDKPAdjPAWI", { PTS = oldTimestamp, ATS = newTimestamp, IATS = core:GetLootDataTimestamp(), DataSet = entry, Item = itemHistoryEntry })
             core:Print(string.format(_L["MSG_DKP_ADJUST_AUTO"], player, dkp, itemHistoryEntry.ItemLink ))
             ErrorDKP:DKPTableUpdate()

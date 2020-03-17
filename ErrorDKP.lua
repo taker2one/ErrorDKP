@@ -13,6 +13,8 @@ function ErrorDKP:Toggle()
     core.UI.Main = core.UI.Main or ErrorDKP:CreateMain()
     core.UI.Main:SetShown(not core.UI.Main:IsShown())
     core.UI.Main:SetClampedToScreen(true)
+
+    ErrorDKP:DKPTableUpdateIfPending()
 end
 
 function ErrorDKP:CreateMain()

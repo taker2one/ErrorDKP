@@ -13,6 +13,8 @@ local GNoteDKP = ErrorDKP.GNoteDKP
 local OFFICER_NOTE_LENGTH = 31
 local GUILD_INFO_LENGTH = 500
 
+local GuildDataAvailable
+
 function GNoteDKP:GetAll()
     local memberCnt = GetNumGuildMembers()
     local canEdit = CanEditOfficerNote()
@@ -24,7 +26,6 @@ function GNoteDKP:GetAll()
 
 
     local dkplist = {}
-    if canView then
         for i = 1, memberCnt do
             name, rank, rankIndex, level, class, zone, note, officernote, online, status, classFileName = GetGuildRosterInfo(i)
 
@@ -46,9 +47,6 @@ function GNoteDKP:GetAll()
             end
         end
         return dkplist
-    else
-        return nil
-    end
    
 end
 
@@ -75,7 +73,7 @@ function GNoteDKP:GetPlayerDKP(playerName)
     return nil
 end
 
-function GNoteDKP:ChangePlayerDKP(playerName, dkp)
+function GNoteDKP:ChangePlayerDKP(playerName, dkp, noInfoUpdate)
     core:PrintDebug("GNoteDKP:ChangePlayerDKP", playerName, dkp)
     local oldPoints = self:GetPlayerDKP(playerName)
     if oldPoints == nil then
@@ -85,6 +83,10 @@ function GNoteDKP:ChangePlayerDKP(playerName, dkp)
     local newPoints = oldPoints + dkp
     local note = self:BuildDKPNote(newPoints)
     self:UpdateNote(playerName, note)
+
+    -- Ignore Update info in case of batch update
+    if noInfoUpdate then return end
+    self:UpdateDKPInfo()
 end
 
 function GNoteDKP:BuildDKPNote(points)
@@ -168,6 +170,12 @@ function GNoteDKP:GetGInfoData()
     local info = self:ExtractGInfoData(text)
     
     return info
+end
+
+
+function GNoteDKP:UpdateDKPInfo()
+    local d = self:BuildDKPInfo(GetServerTime())
+    self:UpdateGInfoData(d)
 end
 
 function GNoteDKP:BuildDKPInfo(timestamp)
@@ -267,6 +275,16 @@ function GNoteDKP:RefreshLocalDKPTable()
     end
 
     core:SetLocalDKPDataTimestamp(self:GetTimestamp())
+end
+
+function GNoteDKP:IsGuildDataAvailable()
+    if GuildDataAvailable then
+        return true
+    else
+        if GetGuildInfoText() ~= nil and  GetNumGuildMembers() > 0 then
+            GuildDataAvailable = true
+        end
+    end
 end
 
   function QDKP2_MakeNote(incNet, incTotal, incSpent, incHours)
