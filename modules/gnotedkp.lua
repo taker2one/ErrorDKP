@@ -14,6 +14,11 @@ local OFFICER_NOTE_LENGTH = 31
 local GUILD_INFO_LENGTH = 500
 
 local GuildDataAvailable
+local updateFrame = CreateFrame("Frame", "GuildRosterUpdateFrame")
+
+--#
+--# Public API
+--#
 
 function GNoteDKP:GetAll()
     local memberCnt = GetNumGuildMembers()
@@ -48,6 +53,11 @@ function GNoteDKP:GetAll()
         end
         return dkplist
    
+end
+
+function GNoteDKP:GetTimestamp()
+    local a = self:GetGInfoData()
+    return a and a.timestamp or nil
 end
 
 function GNoteDKP:GetPlayerDKP(playerName)
@@ -88,6 +98,67 @@ function GNoteDKP:ChangePlayerDKP(playerName, dkp, noInfoUpdate)
     if noInfoUpdate then return end
     self:UpdateDKPInfo()
 end
+
+function GNoteDKP:SetPlayerDKP(playerName, dkp, noInfoUpdate)
+    core:PrintDebug("GNoteDKP:SetPlayerDKP", playerName, dkp)
+    local note = self:BuildDKPNote(dkp)
+    self:UpdateNote(playerName, note)
+
+    -- Ignore Update info in case of batch update
+    if noInfoUpdate then return end
+    self:UpdateDKPInfo()
+end
+
+function GNoteDKP:IsUpdateRequired()
+    local d = self:GetGInfoData()
+
+    if not tonumber(core:GetLocalDKPDataTimestamp()) then
+        return true
+    end
+
+    if d and d.timestamp then
+        if tonumber(d.timestamp) > tonumber(core:GetLocalDKPDataTimestamp()) then
+            return true
+        end
+    end
+end
+
+function GNoteDKP:RefreshLocalTableIfRequired()
+    if self:IsUpdateRequired() then
+        self:RefreshLocalDKPTable()
+    end
+end
+
+function GNoteDKP:RefreshLocalDKPTable()
+    core:PrintDebug("GNoteDKP:RefreshLocalDKPTable", self:GetTimestamp())
+    local dkptable = self:GetAll()
+    table.wipe(core.DKPTable)
+    
+    for k,v in pairs(dkptable) do
+        core.DKPTable[k] = v
+    end
+
+    core:SetLocalDKPDataTimestamp(self:GetTimestamp())
+end
+
+function GNoteDKP:IsGuildDataAvailable()
+    if GuildDataAvailable then
+        return true
+    else
+        if GetGuildInfoText() ~= nil and  GetNumGuildMembers() > 0 then
+            GuildDataAvailable = true
+        end
+    end
+end
+
+function GNoteDKP:UpdateDKPInfo()
+    local d = self:BuildDKPInfo(GetServerTime())
+    self:UpdateGInfoData(d)
+end
+
+--#
+--# Internal Usage
+--#
 
 function GNoteDKP:BuildDKPNote(points)
     return "{" .. tostring(points) .. "}"
@@ -172,12 +243,6 @@ function GNoteDKP:GetGInfoData()
     return info
 end
 
-
-function GNoteDKP:UpdateDKPInfo()
-    local d = self:BuildDKPInfo(GetServerTime())
-    self:UpdateGInfoData(d)
-end
-
 function GNoteDKP:BuildDKPInfo(timestamp)
     return "{" .. tostring(timestamp) .. "}"
 end
@@ -199,25 +264,6 @@ function GNoteDKP:UpdateGInfoData(dkpinfo)
         newInfo = string.sub(newInfo, 1, string.len(newInfo)-diff) .. dkpinfo
     end
     SetGuildInfoText(newInfo)
-end
-
-function GNoteDKP:GetTimestamp()
-    local a = self:GetGInfoData()
-    return a and a.timestamp or nil
-end
-
-function GNoteDKP:IsUpdateRequired()
-    local d = self:GetGInfoData()
-
-    if not tonumber(core:GetLocalDKPDataTimestamp()) then
-        return true
-    end
-
-    if d and d.timestamp then
-        if tonumber(d.timestamp) > tonumber(core:GetLocalDKPDataTimestamp()) then
-            return true
-        end
-    end
 end
 
 function GNoteDKP:ExtractGInfoData(ginfotext)
@@ -265,26 +311,19 @@ local function ExtractNum(str, keys)
     return value
 end
 
-function GNoteDKP:RefreshLocalDKPTable()
-    core:PrintDebug("GNoteDKP:RefreshLocalDKPTable", self:GetTimestamp())
-    local dkptable = self:GetAll()
-    table.wipe(core.DKPTable)
-    
-    for k,v in pairs(dkptable) do
-        core.DKPTable[k] = v
-    end
-
-    core:SetLocalDKPDataTimestamp(self:GetTimestamp())
+function GNoteDKP:InitRosterUpdate()
+    updateFrame.lastCheck = time() - 10
+    updateFrame:SetScript("OnUpdate", function()
+        if ((time() - updateFrame.lastCheck) > 10) then
+            core:PrintDebug("Call Guildroster()")
+            updateFrame.lastCheck = time();
+            GuildRoster()
+        end
+    end)
 end
 
-function GNoteDKP:IsGuildDataAvailable()
-    if GuildDataAvailable then
-        return true
-    else
-        if GetGuildInfoText() ~= nil and  GetNumGuildMembers() > 0 then
-            GuildDataAvailable = true
-        end
-    end
+function GNoteDKP:ResetUpdateCycle()
+    updateFrame.lastCheck = time()
 end
 
   function QDKP2_MakeNote(incNet, incTotal, incSpent, incHours)

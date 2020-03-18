@@ -3,7 +3,7 @@
 --#  File: init.lua
 --#  Author: Manuel "Doktorwho@Venoxis" Ebner
 --#  Description: Setup events, register slash commands
---#  Last Edit: 21.11.2019
+--#  Last Edit: 18.03.2020
 --###############################################
 
 local addonName, core = ...
@@ -14,26 +14,19 @@ local function mapImportDKPData()
     local imported = {}
     local index = 1
 
-    local timestamp = core.ErrorDKP.GNoteDKP:GetTimestamp()
+    local timestamp = ErrorDKP.GNoteDKP:GetTimestamp()
     local importDataTimestamp = DKPInfo["timestamp"]
 
     if (not timestamp and tonumber(importDataTimestamp)) or tonumber(importDataTimestamp) > timestamp then
         -- fine
         for k,v in pairs(gdkp["players"]) do
-            local note = core.ErrorDKP.GNoteDKP:BuildDKPNote(v["dkp_current"])
-            core.ErrorDKP.GNoteDKP:UpdateNote(k, note)
-
-            -- local classFilename, classId = core:LocalizedClassToEng(v["class"])
-            -- imported[index] = { name = k, dkp = v["dkp_current"], classFilename = classFilename, classId = classId  }
-            -- index = index + 1
+            ErrorDKP.GNoteDKP:SetPlayerDKP(k, v["dkp_current"], true)
         end
 
-        local newInfo = core.ErrorDKP.GNoteDKP:BuildDKPInfo(importDataTimestamp)
-        core.ErrorDKP.GNoteDKP:UpdateGInfoData(newInfo)
+        ErrorDKP.GNoteDKP:UpdateDKPInfo()
     else
         core:Print("The timestamp of the data you want to import is older than the dkp data in the guild info")
     end
-    --return imported
 end
 
 -------------------------------------------------------------------
@@ -95,7 +88,7 @@ core.Commands = {
 
     ["import"] = {
         ["dkp"] = function(...)
-            if core:CheckOfficer() then
+            if core:CheckDKPOfficer() then
                 mapImportDKPData()
             end
         end
@@ -275,20 +268,20 @@ local function OnInit()
     -- Do not save Table anymore cause we rebuild it from GuildNotes anyway
     --core.DKPTable = ErrorDKPDKPList    -- the dkp table
     --core.DKPDataInfo = ErrorDKPDataInfo  -- contains info about the data like last sync, last full import
-
+    core.DKPDataInfo.LootInfo = ErrorDKPDataInfo.LootInfo
+    core.DKPDataInfo.PriceListInfo = ErrorDKPDataInfo.PriceListInfo
     core.ItemPriceList = ErrorDKPPriceList
     core.Settings = ErrorDKPConfig
     core.LootLog = ErrorDKPLootLog
-    core.LootQueue = ErrorDKPLootQueue;
+    core.LootQueue = ErrorDKPLootQueue
 
     -- Hook ItemPriceToolTipScript
     ErrorDKP:RegisterItemPriceTooltip()
     
     -- Create MiniMapIcon
     ErrorDKP:CreateMiniMapIcon()
-
+    ErrorDKP.GNoteDKP:InitRosterUpdate()
     core.Initialized = true
-    GuildRoster()
 end
 
 
@@ -356,6 +349,7 @@ function ErrorDKP_OnEventHandler(self, event, ...)
         core:PrintDebug(event, ...)
     elseif (event == "GUILD_ROSTER_UPDATE") then
         local rosterUpdatePossible = ...
+        ErrorDKP.GNoteDKP:ResetUpdateCycle()
         core:PrintDebug(event, ...)
         if not core.Initialized then
             core:PrintDebug("Addon not initalized, cannot update dkp from guildroster")
@@ -368,7 +362,6 @@ function ErrorDKP_OnEventHandler(self, event, ...)
                 ErrorDKP:DKPTableUpdate()
             end
         else
-            GuildRoster()
             core:PrintDebug("Guild Data Cache not filled yet, wait....")
         end
     elseif (event == "LOOT_OPENED") then

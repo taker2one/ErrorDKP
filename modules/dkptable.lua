@@ -27,7 +27,7 @@ function ErrorDKP:DKPTableUpdate()
         TableUpdatePending = true
         return 
     end -- UI not created yet, no need to update table
-
+    core:PrintDebug("ErrorDKP:DKPTableUpdate")
     local DKPTableData = {}
     local index = 1
     for i, v in ipairs(core.DKPTable) do

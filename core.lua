@@ -184,10 +184,11 @@ end
 function core:CheckDKPOfficer()
     if core.IsDKPOfficer == nil then
         core:PrintDebug(CheckDKPOfficer)
+        local isOfficer = self:CheckOfficer() 
         local canEditNote = CanEditPublicNote()
         local canEditGuildInfo = CanEditGuildInfo()
 
-        core.IsDKPOfficer = canEditNote and canEditGuildInfo
+        core.IsDKPOfficer = canEditNote and canEditGuildInfo and isOfficer
 
         core:PrintDebug("CheckDKPOfficer", core.IsDKPOfficer)
     end

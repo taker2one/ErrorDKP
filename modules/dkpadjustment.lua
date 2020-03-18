@@ -11,8 +11,8 @@ local UI = core.UI
 local _L = core._L
 
 local function UpdateDataTimestamp()
-    core.DKPDataInfo["DKPInfo"]["timestamp"] = core:GenerateTimestamp()
-    return core.DKPDataInfo["DKPInfo"]["timestamp"]
+    core:SetLocalDKPDataTimestamp(core:GenerateTimestamp())
+    return core:GetLocalDKPDataTimestamp()
 end
 
 
@@ -27,8 +27,8 @@ function AdjustDKP(player, dkp)
             if string.lower(v["name"]) == string.lower(player) then
                 v["dkp"] = v["dkp"] + dkp
                 entry = v
-                oldTimestamp = core:GetDKPDataTimestamp()
-                newTimestamp = UpdateDataTimestamp()
+                oldTimestamp = core:GetLocalDKPDataTimestamp()
+                newTimestamp = core:GenerateTimestamp() -- just for downwards compatibility
                 break
             end
         end
@@ -51,8 +51,8 @@ function ErrorDKP:AutoAdjustDKP(player, dkp, itemLink)
             if string.lower(v["name"]) == string.lower(player) then
                 v["dkp"] = v["dkp"] + dkp
                 entry = v
-                oldTimestamp = core:GetDKPDataTimestamp()
-                newTimestamp = UpdateDataTimestamp()
+                oldTimestamp = core:GetLocalDKPDataTimestamp()
+                newTimestamp = core:GenerateTimestamp() -- just for downwards compatibility
                 break
             end
         end
@@ -75,8 +75,8 @@ function ErrorDKP:AdjustDKPWithItem(player, dkp, itemHistoryEntry)
             if string.lower(v["name"]) == string.lower(player) then
                 v["dkp"] = v["dkp"] + dkp
                 entry = v
-                oldTimestamp = core:GetDKPDataTimestamp()
-                newTimestamp = UpdateDataTimestamp()
+                oldTimestamp = core:GetLocalDKPDataTimestamp()
+                newTimestamp = core:GenerateTimestamp() -- just for downwards compatibility
                 break
             end
         end

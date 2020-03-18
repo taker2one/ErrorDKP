@@ -87,23 +87,24 @@ function Sync:OnCommReceived(prefix, message, channel, sender)
         -- Data is serialized { PTS, ATS, Data }
         local success, deserialized = Serializer:Deserialize(message)
             if success then
-            core:PrintDebug(deserialized.PTS, deserialized.ATS)
-            local timestampMatches = CheckDKPTimestamp(deserialized.PTS)
+            -- core:PrintDebug(deserialized.PTS, deserialized.ATS)
+            -- local timestampMatches = CheckDKPTimestamp(deserialized.PTS)
 
-            if not timestampMatches then
-                -- timestamp doesnt match request a full update
-                core:Print(_L["MSG_DKPTABLE_OUTOFDATE"])
+            -- if not timestampMatches then
+            --     -- timestamp doesnt match request a full update
+            --     core:Print(_L["MSG_DKPTABLE_OUTOFDATE"])
              
-                -- In dieser Situation lieber direkt vom Sender anfragen da nicht sichergestellt ist, dass die Offiziere die Daten bereits verbucht haben
-                core.Sync:SendTo("ErrDKPSyncReq", "FULL", officer)
-            end
+            --     -- In dieser Situation lieber direkt vom Sender anfragen da nicht sichergestellt ist, dass die Offiziere die Daten bereits verbucht haben
+            --     core.Sync:SendTo("ErrDKPSyncReq", "FULL", officer)
+            -- end
 
             local entry;
             for i, v in ipairs(core.DKPTable) do
-                if v["name"] == deserialized.DataSet["name"] then
+                if string.lower(v["name"]) == string.lower(deserialized.DataSet["name"]) then
                     v["dkp"] = deserialized.DataSet["dkp"]
                     entry = v
-                    core:SetDKPDataTimestamp(deserialized.ATS)
+                    -- I want to update the table when wow server guild roster sync is done
+                    --core:SetDKPDataTimestamp(deserialized.ATS)
                     break
                 end
             end
@@ -111,14 +112,17 @@ function Sync:OnCommReceived(prefix, message, channel, sender)
                 table.insert(core.DKPTable, deserialized.DataSet)
             end
 
+            -- No local table update required cause player can build local table based in public available Guild Information (Public Note and Guild Info)
             if prefix == "ErrDKPAdjPA" then
                 core:Print(string.format(_L["MSG_DKP_ADJUST_AUTO"], deserialized.DataSet["name"], deserialized.Details["DKP"], deserialized.Details["ItemLink"]))
             elseif prefix == "ErrDKPAdjP" then
                 core:Print(string.format(_L["MSG_DKP_ADJUST_MAN"], deserialized.DataSet["name"], deserialized.Details["DKP"] ))
             end
+            ErrorDKP.GNoteDKP:RefreshLocalTableIfRequired()
             ErrorDKP:DKPTableUpdate()
+            -- ErrorDKP:DKPTableUpdate()
         else
-            core:Print("Error while deserializing data from message: ", prefix)
+            core:Error("Error while deserializing data from message: ", prefix)
         end
     elseif prefix == "ErrDKPAdjPAWI" and sender ~= UnitName("player") 
     then
@@ -126,28 +130,21 @@ function Sync:OnCommReceived(prefix, message, channel, sender)
         local success, deserialized = Serializer:Deserialize(message)
             if success then
             core:PrintDebug("ErrDKPAdjPAWI", "sender", deserialized.PTS, deserialized.ATS)
-            local timestampMatches = CheckDKPTimestamp(deserialized.PTS)
+            --local timestampMatches = CheckDKPTimestamp(deserialized.PTS)
 
             -- timestamp doesnt match request a full update
-            if not timestampMatches then
-                core:Print(_L["MSG_DKPTABLE_OUTOFDATE"])
-                --local officer = core:GetOnlineOfficer(sender)
-                -- if officer then
-                --     core.Sync:SendTo("ErrDKPSyncReq", "FULL", officer)
-                -- else
-                --     core:Print("There is currently no online officer")
-                -- end
-
-                -- In dieser situation lieber direkt vom Sender anfragen da nicht sichergestellt ist, dass die Offiziere die Daten bereits verbucht haben
-                core.Sync:SendTo("ErrDKPSyncReq", "FULL", officer)
-            end
+            -- if not timestampMatches then
+            --     core:Print(_L["MSG_DKPTABLE_OUTOFDATE"])
+            --     core.Sync:SendTo("ErrDKPSyncReq", "FULL", officer)
+            -- end
 
             local entry;
             for i, v in ipairs(core.DKPTable) do
-                if v["name"] == deserialized.DataSet["name"] then
+                if string.lower(v["name"]) == string.lower(deserialized.DataSet["name"]) then
                     v["dkp"] = deserialized.DataSet["dkp"]
                     entry = v
-                    core:SetDKPDataTimestamp(deserialized.ATS)
+                    -- I want to update the table when wow server guild roster sync is done
+                    --core:SetDKPDataTimestamp(deserialized.ATS)
                     break
                 end
             end
@@ -164,6 +161,8 @@ function Sync:OnCommReceived(prefix, message, channel, sender)
 
            
             core:Print(string.format(_L["MSG_DKP_ADJUST_AUTO"], deserialized.DataSet["name"], "-"..deserialized.Item["Dkp"], deserialized.Item["ItemLink"]))
+            --ErrorDKP:DKPTableUpdate()
+            ErrorDKP.GNoteDKP:RefreshLocalTableIfRequired()
             ErrorDKP:DKPTableUpdate()
             ErrorDKP:LootHistoryTableUpdate()
         else
@@ -194,20 +193,21 @@ function Sync:OnCommReceived(prefix, message, channel, sender)
     --
     elseif prefix == "ErrDKPDKPSync" and sender ~= UnitName("player")  
     then
-        if VerifySender(sender) then
-            local success, deserialized = Serializer:Deserialize(message)
-            if success then
-                table.wipe(core.DKPTable)
-                for i, v in ipairs(deserialized.DataSet) do
-                    table.insert(core.DKPTable, v)
-                end
-                core:SetDKPDataTimestamp(deserialized.ATS)
-                core:Print(string.format(_L["MSG_SYNC_FINISHED"], "DKP", sender))
-            else
-                core:Print("Error while deserializing data from message: ", prefix)
-            end
-            ErrorDKP:DKPTableUpdate()
-        end
+        -- if VerifySender(sender) then
+        --     local success, deserialized = Serializer:Deserialize(message)
+        --     if success then
+        --         table.wipe(core.DKPTable)
+        --         for i, v in ipairs(deserialized.DataSet) do
+        --             table.insert(core.DKPTable, v)
+        --         end
+        --         core:SetDKPDataTimestamp(deserialized.ATS)
+        --         core:Print(string.format(_L["MSG_SYNC_FINISHED"], "DKP", sender))
+        --     else
+        --         core:Print("Error while deserializing data from message: ", prefix)
+        --     end
+        --     ErrorDKP:DKPTableUpdate()
+        -- end
+        core:PrintDebug("No more dkp sync required")
     elseif prefix == "ErrDKPLootSync" and sender ~= UnitName("player")  
     then
         if VerifySender(sender) then
