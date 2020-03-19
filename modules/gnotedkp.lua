@@ -47,9 +47,6 @@ function GNoteDKP:GetAll()
                 
                 table.insert(dkplist, member)
             end
-            if name == "Dichterin-Venoxis" then --DBG
-                core:Error("Dichterin-Venoxis", points)
-            end
         end
         return dkplist
    
@@ -325,90 +322,3 @@ end
 function GNoteDKP:ResetUpdateCycle()
     updateFrame.lastCheck = time()
 end
-
-  function QDKP2_MakeNote(incNet, incTotal, incSpent, incHours)
-    --puts the data back into a note
-    
-      incNet=RoundNum(incNet)
-      incTotal=RoundNum(incTotal)
-      incSpent=RoundNum(incSpent)
-      incHours=RoundNum(incHours*10)/10
-    
-      local out=''
-      local netLabel='Net'
-      local optLabel, optValue='Tot', incTotal
-      local hrsLabel='Hrs'
-      if QDKP2_TotalOrSpent==2 then
-        optLabel = 'Spt'
-        optValue = incSpent
-      end
-      if QDKP2_CompactNoteMode then
-        netLabel='N'
-        hrsLabel='H'
-        optLabel=string.sub(optLabel,1,1)
-      end
-    
-      local limitMax,limitMin=QDKP2_GetMaximumFieldNumber()
-      if incNet>limitMax then incNet=limitMax
-      elseif incNet<limitMin then incNet=limitMin
-      end
-      if optValue>limitMax then optValue=limitMax
-      elseif optValue<limitMin then optValue=limitMin
-      end
-      if incHours>9999.9 then incHours='9999.9'
-      elseif incHours<0 then incHours='0'
-      end
-    
-      local out=netLabel..QDKP2_NOTE_DASH..tostring(incNet)..QDKP2_NOTE_BREAK..optLabel..QDKP2_NOTE_DASH..tostring(optValue)
-      if QDKP2_StoreHours then
-        out=out..QDKP2_NOTE_BREAK..hrsLabel..QDKP2_NOTE_DASH..tostring(incHours)
-      end
-      return out
-    end
-
-
-    function QDKP2_ParseNote(incParse)
-        -- Given string str, find and return net,total,spent,hours
-        -- returns 0 on not found.
-        -- does NOT rely on outputformat for the parsing.
-        
-          local nettemp=0
-          local spenttemp=0
-          local totaltemp=0
-          local hourstemp=0
-        
-          nettemp   = ExtractNum(incParse, {"Net", "DKP", "N"})     -- Net is any number following n=, net=
-          totaltemp = ExtractNum(incParse, {"Total","Tot","T","G"}) -- Total is any number following g=, t=, tot=, total=
-          spenttemp = ExtractNum(incParse, {"Spent", "Spt","S"})   -- Spent is any number following s=,spt=,spent=
-          hourstemp = ExtractNum(incParse, {"Hours","Hrs","H"})   -- Hours is any number following hours=, hrs=, h=
-        
-          --if there isn't any compatible QDKP2 text in the note, return all 0
-          if not spenttemp and not totaltemp and not nettemp then
-            nettemp=0
-            totaltemp=0
-            spenttemp=0
-          end
-        
-          --this is to fix output format with only NET field (DKP:xx)
-          if not spenttemp and not totaltemp then
-            totaltemp=nettemp
-          end
-        
-          --this is to fix output format with only total
-          if not nettemp and not spenttemp then
-            nettemp=totaltemp
-          end
-        
-          --this is to fix output formats with only spent (????)
-          if not nettemp and not totaltemp then
-            totaltemp=spenttemp
-          end
-        
-          --fixups for empty fields
-          nettemp=nettemp or totaltemp - spenttemp
-          spenttemp=spenttemp or totaltemp - nettemp
-          totaltemp=totaltemp or nettemp + spenttemp
-          hourstemp=hourstemp or 0
-        
-          return nettemp, totaltemp, spenttemp, hourstemp
-        end

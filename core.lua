@@ -106,7 +106,7 @@ core.UI = {}
 
 -- Debug
 core.TestMode = false -- TestMode for some features -- DBG
-core.Debug = true -- Enable debug output -- DBG
+core.Debug = false -- Enable debug output -- DBG
 function core:PrintDebug(...)
     if core.Debug then
         print("|cff90EE90<ErrorDKP-Dbg>|r", ...)
