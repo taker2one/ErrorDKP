@@ -7,21 +7,21 @@ multiTable = {
 },
 }
 DKPInfo = {
-	["date"] = "18.03.20 11:54:01",
-	["timestamp"] = "1584532441",
+	["date"] = "24.03.20 15:37:24",
+	["timestamp"] = "1585064244",
 	["process_dkp_ver"] = "3.0",
-	["total_players"] = 70,
-	["total_items"] = 692,
+	["total_players"] = 76,
+	["total_items"] = 728,
 	["total_points"] = 0,
 	}
 gdkp = {
 	["players"] = {
 		["Argok"] = {
-			["DKP"] = -154,
+			["DKP"] = -157,
 			["dkp_earned"] = 662.45,
-			["dkp_spend"] = 769.0,
+			["dkp_spend"] = 772.0,
 			["dkp_adjust"] = 0,
-			["dkp_current"] = -154.93,
+			["dkp_current"] = -157.93,
 			["class"] = "Krieger",
 			["rcount"] = 0,
 			}
@@ -46,12 +46,22 @@ gdkp = {
 			["rcount"] = 0,
 			}
 		,
-		["Barrexx"] = {
-			["DKP"] = 68,
-			["dkp_earned"] = 82.25,
-			["dkp_spend"] = 16.0,
+		["Barbozza"] = {
+			["DKP"] = 0,
+			["dkp_earned"] = 0.0,
+			["dkp_spend"] = 0.0,
 			["dkp_adjust"] = 0,
-			["dkp_current"] = 68.37,
+			["dkp_current"] = 0.0,
+			["class"] = "Priester",
+			["rcount"] = 0,
+			}
+		,
+		["Barrexx"] = {
+			["DKP"] = -6,
+			["dkp_earned"] = 82.25,
+			["dkp_spend"] = 91.0,
+			["dkp_adjust"] = 0,
+			["dkp_current"] = -6.63,
 			["class"] = "Magier",
 			["rcount"] = 0,
 			}
@@ -67,11 +77,11 @@ gdkp = {
 			}
 		,
 		["Breituxs"] = {
-			["DKP"] = -51,
+			["DKP"] = -151,
 			["dkp_earned"] = 652.95,
-			["dkp_spend"] = 708.0,
+			["dkp_spend"] = 808.0,
 			["dkp_adjust"] = 0,
-			["dkp_current"] = -51.63,
+			["dkp_current"] = -151.63,
 			["class"] = "Schurke",
 			["rcount"] = 0,
 			}
@@ -86,16 +96,6 @@ gdkp = {
 			["rcount"] = 0,
 			}
 		,
-		["Cyless"] = {
-			["DKP"] = -32,
-			["dkp_earned"] = 108.02,
-			["dkp_spend"] = 80.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = -32.86,
-			["class"] = "Schurke",
-			["rcount"] = 0,
-			}
-		,
 		["Davanus"] = {
 			["DKP"] = 0,
 			["dkp_earned"] = 387.34,
@@ -103,16 +103,6 @@ gdkp = {
 			["dkp_adjust"] = 0,
 			["dkp_current"] = -0.09,
 			["class"] = "Priester",
-			["rcount"] = 0,
-			}
-		,
-		["Dep"] = {
-			["DKP"] = -38,
-			["dkp_earned"] = 303.53,
-			["dkp_spend"] = 703.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = -38.41,
-			["class"] = "Jäger",
 			["rcount"] = 0,
 			}
 		,
@@ -143,16 +133,6 @@ gdkp = {
 			["dkp_adjust"] = 0,
 			["dkp_current"] = -30.61,
 			["class"] = "Hexenmeister",
-			["rcount"] = 0,
-			}
-		,
-		["Erdbeerchen"] = {
-			["DKP"] = -51,
-			["dkp_earned"] = 35.49,
-			["dkp_spend"] = 30.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = -51.11,
-			["class"] = "Magier",
 			["rcount"] = 0,
 			}
 		,
@@ -196,26 +176,6 @@ gdkp = {
 			["rcount"] = 0,
 			}
 		,
-		["Gromsuk"] = {
-			["DKP"] = 53,
-			["dkp_earned"] = 675.58,
-			["dkp_spend"] = 411.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 53.13,
-			["class"] = "Schamane",
-			["rcount"] = 0,
-			}
-		,
-		["Hansfallada"] = {
-			["DKP"] = 11,
-			["dkp_earned"] = 122.08,
-			["dkp_spend"] = 232.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 11.02,
-			["class"] = "Druide",
-			["rcount"] = 0,
-			}
-		,
 		["Hasenpfote"] = {
 			["DKP"] = -72,
 			["dkp_earned"] = 532.47,
@@ -256,33 +216,43 @@ gdkp = {
 			["rcount"] = 0,
 			}
 		,
-		["Landogar"] = {
-			["DKP"] = 43,
-			["dkp_earned"] = 288.34,
-			["dkp_spend"] = 200.0,
+		["Lami"] = {
+			["DKP"] = 0,
+			["dkp_earned"] = 0.0,
+			["dkp_spend"] = 0.0,
 			["dkp_adjust"] = 0,
-			["dkp_current"] = 43.87,
+			["dkp_current"] = 0.0,
 			["class"] = "Krieger",
 			["rcount"] = 0,
 			}
 		,
-		["Lustknabe"] = {
-			["DKP"] = -23,
-			["dkp_earned"] = 466.55,
-			["dkp_spend"] = 478.0,
+		["Landogar"] = {
+			["DKP"] = 40,
+			["dkp_earned"] = 288.34,
+			["dkp_spend"] = 203.0,
 			["dkp_adjust"] = 0,
-			["dkp_current"] = -23.17,
-			["class"] = "Magier",
+			["dkp_current"] = 40.87,
+			["class"] = "Krieger",
 			["rcount"] = 0,
 			}
 		,
-		["Maniop"] = {
+		["Legshot"] = {
 			["DKP"] = -16,
 			["dkp_earned"] = 677.53,
 			["dkp_spend"] = 530.0,
 			["dkp_adjust"] = 0,
 			["dkp_current"] = -16.67,
-			["class"] = "Priester",
+			["class"] = "Jäger",
+			["rcount"] = 0,
+			}
+		,
+		["Lustknabe"] = {
+			["DKP"] = -25,
+			["dkp_earned"] = 466.55,
+			["dkp_spend"] = 480.0,
+			["dkp_adjust"] = 0,
+			["dkp_current"] = -25.17,
+			["class"] = "Magier",
 			["rcount"] = 0,
 			}
 		,
@@ -297,11 +267,11 @@ gdkp = {
 			}
 		,
 		["Moard"] = {
-			["DKP"] = 66,
+			["DKP"] = 63,
 			["dkp_earned"] = 661.04,
-			["dkp_spend"] = 280.0,
+			["dkp_spend"] = 283.0,
 			["dkp_adjust"] = 0,
-			["dkp_current"] = 66.47,
+			["dkp_current"] = 63.47,
 			["class"] = "Schamane",
 			["rcount"] = 0,
 			}
@@ -327,11 +297,11 @@ gdkp = {
 			}
 		,
 		["Muffelfutt"] = {
-			["DKP"] = 106,
+			["DKP"] = 23,
 			["dkp_earned"] = 419.06,
-			["dkp_spend"] = 344.0,
+			["dkp_spend"] = 427.0,
 			["dkp_adjust"] = 0,
-			["dkp_current"] = 106.5,
+			["dkp_current"] = 23.5,
 			["class"] = "Magier",
 			["rcount"] = 0,
 			}
@@ -367,11 +337,11 @@ gdkp = {
 			}
 		,
 		["NoMilkToday"] = {
-			["DKP"] = 0,
-			["dkp_earned"] = 0.0,
-			["dkp_spend"] = 0.0,
+			["DKP"] = 53,
+			["dkp_earned"] = 675.58,
+			["dkp_spend"] = 411.0,
 			["dkp_adjust"] = 0,
-			["dkp_current"] = 0.0,
+			["dkp_current"] = 53.13,
 			["class"] = "Jäger",
 			["rcount"] = 0,
 			}
@@ -426,22 +396,12 @@ gdkp = {
 			["rcount"] = 0,
 			}
 		,
-		["Russelbow"] = {
-			["DKP"] = 108,
-			["dkp_earned"] = 168.02,
-			["dkp_spend"] = 62.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 108.14,
-			["class"] = "Jäger",
-			["rcount"] = 0,
-			}
-		,
 		["Ráynz"] = {
-			["DKP"] = -4,
+			["DKP"] = -7,
 			["dkp_earned"] = 688.62,
-			["dkp_spend"] = 550.0,
+			["dkp_spend"] = 553.0,
 			["dkp_adjust"] = 0,
-			["dkp_current"] = -4.02,
+			["dkp_current"] = -7.02,
 			["class"] = "Schurke",
 			["rcount"] = 0,
 			}
@@ -467,11 +427,11 @@ gdkp = {
 			}
 		,
 		["Schamaninger"] = {
-			["DKP"] = 79,
+			["DKP"] = 68,
 			["dkp_earned"] = 611.42,
-			["dkp_spend"] = 499.0,
+			["dkp_spend"] = 510.0,
 			["dkp_adjust"] = 0,
-			["dkp_current"] = 79.97,
+			["dkp_current"] = 68.97,
 			["class"] = "Schamane",
 			["rcount"] = 0,
 			}
@@ -486,7 +446,7 @@ gdkp = {
 			["rcount"] = 0,
 			}
 		,
-		["shambert"] = {
+		["Shambert"] = {
 			["DKP"] = 0,
 			["dkp_earned"] = 0.0,
 			["dkp_spend"] = 0.0,
@@ -527,11 +487,11 @@ gdkp = {
 			}
 		,
 		["Taxol"] = {
-			["DKP"] = -143,
+			["DKP"] = -183,
 			["dkp_earned"] = 287.48,
-			["dkp_spend"] = 380.0,
+			["dkp_spend"] = 420.0,
 			["dkp_adjust"] = 0,
-			["dkp_current"] = -143.68,
+			["dkp_current"] = -183.68,
 			["class"] = "Schurke",
 			["rcount"] = 0,
 			}
@@ -546,7 +506,7 @@ gdkp = {
 			["rcount"] = 0,
 			}
 		,
-		["thurikan"] = {
+		["Thurikan"] = {
 			["DKP"] = 0,
 			["dkp_earned"] = 0.0,
 			["dkp_spend"] = 0.0,
@@ -567,41 +527,31 @@ gdkp = {
 			}
 		,
 		["Tosuau"] = {
-			["DKP"] = 109,
+			["DKP"] = 25,
 			["dkp_earned"] = 268.44,
-			["dkp_spend"] = 131.0,
+			["dkp_spend"] = 215.0,
 			["dkp_adjust"] = 0,
-			["dkp_current"] = 109.88,
+			["dkp_current"] = 25.88,
 			["class"] = "Krieger",
 			["rcount"] = 0,
 			}
 		,
-		["Traxol"] = {
-			["DKP"] = 21,
-			["dkp_earned"] = 103.12,
-			["dkp_spend"] = 110.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 21.76,
-			["class"] = "Schurke",
-			["rcount"] = 0,
-			}
-		,
 		["Villain"] = {
-			["DKP"] = 0,
+			["DKP"] = -75,
 			["dkp_earned"] = 0.0,
-			["dkp_spend"] = 0.0,
+			["dkp_spend"] = 75.0,
 			["dkp_adjust"] = 0,
-			["dkp_current"] = 0.0,
+			["dkp_current"] = -75.0,
 			["class"] = "Schurke",
 			["rcount"] = 0,
 			}
 		,
 		["Watschenbaum"] = {
-			["DKP"] = 190,
+			["DKP"] = 186,
 			["dkp_earned"] = 465.1,
-			["dkp_spend"] = 81.0,
+			["dkp_spend"] = 85.0,
 			["dkp_adjust"] = 0,
-			["dkp_current"] = 190.33,
+			["dkp_current"] = 186.33,
 			["class"] = "Krieger",
 			["rcount"] = 0,
 			}
@@ -613,16 +563,6 @@ gdkp = {
 			["dkp_adjust"] = 0,
 			["dkp_current"] = 130.27,
 			["class"] = "Magier",
-			["rcount"] = 0,
-			}
-		,
-		["Xraa"] = {
-			["DKP"] = -39,
-			["dkp_earned"] = 92.45,
-			["dkp_spend"] = 140.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = -39.41,
-			["class"] = "Schamane",
 			["rcount"] = 0,
 			}
 		,
@@ -667,6 +607,12 @@ DKP_ITEMS = {
 		,
 		}
 	,
+	["Barbozza"] = {
+		["Items"] = {
+			}
+		,
+		}
+	,
 	["Barrexx"] = {
 		["Items"] = {
 			}
@@ -691,19 +637,7 @@ DKP_ITEMS = {
 		,
 		}
 	,
-	["Cyless"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
 	["Davanus"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Dep"] = {
 		["Items"] = {
 			}
 		,
@@ -722,12 +656,6 @@ DKP_ITEMS = {
 		}
 	,
 	["Elgrecco"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Erdbeerchen"] = {
 		["Items"] = {
 			}
 		,
@@ -757,18 +685,6 @@ DKP_ITEMS = {
 		,
 		}
 	,
-	["Gromsuk"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Hansfallada"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
 	["Hasenpfote"] = {
 		["Items"] = {
 			}
@@ -793,19 +709,25 @@ DKP_ITEMS = {
 		,
 		}
 	,
+	["Lami"] = {
+		["Items"] = {
+			}
+		,
+		}
+	,
 	["Landogar"] = {
 		["Items"] = {
 			}
 		,
 		}
 	,
-	["Lustknabe"] = {
+	["Legshot"] = {
 		["Items"] = {
 			}
 		,
 		}
 	,
-	["Maniop"] = {
+	["Lustknabe"] = {
 		["Items"] = {
 			}
 		,
@@ -895,12 +817,6 @@ DKP_ITEMS = {
 		,
 		}
 	,
-	["Russelbow"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
 	["Ráynz"] = {
 		["Items"] = {
 			}
@@ -931,7 +847,7 @@ DKP_ITEMS = {
 		,
 		}
 	,
-	["shambert"] = {
+	["Shambert"] = {
 		["Items"] = {
 			}
 		,
@@ -967,7 +883,7 @@ DKP_ITEMS = {
 		,
 		}
 	,
-	["thurikan"] = {
+	["Thurikan"] = {
 		["Items"] = {
 			}
 		,
@@ -980,12 +896,6 @@ DKP_ITEMS = {
 		}
 	,
 	["Tosuau"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Traxol"] = {
 		["Items"] = {
 			}
 		,
@@ -1004,12 +914,6 @@ DKP_ITEMS = {
 		}
 	,
 	["Xatakus"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Xraa"] = {
 		["Items"] = {
 			}
 		,
