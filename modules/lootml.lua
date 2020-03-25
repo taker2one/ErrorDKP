@@ -154,13 +154,12 @@ function ErrorDKP:OnCommReceived_SurvAnsw(sender, data)
 
      if data["response"] == "GOT" then
         -- Client responds survey received
-        -- We have multiple items in a survey but only geht one reveived so set it for all items
         for i,v in ipairs(core.ActiveSurveyData["items"]) do
             v.responses[sender] = { "PENDING", -1 } --data["response"]
         end
         ErrorDKP.MLResult:SetVisualUpdateRequired()
      else
-        core.ActiveSurveyData.items[data["itemIndex"]].responses[sender] = { data["response"], data["hasItem"] }
+        core.ActiveSurveyData.items[data["itemIndex"]].responses[sender] = { data["response"], data["hasItem"], data["roll"] or 0 }
         ErrorDKP.MLResult:SetVisualUpdateRequired(data["itemIndex"])
      end
 

@@ -9,6 +9,7 @@
 local addonName, core = ...
 local ErrorDKP = core.ErrorDKP
 local _LS = core._L["LOOT_SURVEY"]
+local _L = core._L
 local LootSurvey = {}
 ErrorDKP.LootSurvey = LootSurvey
 
@@ -72,6 +73,7 @@ function LootSurvey:Update(data)
         entryFrame.MainBtn:SetEnabled(true)
         entryFrame.SecBtn:SetEnabled(true)
         entryFrame.PassBtn:SetEnabled(true)
+        entryFrame.OffspecBtn:SetEnabled(true)
         entryFrame:Show()
     end
 
@@ -84,8 +86,15 @@ function LootSurvey:OnClickEntryButton(button, index)
 
     if not entry then 
         -- WTF happened
-        core:ErrorDebug("WTF happened there is no entry")
+        core:Error("WTF happened there is no entry")
         return
+    end
+
+    -- If Offspec roll
+    if button == "OFFSPEC" then
+        local roll = core:Roll(true)
+        core:Print(string.format(_L["MSG_OFFSPEC_ROLL_YOU"], tostring(roll), entry.itemLink))
+        core.Sync:Send("OffspecRoll", { roll = roll, itemLink = entry.itemLink })
     end
 
     if not entry.responded then
@@ -95,7 +104,8 @@ function LootSurvey:OnClickEntryButton(button, index)
             ["id"] = itemSurveyData["id"],
             ["itemIndex"] = index,
             ["response"] = button,
-            ["hasItem"] = GetItemCount(entry.itemLink, true)
+            ["hasItem"] = GetItemCount(entry.itemLink, true),
+            ["roll"] = roll or 0
         })
 
         entry.responded = true
@@ -120,7 +130,7 @@ function LootSurvey:CreateFrame()
 
     f.Entries = {}
 
-    f:SetWidth(500)
+    f:SetWidth(520)
     f:SetHeight(200)
     f:SetFrameLevel(25)
     f:Hide()
@@ -221,6 +231,15 @@ function LootSurvey:CreateEntry(name)
     f.PassBtn = core:CreateButton(f, "PassBtn", _LS["BTN_PASS"])
     f.PassBtn:SetPoint("LEFT", f.SecBtn, "RIGHT")
 
+    f.OffspecBtn = core:CreateButton(f, "OffspecBtn", _LS["BTN_OFFSPEC"])
+    f.OffspecBtn:SetPoint("LEFT", f.PassBtn, "RIGHT") 
+
+    -- Show Offspec only to people which have an offspec
+    localizedClass, englishClass, classIndex = UnitClass("unit");
+    if englishClass == "MAGE" or englishClass == "WARLOCK" or englishClass == "ROGUE" or englishClass == "HUNTER" then
+        f.OffspecBtn:Hide()
+    end
+
     f.MainBtn:SetScript("OnClick", function()
         LootSurvey:OnClickEntryButton("MAIN", f.Index)
     end)
@@ -229,6 +248,9 @@ function LootSurvey:CreateEntry(name)
     end)
     f.PassBtn:SetScript("OnClick", function()
         LootSurvey:OnClickEntryButton("PASS", f.Index)
+    end)
+    f.OffspecBtn:SetScript("OnClick", function()
+        LootSurvey:OnClickEntryButton("OFFSPEC", f.Index)
     end)
 
     return f
@@ -241,6 +263,7 @@ function LootSurvey:FinishEntry(index)
     f.MainBtn:SetEnabled(false)
     f.SecBtn:SetEnabled(false)
     f.PassBtn:SetEnabled(false)
+    f.OffspecBtn:SetEnabled(false)
 end
 
 function LootSurvey:FinishSurvey()

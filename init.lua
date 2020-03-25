@@ -24,6 +24,7 @@ local function mapImportDKPData()
         end
 
         ErrorDKP.GNoteDKP:UpdateDKPInfo()
+        core:Print("DKP Import done.")
     else
         core:Print("The timestamp of the data you want to import is older than the dkp data in the guild info")
     end
@@ -86,10 +87,16 @@ core.Commands = {
         end
     end,
 
+    ["roll"] = function()
+        core:Roll()
+    end,
+
     ["import"] = {
         ["dkp"] = function(...)
             if core:CheckDKPOfficer() then
                 mapImportDKPData()
+            else
+                core:Print("Not allowed.")
             end
         end
     },
@@ -111,6 +118,12 @@ core.Commands = {
             if core:CheckSelfTrusted() then
                 core:Print("Test lootsurvey")
                 ErrorDKP.LootSurvey:Start(ErrorDKP.LootSurvey.DemoSurveyData, 120)
+            end
+        end,
+        ["lootsurveyresult"] = function(...)
+            if core:CheckSelfTrusted() then
+                core:Print("Test lootsurvey")
+                ErrorDKP.MLResult:Show(1, true)
             end
         end,
         ["loottrack"] = function(...)

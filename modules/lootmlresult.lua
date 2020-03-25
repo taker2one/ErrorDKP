@@ -22,12 +22,13 @@ local CountdownActive = false
 local timerFrame = CreateFrame("Frame")
 
 local responseSortOrder = {
-	["PENDING"] = 3,
+	["PENDING"] = 4,
 	["MAIN"] = 1,
 	["SECOND"] = 2,
 	["PASS"] = 10,
-	["TIMEOUT"] = 5,
-	["OFFLINE"] = 4
+	["TIMEOUT"] = 6,
+	["OFFLINE"] = 5,
+	["OFFSPEC"] = 3
 }
 
 local RACE_ICON_TCOORDS = {
@@ -148,10 +149,11 @@ local colDef = {
 			end
 		end
 	end 
-	}
+	},
+	{ ["name"] = _LS["COLROLL"], ["width"] = 60 }
 }
 
-local DemoSurveyData = {
+MLResult.DemoSurveyData = {
     id = "157564448499",
 	items = {
 		{
@@ -160,7 +162,9 @@ local DemoSurveyData = {
             ["itemLink"] = "|cffa335ee|Hitem:16930::::::::60:::::::|h[Nemesis Leggings]|h|r",
             ["quality"] = 4,
 			["icon"] = "Interface\\Icons\\inv_pants_07",
-			["responses"] = {},
+			["responses"] = {
+				["Rassputin"] = { "OFFSPEC", 0, 99 },
+			},
 			["closed"] = nil
         },
         {
@@ -182,7 +186,7 @@ local DemoSurveyData = {
             ["quality"] = 4,
 			["icon"] = "Interface\\Icons\\inv_jewelry_ring_21",
 			["responses"] = {
-				["Doktorwho"] = { "MAIN", 0 },
+				["Doktorwho"] = { "OFFSPEC", 0, 55 },
 				["Rassputin"] = { "SECOND", 1 },
 			},
 			["closed"] = nil
@@ -211,11 +215,11 @@ local DemoSurveyData = {
 	}
 }
 
-core.ActiveSurveyData = DemoSurveyData --DBG
+core.ActiveSurveyData = MLResult.DemoSurveyData --DBG
 
-function MLResult:Show(index)
+function MLResult:Show(index, test)
 	-- currently only masterlooter can show this, this is just a temp solution
-	if not core.IsMLooter then
+	if not core.IsMLooter and not test then
 		StaticPopupDialogs["MLRESULT_ONLYML"] = {
 			text = "Currently only the Masterlooter can view this window, this will change in a future update.",
 			button1 = "Ok",
@@ -357,13 +361,15 @@ function MLResult:UpdateScrollTable(players, responses, resetSorting)
 	local st = MLResult:GetFrame().ScrollingTable
 
 	for i, v in ipairs(players) do
-		local responseType, hasItem
+		local responseType, hasItem, roll
 		if responses[v.name] then
 			responseType = responses[v.name][1]
 			hasItem =  responses[v.name][2] or -1
+			roll = responses[v.name][3] or ""
 		else
 			responseType = "OFFLINE"
 			hasItem = -1
+			roll = ""
 		end
 
 		local row = {
@@ -373,7 +379,8 @@ function MLResult:UpdateScrollTable(players, responses, resetSorting)
 			responseType,
 			_LS["RESPONSE_"..responseType] or responseType,
 			ErrorDKP:GetPlayerDKP(v.name) or 0,
-			hasItem
+			hasItem,
+			roll
 		}
 		table.insert(rows, row)
 	end
@@ -465,6 +472,13 @@ function MLResult:CreateFrame()
 	responseFontString:SetText(_LS["RESPONSES"])
 	responseFontString:SetTextColor(0,1,0,1) -- Green
 	f.ResponseFontString = responseFontString
+
+	local closeSurveyButton = core:CreateButton(f, "CloseSurveYbtn", "Close survey")
+	closeSurveyButton:SetPoint("TOPLEFT", responseFontString, "BOTTOMLEFT", -5, -5)
+	closeSurveyButton:SetScript("OnClick", function()
+        MLResult:CloseSurvey()
+	end)
+	f.CloseSurveyBtn = closeSurveyButton
 
 	-- Item toggle
 	local itemToggle = CreateFrame("Frame", nil, f)

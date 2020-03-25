@@ -39,7 +39,8 @@ if GetLocale() == "deDE" then
         LOOT_SURVEY = {
             BTN_NEED = "Hohe Prio",
             BTN_GREED = "Niedrige Prio",
-            BTN_PASS = "Passe"
+            BTN_PASS = "Passe",
+            BTN_OFFSPEC = "Offspec"
         },
         ML_SURVEY_RESULT = {
             TITLE = "Ergebnis",
@@ -50,10 +51,12 @@ if GetLocale() == "deDE" then
             RESPONSE_MAIN = "|cFF00FF00Hohe Priorität|r",
             RESPONSE_TIMEOUT = "|cFF0000FFSpieler hat nicht geantwortet|r",
             RESPONSE_AUTOPASS = "|cFFB2B2B2Autopass|r",
+            RESPONSE_OFFSPEC = "|cFFFF4F00Offspec|r",
             COLPLAYER = "Spieler",
             COLRESPONSE = "Antwort",
             COLDKP = "DKP",
             COLHASITEM = "Hat Item",
+            COLROLL = "Wurf",
             HASITEM = "Ja",
             HASNOTITEM = "Nein",
             RESPONSES = "Antworten",
@@ -89,6 +92,8 @@ if GetLocale() == "deDE" then
         MSG_SURVEY_CANCELLED_BY = "Die Lootumfrage wurde von %s abgebrochen.",
         MSG_LOOT_SKIN_REQUIRED = "%s muss %s plündern!",
         MSG_LOOT_SKIN_REQUIRED_YOU = "Du musst %s plündern!",
+        MSG_OFFSPEC_ROLL_YOU = "Du würfelst |cff00FF00%s|r für %s",
+        MSG_OFFSPEC_ROLL = "%s würfelt |cff00FF00%s|r für %s",
 
         HELP_EDKP = "Öffnet das ErrorDKP Fenster.",
         HELP_HELP = "Gibt die aktuelle Hilfeliste aus.",

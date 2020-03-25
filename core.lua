@@ -418,6 +418,15 @@ function core:ItemInfo(linkorid)
   return itemName, itemLink, itemId, itemString, itemRarity, itemColor, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice, itemClassID, itemSubClassID;
 end
 
+function core:Roll(dontPrint)
+    local i =  math.random(100)
+    if not dontPrint then
+        core:Print("Roll ", i)
+    end
+
+    return i
+end
+
 -- shift-click-parsing of item links
 local function Hook_ChatEdit_InsertLink(link)
     core:PrintDebug("core:Hook_ChatEdit_InsertLink", link)

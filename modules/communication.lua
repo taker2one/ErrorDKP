@@ -53,6 +53,7 @@ function Sync:OnEnable()
     self:RegisterComm("ErrDKPSurvClosed")      -- Item survey is closed
     self:RegisterComm("ErrDKPSurvCancel")      -- Item survey canceled
     self:RegisterComm("CanLootSkinNpc")        -- Player report he can loot a skinnable creature
+    self:RegisterComm("OffspecRoll")           -- Offspecroll for item
 
     --Mixed
     self:RegisterComm("VerCheck")        -- Request Version from every Group/Guild member
@@ -328,6 +329,12 @@ function Sync:OnCommReceived(prefix, message, channel, sender)
                 core.CanLootMessages[deserialized.guid] =  core.CanLootMessages[deserialized.guid] + 1
                 core.CanLootMessages["LastChange"] = time()
             end
+        end
+    elseif prefix == "OffspecRoll" and sender ~= UnitName("player") then
+        local success, deserialized = Serializer:Deserialize(message)
+        if success then
+            -- Just Print
+            core:Print(string.format(_L["MSG_OFFSPEC_ROLL"], sender, deserialized.roll, deserialized.itemLink))
         end
     end
 
