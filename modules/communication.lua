@@ -283,6 +283,7 @@ function Sync:OnCommReceived(prefix, message, channel, sender)
                 
                 if success then
                     ErrorDKP:OnCommReceived_SurvAnsw(sender, deserialized)
+                
                 end
             end
         elseif prefix == "ErrDKPSurvClosed" then

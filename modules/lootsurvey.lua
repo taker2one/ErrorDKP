@@ -91,8 +91,9 @@ function LootSurvey:OnClickEntryButton(button, index)
     end
 
     -- If Offspec roll
+    local roll = 0
     if button == "OFFSPEC" then
-        local roll = core:Roll(true)
+        roll = core:Roll(true)
         core:Print(string.format(_L["MSG_OFFSPEC_ROLL_YOU"], tostring(roll), entry.itemLink))
         core.Sync:Send("OffspecRoll", { roll = roll, itemLink = entry.itemLink })
     end
@@ -228,14 +229,15 @@ function LootSurvey:CreateEntry(name)
     f.SecBtn = core:CreateButton(f, "SecSpecBtn", _LS["BTN_GREED"])
     f.SecBtn:SetPoint("LEFT", f.MainBtn, "RIGHT")
     
-    f.PassBtn = core:CreateButton(f, "PassBtn", _LS["BTN_PASS"])
-    f.PassBtn:SetPoint("LEFT", f.SecBtn, "RIGHT")
-
     f.OffspecBtn = core:CreateButton(f, "OffspecBtn", _LS["BTN_OFFSPEC"])
-    f.OffspecBtn:SetPoint("LEFT", f.PassBtn, "RIGHT") 
+    f.OffspecBtn:SetPoint("LEFT", f.SecBtn, "RIGHT") 
+
+    f.PassBtn = core:CreateButton(f, "PassBtn", _LS["BTN_PASS"])
+    f.PassBtn:SetPoint("LEFT", f.OffspecBtn, "RIGHT")
+
 
     -- Show Offspec only to people which have an offspec
-    localizedClass, englishClass, classIndex = UnitClass("unit");
+    local localizedClass, englishClass, classIndex = UnitClass("PLAYER")
     if englishClass == "MAGE" or englishClass == "WARLOCK" or englishClass == "ROGUE" or englishClass == "HUNTER" then
         f.OffspecBtn:Hide()
     end

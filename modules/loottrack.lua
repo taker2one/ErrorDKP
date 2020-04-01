@@ -111,7 +111,7 @@ local function ErrorDKPAutoAddLootItem(playerName, itemLink, itemCount)
     end
     
     local dkpValue = 0;
-    local bisValue = 0;
+    local offspecValue = 0;
     local lootAction = nil;
     local itemNote = nil;
     local supressCostDialog = nil;
@@ -127,11 +127,10 @@ local function ErrorDKPAutoAddLootItem(playerName, itemLink, itemCount)
             dkpvalue = 0
         end
 
-        local bisPriceListPrice = tonumber(priceListItem.pricebis)
-        if bisPriceListPrice then
-            bisValue = bisPriceListPrice
+        if priceListPrice > 5 then
+            offspecValue = 5
         else
-            bisValue = 0
+            offspecValue = priceListPrice
         end
     end
 
@@ -145,7 +144,7 @@ local function ErrorDKPAutoAddLootItem(playerName, itemLink, itemCount)
         ["ItemCount"] = itemCount,
         ["Looter"] = playerName,
         ["DKPValue"] = dkpValue,
-        ["BisValue"] = bisValue,
+        ["OffspecValue"] = offspecValue,
         ["Time"] = GetServerTime(),
         ["Note"] = itemNote,
     };
@@ -161,11 +160,15 @@ local function ErrorDKP_LCD_Handler(button)
     local lootNote = UI.LootConfirmDialog.NoteText:GetText();
 
     --Only Pricebutton was pressed, just change text in Price field
-    if(button == "NORMALPRICE" or button == "BISPRICE") then
+    if(button == "NORMALPRICE" or button == "OFFSPECPRICE") then
         if(button == "NORMALPRICE") then
             UI.LootConfirmDialog.PriceInput:SetText(LootInfo["DKPValue"])
-        elseif (button == "BISPRICE") then
-            UI.LootConfirmDialog.PriceInput:SetText(LootInfo["BisValue"])
+        elseif (button == "OFFSPECPRICE") then
+            local price = 0 
+            if tonumber(LootInfo["DKPValue"]) > 5 then 
+                price = 5
+            end
+            UI.LootConfirmDialog.PriceInput:SetText(price)
         end
         return
     end
@@ -277,10 +280,10 @@ local function CreateLootConfirmDialog()
         ErrorDKP_LCD_Handler("NORMALPRICE")
     end)
     -- BiS
-    core.UI.LootConfirmDialog.BisPriceBtn = core:CreateButton(core.UI.LootConfirmDialog, "ErrorDKP_LCD_BiSPriceBtn", "BiS-Price")
+    core.UI.LootConfirmDialog.BisPriceBtn = core:CreateButton(core.UI.LootConfirmDialog, "ErrorDKP_LCD_BiSPriceBtn", "Offspec-Price")
     core.UI.LootConfirmDialog.BisPriceBtn:SetPoint("TOPLEFT", core.UI.LootConfirmDialog.NormalPriceBtn, "TOPRIGHT")
     core.UI.LootConfirmDialog.BisPriceBtn:SetScript("OnClick", function()
-        ErrorDKP_LCD_Handler("BISPRICE")
+        ErrorDKP_LCD_Handler("OFFSPECPRICE")
     end)
 
     -- note input

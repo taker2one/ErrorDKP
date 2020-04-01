@@ -86,33 +86,33 @@ local function addEdkpTooltip(self, id)
         end
 
         --BiS
-        if bis and #bis > 0 then
-            -- Check for > in prios
-            local bisSeqTable = core:SplitString(bis, ">")
-            if #bisSeqTable > 1 then
-                for i, v in ipairs(bisSeqTable) do
-                    local bisTable = core:SplitString(v, ",")
-                    for i1, v1 in ipairs(bisTable) do
-                        if i == 1 and i1 == 1 then
-                            addLine(self, i..". "..core:ltrim(v1) or _L["TOOLTIP_PRIO_NONE"], "BiS" )
-                        else
-                            addLine(self, i..". "..core:ltrim(v1))
-                        end
-                    end
-                end
-            else
-                local bisTable = core:SplitString(bis, ",")
-                for i, v in ipairs(bisTable) do
-                    if i == 1 then
-                        addLine(self, core:ltrim(v) or _L["TOOLTIP_PRIO_NONE"], "BiS" )
-                    else
-                        addLine(self, core:ltrim(v) or _L["TOOLTIP_PRIO_NONE"], "" )
-                    end
-                end
-            end
-        else
-            addLine(self, _L["TOOLTIP_PRIO_NONE"], "BiS" )
-        end
+        -- if bis and #bis > 0 then
+        --     -- Check for > in prios
+        --     local bisSeqTable = core:SplitString(bis, ">")
+        --     if #bisSeqTable > 1 then
+        --         for i, v in ipairs(bisSeqTable) do
+        --             local bisTable = core:SplitString(v, ",")
+        --             for i1, v1 in ipairs(bisTable) do
+        --                 if i == 1 and i1 == 1 then
+        --                     addLine(self, i..". "..core:ltrim(v1) or _L["TOOLTIP_PRIO_NONE"], "BiS" )
+        --                 else
+        --                     addLine(self, i..". "..core:ltrim(v1))
+        --                 end
+        --             end
+        --         end
+        --     else
+        --         local bisTable = core:SplitString(bis, ",")
+        --         for i, v in ipairs(bisTable) do
+        --             if i == 1 then
+        --                 addLine(self, core:ltrim(v) or _L["TOOLTIP_PRIO_NONE"], "BiS" )
+        --             else
+        --                 addLine(self, core:ltrim(v) or _L["TOOLTIP_PRIO_NONE"], "" )
+        --             end
+        --         end
+        --     end
+        -- else
+        --     addLine(self, _L["TOOLTIP_PRIO_NONE"], "BiS" )
+        -- end
 
         -- Alternate not needed at the moment
         -- if alt then
