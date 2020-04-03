@@ -280,7 +280,6 @@ function Sync:OnCommReceived(prefix, message, channel, sender)
             -- clients also responds instantly after receiving the survey
             if core:CheckSelfTrusted() then
                 local success, deserialized = Serializer:Deserialize(message)
-                
                 if success then
                     ErrorDKP:OnCommReceived_SurvAnsw(sender, deserialized)
                 
