@@ -1,934 +1,466 @@
-multiTable = {
-	[1]= { ["dkp"] = {
-["name"] = "dkp",
-["disc"] = "Raid DKP",
-["events"] = " "
+DKPInfo = {
+["date"] = "11.04.20 18:05:07",
+["timestamp"] = "1586628307",
+["total_players"] = 83,
+["total_items"] = 899,
+}
+gdkp = {
+["players"] = {
+["Argok"] = {
+["DKP"] = 113,
+["dkp_earned"] = 857.85,
+["dkp_spend"] = 773,
+["dkp_adjust"] = 38.62,
+["dkp_current"] = 112.03,
+["class"] = "Krieger",
 },
+["Aryuna"] = {
+["DKP"] = 264,
+["dkp_earned"] = 626.31,
+["dkp_spend"] = 570,
+["dkp_adjust"] = 262.3,
+["dkp_current"] = 263.85,
+["class"] = "Schamane",
+},
+["Atomar"] = {
+["DKP"] = 111,
+["dkp_earned"] = 243.67,
+["dkp_spend"] = 195,
+["dkp_adjust"] = 92.12,
+["dkp_current"] = 110.98,
+["class"] = "Hexenmeister",
+},
+["Barbozza"] = {
+["DKP"] = 80,
+["dkp_earned"] = 195.1,
+["dkp_spend"] = 101,
+["dkp_adjust"] = 0,
+["dkp_current"] = 79.8,
+["class"] = "Priester",
+},
+["Barrexx"] = {
+["DKP"] = 202,
+["dkp_earned"] = 262.75,
+["dkp_spend"] = 103,
+["dkp_adjust"] = 77.12,
+["dkp_current"] = 201.14,
+["class"] = "Magier",
+},
+["Blackagony"] = {
+["DKP"] = 133,
+["dkp_earned"] = 371.78,
+["dkp_spend"] = 335,
+["dkp_adjust"] = 116.34,
+["dkp_current"] = 132.55,
+["class"] = "Hexenmeister",
+},
+["Breituxs"] = {
+["DKP"] = -3,
+["dkp_earned"] = 701.45,
+["dkp_spend"] = 808,
+["dkp_adjust"] = 103.42,
+["dkp_current"] = -3.13,
+["class"] = "Schurke",
+},
+["Bärspektive"] = {
+["DKP"] = -26,
+["dkp_earned"] = 15.13,
+["dkp_spend"] = 12,
+["dkp_adjust"] = -30,
+["dkp_current"] = -26.87,
+["class"] = "Druide",
+},
+["Davanus"] = {
+["DKP"] = 81,
+["dkp_earned"] = 387.34,
+["dkp_spend"] = 453,
+["dkp_adjust"] = 165.57,
+["dkp_current"] = 80.93,
+["class"] = "Priester",
+},
+["Doktorwho"] = {
+["DKP"] = 168,
+["dkp_earned"] = 930.58,
+["dkp_spend"] = 655,
+["dkp_adjust"] = -84.85,
+["dkp_current"] = 167.46,
+["class"] = "Priester",
+},
+["Dreadhead"] = {
+["DKP"] = 52,
+["dkp_earned"] = 849.97,
+["dkp_spend"] = 785,
+["dkp_adjust"] = -10.86,
+["dkp_current"] = 51.9,
+["class"] = "Schurke",
+},
+["DrGurke"] = {
+["DKP"] = 35,
+["dkp_earned"] = 50,
+["dkp_spend"] = 9,
+["dkp_adjust"] = 0,
+["dkp_current"] = 34.92,
+["class"] = "Hexenmeister",
+},
+["Elgrecco"] = {
+["DKP"] = 237,
+["dkp_earned"] = 535.61,
+["dkp_spend"] = 669,
+["dkp_adjust"] = 410.28,
+["dkp_current"] = 236.04,
+["class"] = "Hexenmeister",
+},
+["Exidius"] = {
+["DKP"] = 61,
+["dkp_earned"] = 70,
+["dkp_spend"] = 6,
+["dkp_adjust"] = 0,
+["dkp_current"] = 60.64,
+["class"] = "Krieger",
+},
+["Flottiløl"] = {
+["DKP"] = 50,
+["dkp_earned"] = 749.34,
+["dkp_spend"] = 977,
+["dkp_adjust"] = 284.7,
+["dkp_current"] = 49.45,
+["class"] = "Priester",
+},
+["Gilo"] = {
+["DKP"] = 288,
+["dkp_earned"] = 646.84,
+["dkp_spend"] = 500,
+["dkp_adjust"] = 192.11,
+["dkp_current"] = 287.52,
+["class"] = "Hexenmeister",
+},
+["Gromsuk"] = {
+["DKP"] = 307,
+["dkp_earned"] = 892.08,
+["dkp_spend"] = 416,
+["dkp_adjust"] = -111.45,
+["dkp_current"] = 306.92,
+["class"] = "Schamane",
+},
+["Hackerman"] = {
+["DKP"] = 20,
+["dkp_earned"] = 25,
+["dkp_spend"] = 3,
+["dkp_adjust"] = 0,
+["dkp_current"] = 19.8,
+["class"] = "Krieger",
+},
+["Hasenpfote"] = {
+["DKP"] = 41,
+["dkp_earned"] = 665.57,
+["dkp_spend"] = 623,
+["dkp_adjust"] = 2.68,
+["dkp_current"] = 40.34,
+["class"] = "Druide",
+},
+["Himbster"] = {
+["DKP"] = 216,
+["dkp_earned"] = 336.2,
+["dkp_spend"] = 188,
+["dkp_adjust"] = 102.12,
+["dkp_current"] = 215.73,
+["class"] = "Schamane",
+},
+["Hody"] = {
+["DKP"] = 56,
+["dkp_earned"] = 78,
+["dkp_spend"] = 20,
+["dkp_adjust"] = 0,
+["dkp_current"] = 55.9,
+["class"] = "Jäger",
+},
+["Kaltherz"] = {
+["DKP"] = 129,
+["dkp_earned"] = 926.58,
+["dkp_spend"] = 845,
+["dkp_adjust"] = 61.15,
+["dkp_current"] = 128.13,
+["class"] = "Krieger",
+},
+["Kayujin"] = {
+["DKP"] = 196,
+["dkp_earned"] = 466.79,
+["dkp_spend"] = 400,
+["dkp_adjust"] = 174.89,
+["dkp_current"] = 195.76,
+["class"] = "Jäger",
+},
+["Landogar"] = {
+["DKP"] = 307,
+["dkp_earned"] = 509.84,
+["dkp_spend"] = 203,
+["dkp_adjust"] = 55.53,
+["dkp_current"] = 306.49,
+["class"] = "Krieger",
+},
+["Legshot"] = {
+["DKP"] = 122,
+["dkp_earned"] = 904.68,
+["dkp_spend"] = 691,
+["dkp_adjust"] = -69.2,
+["dkp_current"] = 121.9,
+["class"] = "Jäger",
+},
+["Lustknabe"] = {
+["DKP"] = 204,
+["dkp_earned"] = 663.05,
+["dkp_spend"] = 504,
+["dkp_adjust"] = 83.28,
+["dkp_current"] = 203.21,
+["class"] = "Magier",
+},
+["Midget"] = {
+["DKP"] = 122,
+["dkp_earned"] = 745.04,
+["dkp_spend"] = 499,
+["dkp_adjust"] = -98.79,
+["dkp_current"] = 121.8,
+["class"] = "Krieger",
+},
+["Moard"] = {
+["DKP"] = 191,
+["dkp_earned"] = 845.54,
+["dkp_spend"] = 406,
+["dkp_adjust"] = -214.57,
+["dkp_current"] = 190.93,
+["class"] = "Schamane",
+},
+["MonkeyDArlee"] = {
+["DKP"] = 23,
+["dkp_earned"] = 420.01,
+["dkp_spend"] = 545,
+["dkp_adjust"] = 153.84,
+["dkp_current"] = 22.47,
+["class"] = "Krieger",
+},
+["Moschter"] = {
+["DKP"] = 163,
+["dkp_earned"] = 231.65,
+["dkp_spend"] = 115,
+["dkp_adjust"] = 72.12,
+["dkp_current"] = 162.27,
+["class"] = "Priester",
+},
+["Muffelfutt"] = {
+["DKP"] = 188,
+["dkp_earned"] = 640.56,
+["dkp_spend"] = 550,
+["dkp_adjust"] = 131.44,
+["dkp_current"] = 187.12,
+["class"] = "Magier",
+},
+["Møtz"] = {
+["DKP"] = 253,
+["dkp_earned"] = 645.39,
+["dkp_spend"] = 362,
+["dkp_adjust"] = 23.74,
+["dkp_current"] = 252.47,
+["class"] = "Magier",
+},
+["Necrotox"] = {
+["DKP"] = 4,
+["dkp_earned"] = 4.54,
+["dkp_spend"] = 0,
+["dkp_adjust"] = 0,
+["dkp_current"] = 3.68,
+["class"] = "Schurke",
+},
+["Nesrar"] = {
+["DKP"] = 159,
+["dkp_earned"] = 491.93,
+["dkp_spend"] = 344,
+["dkp_adjust"] = 48.84,
+["dkp_current"] = 158.57,
+["class"] = "Schamane",
+},
+["Okat"] = {
+["DKP"] = 137,
+["dkp_earned"] = 918.92,
+["dkp_spend"] = 666,
+["dkp_adjust"] = -81.1,
+["dkp_current"] = 136.1,
+["class"] = "Druide",
+},
+["Promz"] = {
+["DKP"] = -182,
+["dkp_earned"] = 808.04,
+["dkp_spend"] = 925,
+["dkp_adjust"] = -65.76,
+["dkp_current"] = -182.72,
+["class"] = "Krieger",
+},
+["Pâd"] = {
+["DKP"] = 156,
+["dkp_earned"] = 731.57,
+["dkp_spend"] = 656,
+["dkp_adjust"] = 104.3,
+["dkp_current"] = 155.65,
+["class"] = "Priester",
+},
+["Rassputin"] = {
+["DKP"] = 232,
+["dkp_earned"] = 930.58,
+["dkp_spend"] = 755,
+["dkp_adjust"] = 94.4,
+["dkp_current"] = 231.65,
+["class"] = "Hexenmeister",
+},
+["Repa"] = {
+["DKP"] = 188,
+["dkp_earned"] = 923.15,
+["dkp_spend"] = 830,
+["dkp_adjust"] = 149.34,
+["dkp_current"] = 187.59,
+["class"] = "Magier",
+},
+["Rondalis"] = {
+["DKP"] = 143,
+["dkp_earned"] = 820.04,
+["dkp_spend"] = 655,
+["dkp_adjust"] = -2.61,
+["dkp_current"] = 142.29,
+["class"] = "Priester",
+},
+["Ráynz"] = {
+["DKP"] = 7,
+["dkp_earned"] = 910.12,
+["dkp_spend"] = 836,
+["dkp_adjust"] = -67.64,
+["dkp_current"] = 6.48,
+["class"] = "Schurke",
+},
+["Saidar"] = {
+["DKP"] = 187,
+["dkp_earned"] = 846.95,
+["dkp_spend"] = 756,
+["dkp_adjust"] = 135.3,
+["dkp_current"] = 186.97,
+["class"] = "Priester",
+},
+["Savalox"] = {
+["DKP"] = 0,
+["dkp_earned"] = 0,
+["dkp_spend"] = 0,
+["dkp_adjust"] = 0,
+["dkp_current"] = 0,
+["class"] = "Hexenmeister",
+},
+["Schamaninger"] = {
+["DKP"] = 96,
+["dkp_earned"] = 832.92,
+["dkp_spend"] = 788,
+["dkp_adjust"] = 67.55,
+["dkp_current"] = 95.25,
+["class"] = "Schamane",
+},
+["Shadowbírd"] = {
+["DKP"] = 314,
+["dkp_earned"] = 574.11,
+["dkp_spend"] = 685,
+["dkp_adjust"] = 488.77,
+["dkp_current"] = 313.2,
+["class"] = "Jäger",
+},
+["Shatoyama"] = {
+["DKP"] = 225,
+["dkp_earned"] = 713.35,
+["dkp_spend"] = 521,
+["dkp_adjust"] = 72.04,
+["dkp_current"] = 224.43,
+["class"] = "Krieger",
+},
+["Stichtag"] = {
+["DKP"] = 68,
+["dkp_earned"] = 845.13,
+["dkp_spend"] = 731,
+["dkp_adjust"] = -41.2,
+["dkp_current"] = 67.55,
+["class"] = "Schurke",
+},
+["Sumba"] = {
+["DKP"] = 181,
+["dkp_earned"] = 337.33,
+["dkp_spend"] = 204,
+["dkp_adjust"] = 97.12,
+["dkp_current"] = 180.48,
+["class"] = "Magier",
+},
+["Taxol"] = {
+["DKP"] = 58,
+["dkp_earned"] = 504.98,
+["dkp_spend"] = 483,
+["dkp_adjust"] = 48.84,
+["dkp_current"] = 57.91,
+["class"] = "Schurke",
+},
+["Telli"] = {
+["DKP"] = 85,
+["dkp_earned"] = 320.6,
+["dkp_spend"] = 305,
+["dkp_adjust"] = 74.69,
+["dkp_current"] = 84.96,
+["class"] = "Schurke",
+},
+["Thurikan"] = {
+["DKP"] = -18,
+["dkp_earned"] = 209.5,
+["dkp_spend"] = 220,
+["dkp_adjust"] = 0,
+["dkp_current"] = -18.35,
+["class"] = "Krieger",
+},
+["Tosuau"] = {
+["DKP"] = 196,
+["dkp_earned"] = 489.94,
+["dkp_spend"] = 326,
+["dkp_adjust"] = 72.44,
+["dkp_current"] = 195.35,
+["class"] = "Krieger",
+},
+["Villain"] = {
+["DKP"] = 11,
+["dkp_earned"] = 109.4,
+["dkp_spend"] = 199,
+["dkp_adjust"] = 100,
+["dkp_current"] = 10.4,
+["class"] = "Schurke",
+},
+["Watschenbaum"] = {
+["DKP"] = 336,
+["dkp_earned"] = 686.6,
+["dkp_spend"] = 176,
+["dkp_adjust"] = -93.77,
+["dkp_current"] = 335.14,
+["class"] = "Krieger",
+},
+["Xatakus"] = {
+["DKP"] = 371,
+["dkp_earned"] = 528.93,
+["dkp_spend"] = 176,
+["dkp_adjust"] = 88.84,
+["dkp_current"] = 370.35,
+["class"] = "Magier",
+},
+["Yologott"] = {
+["DKP"] = 155,
+["dkp_earned"] = 432.16,
+["dkp_spend"] = 340,
+["dkp_adjust"] = 85.43,
+["dkp_current"] = 154.51,
+["class"] = "Krieger",
+},
+["Zypnek"] = {
+["DKP"] = 114,
+["dkp_earned"] = 314.89,
+["dkp_spend"] = 380,
+["dkp_adjust"] = 205.79,
+["dkp_current"] = 113.95,
+["class"] = "Magier",
 },
 }
-DKPInfo = {
-	["date"] = "02.04.20 19:29:04",
-	["timestamp"] = "1585855744",
-	["process_dkp_ver"] = "3.0",
-	["total_players"] = 80,
-	["total_items"] = 829,
-	["total_points"] = 0,
-	}
-gdkp = {
-	["players"] = {
-		["Absolutja"] = {
-			["DKP"] = 0,
-			["dkp_earned"] = 0.0,
-			["dkp_spend"] = 0.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 0.0,
-			["class"] = "Priester",
-			["rcount"] = 0,
-			}
-		,
-		["Argok"] = {
-			["DKP"] = 47,
-			["dkp_earned"] = 783.85,
-			["dkp_spend"] = 772.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 47.92,
-			["class"] = "Krieger",
-			["rcount"] = 0,
-			}
-		,
-		["Aryuna"] = {
-			["DKP"] = 211,
-			["dkp_earned"] = 548.31,
-			["dkp_spend"] = 570.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 211.05,
-			["class"] = "Schamane",
-			["rcount"] = 0,
-			}
-		,
-		["Atomar"] = {
-			["DKP"] = 157,
-			["dkp_earned"] = 202.67,
-			["dkp_spend"] = 120.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 157.31,
-			["class"] = "Hexenmeister",
-			["rcount"] = 0,
-			}
-		,
-		["Barbozza"] = {
-			["DKP"] = 84,
-			["dkp_earned"] = 117.1,
-			["dkp_spend"] = 23.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 84.89,
-			["class"] = "Priester",
-			["rcount"] = 0,
-			}
-		,
-		["Barrexx"] = {
-			["DKP"] = 182,
-			["dkp_earned"] = 225.75,
-			["dkp_spend"] = 103.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 182.38,
-			["class"] = "Magier",
-			["rcount"] = 0,
-			}
-		,
-		["Blackagony"] = {
-			["DKP"] = 110,
-			["dkp_earned"] = 338.78,
-			["dkp_spend"] = 335.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 110.61,
-			["class"] = "Hexenmeister",
-			["rcount"] = 0,
-			}
-		,
-		["Breituxs"] = {
-			["DKP"] = -3,
-			["dkp_earned"] = 701.45,
-			["dkp_spend"] = 808.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = -3.13,
-			["class"] = "Schurke",
-			["rcount"] = 0,
-			}
-		,
-		["Bärspektive"] = {
-			["DKP"] = -26,
-			["dkp_earned"] = 15.13,
-			["dkp_spend"] = 12.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = -26.87,
-			["class"] = "Druide",
-			["rcount"] = 0,
-			}
-		,
-		["Davanus"] = {
-			["DKP"] = 89,
-			["dkp_earned"] = 387.34,
-			["dkp_spend"] = 453.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 89.92,
-			["class"] = "Priester",
-			["rcount"] = 0,
-			}
-		,
-		["Doktorwho"] = {
-			["DKP"] = 103,
-			["dkp_earned"] = 852.58,
-			["dkp_spend"] = 655.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 103.96,
-			["class"] = "Priester",
-			["rcount"] = 0,
-			}
-		,
-		["Dreadhead"] = {
-			["DKP"] = 6,
-			["dkp_earned"] = 776.97,
-			["dkp_spend"] = 785.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 6.11,
-			["class"] = "Schurke",
-			["rcount"] = 0,
-			}
-		,
-		["DrGurke"] = {
-			["DKP"] = 38,
-			["dkp_earned"] = 50.0,
-			["dkp_spend"] = 9.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 38.8,
-			["class"] = "Hexenmeister",
-			["rcount"] = 0,
-			}
-		,
-		["Elgrecco"] = {
-			["DKP"] = 189,
-			["dkp_earned"] = 461.61,
-			["dkp_spend"] = 664.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 189.6,
-			["class"] = "Hexenmeister",
-			["rcount"] = 0,
-			}
-		,
-		["Exidius"] = {
-			["DKP"] = 25,
-			["dkp_earned"] = 29.0,
-			["dkp_spend"] = 3.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 25.6,
-			["class"] = "Krieger",
-			["rcount"] = 0,
-			}
-		,
-		["Ezral"] = {
-			["DKP"] = -126,
-			["dkp_earned"] = 764.04,
-			["dkp_spend"] = 825.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = -126.72,
-			["class"] = "Schamane",
-			["rcount"] = 0,
-			}
-		,
-		["Flottiløl"] = {
-			["DKP"] = 18,
-			["dkp_earned"] = 713.34,
-			["dkp_spend"] = 977.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 18.94,
-			["class"] = "Priester",
-			["rcount"] = 0,
-			}
-		,
-		["Gilo"] = {
-			["DKP"] = 237,
-			["dkp_earned"] = 568.84,
-			["dkp_spend"] = 500.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 237.36,
-			["class"] = "Hexenmeister",
-			["rcount"] = 0,
-			}
-		,
-		["Gromsuk"] = {
-			["DKP"] = 269,
-			["dkp_earned"] = 819.08,
-			["dkp_spend"] = 411.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 269.47,
-			["class"] = "Schamane",
-			["rcount"] = 0,
-			}
-		,
-		["Hackerman"] = {
-			["DKP"] = 22,
-			["dkp_earned"] = 25.0,
-			["dkp_spend"] = 3.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 22.0,
-			["class"] = "Krieger",
-			["rcount"] = 0,
-			}
-		,
-		["Hasenpfote"] = {
-			["DKP"] = 3,
-			["dkp_earned"] = 624.57,
-			["dkp_spend"] = 623.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 3.82,
-			["class"] = "Druide",
-			["rcount"] = 0,
-			}
-		,
-		["Himbster"] = {
-			["DKP"] = 157,
-			["dkp_earned"] = 258.2,
-			["dkp_spend"] = 188.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 157.59,
-			["class"] = "Schamane",
-			["rcount"] = 0,
-			}
-		,
-		["Kaltherz"] = {
-			["DKP"] = 65,
-			["dkp_earned"] = 848.58,
-			["dkp_spend"] = 840.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 65.26,
-			["class"] = "Krieger",
-			["rcount"] = 0,
-			}
-		,
-		["Kayujin"] = {
-			["DKP"] = 217,
-			["dkp_earned"] = 466.79,
-			["dkp_spend"] = 400.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 217.51,
-			["class"] = "Jäger",
-			["rcount"] = 0,
-			}
-		,
-		["Landogar"] = {
-			["DKP"] = 254,
-			["dkp_earned"] = 427.84,
-			["dkp_spend"] = 203.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 254.83,
-			["class"] = "Krieger",
-			["rcount"] = 0,
-			}
-		,
-		["Legshot"] = {
-			["DKP"] = 53,
-			["dkp_earned"] = 826.68,
-			["dkp_spend"] = 691.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 53.33,
-			["class"] = "Jäger",
-			["rcount"] = 0,
-			}
-		,
-		["Lustknabe"] = {
-			["DKP"] = 165,
-			["dkp_earned"] = 585.05,
-			["dkp_spend"] = 484.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 165.9,
-			["class"] = "Magier",
-			["rcount"] = 0,
-			}
-		,
-		["Midget"] = {
-			["DKP"] = 130,
-			["dkp_earned"] = 741.04,
-			["dkp_spend"] = 500.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 130.33,
-			["class"] = "Krieger",
-			["rcount"] = 0,
-			}
-		,
-		["Moard"] = {
-			["DKP"] = 174,
-			["dkp_earned"] = 808.54,
-			["dkp_spend"] = 403.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 174.37,
-			["class"] = "Schamane",
-			["rcount"] = 0,
-			}
-		,
-		["MonkeyDArlee"] = {
-			["DKP"] = 57,
-			["dkp_earned"] = 350.01,
-			["dkp_spend"] = 440.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 57.47,
-			["class"] = "Krieger",
-			["rcount"] = 0,
-			}
-		,
-		["Moschter"] = {
-			["DKP"] = 135,
-			["dkp_earned"] = 190.65,
-			["dkp_spend"] = 115.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 135.19,
-			["class"] = "Priester",
-			["rcount"] = 0,
-			}
-		,
-		["Muffelfutt"] = {
-			["DKP"] = 185,
-			["dkp_earned"] = 562.56,
-			["dkp_spend"] = 490.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 185.8,
-			["class"] = "Magier",
-			["rcount"] = 0,
-			}
-		,
-		["Møtz"] = {
-			["DKP"] = 239,
-			["dkp_earned"] = 604.39,
-			["dkp_spend"] = 362.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 239.52,
-			["class"] = "Magier",
-			["rcount"] = 0,
-			}
-		,
-		["Necrotox"] = {
-			["DKP"] = 4,
-			["dkp_earned"] = 4.54,
-			["dkp_spend"] = 0.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 4.09,
-			["class"] = "Schurke",
-			["rcount"] = 0,
-			}
-		,
-		["Nesrar"] = {
-			["DKP"] = 210,
-			["dkp_earned"] = 450.93,
-			["dkp_spend"] = 269.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 210.19,
-			["class"] = "Schamane",
-			["rcount"] = 0,
-			}
-		,
-		["Okat"] = {
-			["DKP"] = 172,
-			["dkp_earned"] = 840.92,
-			["dkp_spend"] = 571.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 172.44,
-			["class"] = "Druide",
-			["rcount"] = 0,
-			}
-		,
-		["Pâd"] = {
-			["DKP"] = 95,
-			["dkp_earned"] = 657.57,
-			["dkp_spend"] = 656.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 95.28,
-			["class"] = "Priester",
-			["rcount"] = 0,
-			}
-		,
-		["Rassputin"] = {
-			["DKP"] = 175,
-			["dkp_earned"] = 852.58,
-			["dkp_spend"] = 755.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 175.28,
-			["class"] = "Hexenmeister",
-			["rcount"] = 0,
-			}
-		,
-		["Repa"] = {
-			["DKP"] = 348,
-			["dkp_earned"] = 845.15,
-			["dkp_spend"] = 610.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 348.54,
-			["class"] = "Magier",
-			["rcount"] = 0,
-			}
-		,
-		["Rondalis"] = {
-			["DKP"] = 75,
-			["dkp_earned"] = 742.04,
-			["dkp_spend"] = 655.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 75.99,
-			["class"] = "Priester",
-			["rcount"] = 0,
-			}
-		,
-		["Ráynz"] = {
-			["DKP"] = -68,
-			["dkp_earned"] = 832.12,
-			["dkp_spend"] = 833.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = -68.52,
-			["class"] = "Schurke",
-			["rcount"] = 0,
-			}
-		,
-		["Saidar"] = {
-			["DKP"] = 225,
-			["dkp_earned"] = 768.95,
-			["dkp_spend"] = 656.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 225.63,
-			["class"] = "Priester",
-			["rcount"] = 0,
-			}
-		,
-		["Savalox"] = {
-			["DKP"] = 0,
-			["dkp_earned"] = 0.0,
-			["dkp_spend"] = 0.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 0.0,
-			["class"] = "Hexenmeister",
-			["rcount"] = 0,
-			}
-		,
-		["Schamaninger"] = {
-			["DKP"] = 115,
-			["dkp_earned"] = 754.92,
-			["dkp_spend"] = 696.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 115.72,
-			["class"] = "Schamane",
-			["rcount"] = 0,
-			}
-		,
-		["Shadowbírd"] = {
-			["DKP"] = 265,
-			["dkp_earned"] = 496.11,
-			["dkp_spend"] = 685.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 265.89,
-			["class"] = "Jäger",
-			["rcount"] = 0,
-			}
-		,
-		["Shatoyama"] = {
-			["DKP"] = 172,
-			["dkp_earned"] = 640.35,
-			["dkp_spend"] = 521.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 172.25,
-			["class"] = "Krieger",
-			["rcount"] = 0,
-			}
-		,
-		["Stichtag"] = {
-			["DKP"] = 42,
-			["dkp_earned"] = 767.13,
-			["dkp_spend"] = 731.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 42.94,
-			["class"] = "Schurke",
-			["rcount"] = 0,
-			}
-		,
-		["Sumba"] = {
-			["DKP"] = 237,
-			["dkp_earned"] = 268.33,
-			["dkp_spend"] = 104.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 237.31,
-			["class"] = "Magier",
-			["rcount"] = 0,
-			}
-		,
-		["Taxol"] = {
-			["DKP"] = 53,
-			["dkp_earned"] = 430.98,
-			["dkp_spend"] = 423.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 53.34,
-			["class"] = "Schurke",
-			["rcount"] = 0,
-			}
-		,
-		["Telli"] = {
-			["DKP"] = 12,
-			["dkp_earned"] = 242.6,
-			["dkp_spend"] = 305.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 12.29,
-			["class"] = "Schurke",
-			["rcount"] = 0,
-			}
-		,
-		["Thurikan"] = {
-			["DKP"] = 95,
-			["dkp_earned"] = 143.5,
-			["dkp_spend"] = 40.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 95.65,
-			["class"] = "Krieger",
-			["rcount"] = 0,
-			}
-		,
-		["Tosuau"] = {
-			["DKP"] = 235,
-			["dkp_earned"] = 411.94,
-			["dkp_spend"] = 225.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 235.94,
-			["class"] = "Krieger",
-			["rcount"] = 0,
-			}
-		,
-		["Villain"] = {
-			["DKP"] = -11,
-			["dkp_earned"] = 84.4,
-			["dkp_spend"] = 196.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = -11.6,
-			["class"] = "Schurke",
-			["rcount"] = 0,
-			}
-		,
-		["Watschenbaum"] = {
-			["DKP"] = 379,
-			["dkp_earned"] = 608.6,
-			["dkp_spend"] = 96.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 379.15,
-			["class"] = "Krieger",
-			["rcount"] = 0,
-			}
-		,
-		["Xatakus"] = {
-			["DKP"] = 329,
-			["dkp_earned"] = 450.93,
-			["dkp_spend"] = 176.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 329.39,
-			["class"] = "Magier",
-			["rcount"] = 0,
-			}
-		,
-		["Yologott"] = {
-			["DKP"] = 101,
-			["dkp_earned"] = 354.16,
-			["dkp_spend"] = 329.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 101.23,
-			["class"] = "Krieger",
-			["rcount"] = 0,
-			}
-		,
-		["Zypnek"] = {
-			["DKP"] = 126,
-			["dkp_earned"] = 314.89,
-			["dkp_spend"] = 380.0,
-			["dkp_adjust"] = 0,
-			["dkp_current"] = 126.61,
-			["class"] = "Magier",
-			["rcount"] = 0,
-			}
-		,
-		}
-	}
-DKP_ITEMS = {
-	["Absolutja"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Argok"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Aryuna"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Atomar"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Barbozza"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Barrexx"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Blackagony"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Breituxs"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Bärspektive"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Davanus"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Doktorwho"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Dreadhead"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["DrGurke"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Elgrecco"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Exidius"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Ezral"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Flottiløl"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Gilo"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Gromsuk"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Hackerman"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Hasenpfote"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Himbster"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Kaltherz"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Kayujin"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Landogar"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Legshot"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Lustknabe"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Midget"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Moard"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["MonkeyDArlee"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Moschter"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Muffelfutt"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Møtz"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Necrotox"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Nesrar"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Okat"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Pâd"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Rassputin"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Repa"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Rondalis"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Ráynz"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Saidar"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Savalox"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Schamaninger"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Shadowbírd"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Shatoyama"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Stichtag"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Sumba"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Taxol"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Telli"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Thurikan"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Tosuau"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Villain"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Watschenbaum"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Xatakus"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Yologott"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	["Zypnek"] = {
-		["Items"] = {
-			}
-		,
-		}
-	,
-	}
+}

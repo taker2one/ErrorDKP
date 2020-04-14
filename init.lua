@@ -23,7 +23,7 @@ local function mapImportDKPData()
             ErrorDKP.GNoteDKP:SetPlayerDKP(k, v["dkp_current"], true)
         end
 
-        ErrorDKP.GNoteDKP:UpdateDKPInfo()
+        C_Timer.After(5, function() ErrorDKP.GNoteDKP:UpdateDKPInfo() end)
         core:Print("DKP Import done.")
     else
         core:Print("The timestamp of the data you want to import is older than the dkp data in the guild info")
@@ -361,7 +361,6 @@ function ErrorDKP_OnEventHandler(self, event, ...)
     elseif (event == "ENCOUNTER_LOOT_RECEIVED") then
         core:PrintDebug(event, ...)
     elseif (event == "GUILD_ROSTER_UPDATE") then
-        local rosterUpdatePossible = ...
         ErrorDKP.GNoteDKP:ResetUpdateCycle()
         core:PrintDebug(event, ...)
         if not core.Initialized then

@@ -43,6 +43,10 @@ function ErrorDKP:DKPTableUpdate()
     table.sort(DKPTableData, function(a, b) return (a[6] > b[6]); end);
     UI.DKPTable:ClearSelection()
     UI.DKPTable:SetData(DKPTableData, true)
+
+    -- Update Time string on top
+    UI.DKPTable.DataTime:SetText(' - ' .. core:ToDateString(core:GetLocalDKPDataTimestamp()))
+
 end
 
 local menu = {
@@ -123,6 +127,12 @@ function ErrorDKP:CreateDKPScrollingTable()
     title:SetFontObject("GameFontNormal")
     title:SetText(_LS["TITLE"])
     title:SetPoint("TOPLEFT", UI.DKPTable.frame, "TOPLEFT", 0, 30)
+
+    local dataTime = UI.DKPTable.frame:CreateFontString("DKPSTDataTime")
+    dataTime:SetFontObject("GameFontWhite")
+    dataTime:SetText("- None")
+    dataTime:SetPoint("TOPLEFT", title, "TOPRIGHT", 0, 0)
+    UI.DKPTable.DataTime = dataTime
 
 
     local adjustDKPButton = CreateFrame("Button", nil, UI.DKPTable.frame, "UIPanelButtonTemplate")
