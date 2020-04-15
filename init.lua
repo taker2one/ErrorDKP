@@ -117,7 +117,7 @@ core.Commands = {
         ["lootsurvey"] = function(...)
             if core:CheckSelfTrusted() then
                 core:Print("Test lootsurvey")
-                ErrorDKP.LootSurvey:Start(ErrorDKP.LootSurvey.DemoSurveyData, 120)
+                ErrorDKP.LootSurvey:Start(core:tcopy(ErrorDKP.LootSurvey.DemoSurveyData), 120)
             end
         end,
         ["lootsurveyresult"] = function(...)
@@ -144,6 +144,10 @@ core.Commands = {
         end,
         ["writenote"] = function(...)
             ErrorDKP.GNoteDKP:UpdateNote("Kräuterlisl", "{125.12}")
+        end,
+        ["mrti"] = function(...)
+            core:PrintDebug("Test MizusRaidtracker Interface")
+            core.MrtI:AddItem("|cffa335ee|Hitem:16930::::::::60:::::::|h[Nemesis Leggings]|h|r", "Rassputin", 10)
         end
     }
 }

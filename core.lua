@@ -16,7 +16,7 @@ local deformat = LibStub("LibDeformat-3.0")
 
 -- Version
 core.Version = GetAddOnMetadata("ErrorDKP", "Version")
-core.Build = 1130407
+core.Build = 1130408
 core.Type = "R" -- R = Release, B = Beta, A = Alpha
 
 --SetCVar("ScriptErrors", 1)
@@ -425,6 +425,14 @@ function core:Roll(dontPrint)
     end
 
     return i
+end
+
+function core:PutInChatbox(text)
+    if ChatEdit_GetActiveWindow() then
+        ChatEdit_InsertLink(tostring(text))
+    else
+        ChatFrame_OpenChat(tostring(text))
+    end
 end
 
 -- shift-click-parsing of item links

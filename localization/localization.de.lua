@@ -4,9 +4,10 @@ if GetLocale() == "deDE" then
         PRICELISTTABLE = {
             COLICON = "Icon",
             COLNAME = "Item",
-            COLPRICE = "Preis(BiS)",
+            COLPRICE = "Preis",
             COLPRIO = "Priorität",
-            TITLE = "Item-Preisliste"
+            TITLE = "Item-Preisliste",
+            SEARCH = "Suche"
         },
         DKPLISTTABLE = {
             COLNAME = "Name",

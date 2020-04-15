@@ -159,6 +159,9 @@ function Sync:OnCommReceived(prefix, message, channel, sender)
                 table.remove(core.LootLog, #core.LootLog)
             end
             core:SetLootDataTimestamp(deserialized.IATS)
+            
+            --Add to MRT if installed
+            core.MrtI:AddItem(deserialized.Item.ItemLink, deserialized.Item.Looter, deserialized.Item.Dkp)
 
            
             core:Print(string.format(_L["MSG_DKP_ADJUST_AUTO"], deserialized.DataSet["name"], "-"..deserialized.Item["Dkp"], deserialized.Item["ItemLink"]))
@@ -180,6 +183,9 @@ function Sync:OnCommReceived(prefix, message, channel, sender)
             end
             core:SetLootDataTimestamp(deserialized.ATS)
             ErrorDKP:LootHistoryTableUpdate()
+
+            -- Add to MRT if installed
+            core.MrtI:AddItem(deserialized.Item.ItemLink, deserialized.Item.Looter, deserialized.Item.Dkp)
 
             if deserialized.Item.Looter == "disenchanted" then
                 core:Print(string.format(_L["MSG_LOOT_DISENCHANTED"], deserialized.Item.ItemLink))
@@ -278,12 +284,12 @@ function Sync:OnCommReceived(prefix, message, channel, sender)
         elseif prefix == "ErrDKPSurvAnsw" then
             --  { ["id"], ["itemIndex"], ["response"]  } 
             -- clients also responds instantly after receiving the survey
-            if core:CheckSelfTrusted() then
-                local success, deserialized = Serializer:Deserialize(message)
-                if success then
+            local success, deserialized = Serializer:Deserialize(message)
+            if success then
+                if core:CheckSelfTrusted() then
                     ErrorDKP:OnCommReceived_SurvAnsw(sender, deserialized)
-                
                 end
+                ErrorDKP.LootSurvey:UpdateAnswerCount(sender, deserialized)
             end
         elseif prefix == "ErrDKPSurvClosed" then
             if VerifySender(sender) then

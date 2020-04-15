@@ -3,9 +3,10 @@ local addonName, core = ...;
         PRICELISTTABLE = {
             COLICON = "Icon",
             COLNAME = "Item",
-            COLPRICE = "Price(BiS)",
+            COLPRICE = "Price",
             COLPRIO = "Priority",
-            TITLE = "Itempricelist"
+            TITLE = "Itempricelist",
+            SEARCH = "Search"
         },
         DKPLISTTABLE = {
             COLNAME = "Name",

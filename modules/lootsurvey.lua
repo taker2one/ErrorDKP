@@ -71,9 +71,17 @@ function LootSurvey:Update(data)
         entryFrame.ItemText:SetText(v.itemLink)
         entryFrame.Icon.texture:SetTexture(v.icon)
         entryFrame.MainBtn:SetEnabled(true)
+        entryFrame.MainBtn.ResponseCount = 0
+        self:ApplyRespButtonText(entryFrame.MainBtn)
         entryFrame.SecBtn:SetEnabled(true)
+        entryFrame.SecBtn.ResponseCount = 0
+        self:ApplyRespButtonText(entryFrame.SecBtn)
         entryFrame.PassBtn:SetEnabled(true)
+        entryFrame.PassBtn.ResponseCount = 0
+        self:ApplyRespButtonText(entryFrame.PassBtn)
         entryFrame.OffspecBtn:SetEnabled(true)
+        entryFrame.OffspecBtn.ResponseCount = 0
+        self:ApplyRespButtonText(entryFrame.OffspecBtn)
         entryFrame:Show()
     end
 
@@ -223,16 +231,23 @@ function LootSurvey:CreateEntry(name)
     
 
     f.MainBtn = core:CreateButton(f, "MainSpecBtn", _LS["BTN_NEED"])
+    f.MainBtn.Title = _LS["BTN_NEED"]
+    f.MainBtn.ResponseCount = 0
     f.MainBtn:SetPoint("TOPLEFT", f, "TOPLEFT", 85, -40)
-    
-    -- Currently not available in the new loot system
+
     f.SecBtn = core:CreateButton(f, "SecSpecBtn", _LS["BTN_GREED"])
+    f.SecBtn.Title = _LS["BTN_GREED"]
+    f.SecBtn.ResponseCount = 0
     f.SecBtn:SetPoint("LEFT", f.MainBtn, "RIGHT")
     
     f.OffspecBtn = core:CreateButton(f, "OffspecBtn", _LS["BTN_OFFSPEC"])
+    f.OffspecBtn.Title = _LS["BTN_OFFSPEC"]
+    f.OffspecBtn.ResponseCount = 0
     f.OffspecBtn:SetPoint("LEFT", f.SecBtn, "RIGHT") 
 
     f.PassBtn = core:CreateButton(f, "PassBtn", _LS["BTN_PASS"])
+    f.PassBtn.Title = _LS["BTN_PASS"]
+    f.PassBtn.ResponseCount = 0
     f.PassBtn:SetPoint("LEFT", f.OffspecBtn, "RIGHT")
 
 
@@ -294,5 +309,40 @@ function LootSurvey:OnCommCloseReceived(closeType)
         self:FinishSurvey() -- i think this should be enough
     elseif closeType == "CANCEL" then
         self:FinishSurvey() -- i think this should be enough
+    end
+end
+
+function LootSurvey:UpdateAnswerCount(sender, data)
+    --data["itemIndex"],
+    --data["response"],
+    --data["id"]
+    
+    -- Check if survey is in progress and survey id matches
+    if itemSurveyData and itemSurveyData["id"] == data["id"] then
+        local entry = LootSurvey:GetEntry(data["itemIndex"])
+        core:PrintDebug("UpdateAnswerCount", data["response"])
+        if data["response"] == "MAIN" then
+            entry.MainBtn.ResponseCount = entry.MainBtn.ResponseCount + 1
+            LootSurvey:ApplyRespButtonText(entry.MainBtn)
+        elseif data["response"] == "SECOND" then
+            entry.SecBtn.ResponseCount = entry.SecBtn.ResponseCount + 1
+            LootSurvey:ApplyRespButtonText(entry.SecBtn)
+        elseif data["response"] == "PASS" then
+            entry.PassBtn.ResponseCount = entry.PassBtn.ResponseCount + 1 
+            LootSurvey:ApplyRespButtonText(entry.PassBtn)      
+        elseif data["response"] == "OFFSPEC" then
+            entry.OffspecBtn.ResponseCount = entry.OffspecBtn.ResponseCount + 1
+            LootSurvey:ApplyRespButtonText(entry.OffspecBtn)
+        end
+    end
+end
+
+function LootSurvey:ApplyRespButtonText(button)
+    if button then
+        local text = button.Title
+        if button.ResponseCount > 0 then
+            text = text .. " - " .. button.ResponseCount
+        end
+        button:SetText( text )
     end
 end

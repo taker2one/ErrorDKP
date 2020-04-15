@@ -17,13 +17,26 @@ local pendingItemRequests = {}
 local contextMenuItems = {
     { text = "Select an Option", isTitle = true, notCheckable = true},
     { text = "Export", notCheckable = true, func = function() 
-      local selection = ErrorDKP:GetLootHistoryTable():GetSelection()
-      if selection then
-        ErrorDKP:ExportItems(core.LootLog[selection])
-        -- ErrorDKP:ExportItems(items)
-        -- ErrorDKP:StartAdjustment(UI.DKPTable:GetCell(selection, 3))
-      end
-    end }
+            local selection = ErrorDKP:GetLootHistoryTable():GetSelection()
+            if selection then
+                ErrorDKP:ExportItems(core.LootLog[selection])
+                -- ErrorDKP:ExportItems(items)
+                -- ErrorDKP:StartAdjustment(UI.DKPTable:GetCell(selection, 3))
+            end
+        end 
+    },
+    {
+        text = "Add to MRT", notCheckable = true, onlyTrusted = true, func = function()
+            local selection = ErrorDKP:GetLootHistoryTable():GetSelection()
+            if selection then
+                local loot = core.LootLog[selection]
+                core.MrtI:AddItem(loot.ItemLink, loot.Looter, loot.Dkp)
+                
+                -- ErrorDKP:ExportItems(items)
+                -- ErrorDKP:StartAdjustment(UI.DKPTable:GetCell(selection, 3))
+            end
+        end
+    }
 }
 
 local LootHistoryTableColDef = {
@@ -143,7 +156,19 @@ local function CreateLootHistoryTable()
     t:RegisterEvents({
         ["OnMouseDown"] = function (rowFrame, cellFrame, data, cols, row, realrow, column, scrollingTable, ...)
             local button = ...
-            if button == "RightButton" then
+
+            if button == "LeftButton" then
+                local shift_key = IsShiftKeyDown()
+                if shift_key then
+                    local cell = scrollingTable:GetCell(realrow, 2)
+                    core:PrintDebug(button, shift_key, cell)
+                    core:PutInChatbox( cell )
+                elseif IsControlKeyDown() then
+                    local cell = scrollingTable:GetCell(realrow, 2)
+                    core:PrintDebug(button, cell)
+                    DressUpItemLink(cell)
+                end
+            elseif button == "RightButton" then
                 core:PrintDebug("DKPTable RightButton clicked")
                 scrollingTable:SetSelection(realrow)
                 -- There is currently ony one entry so do it the easy way and hide whole menu
@@ -215,6 +240,8 @@ function ErrorDKP:AddItemToHistory(itemLink, itemId, looter, dkp, lootTime, broa
         else
             core:Print(string.format(_L["MSG_LOOT_ADDED"], historyEntry.ItemLink))
         end
+        -- Add to MRT if installed, only do when broadcasting cause if not it will be added by DKP-Adjustment with item
+        core.MrtI:AddItem(deserialized.Item.ItemLink, deserialized.Item.Looter, deserialized.Item.Dkp)
     end
     return historyEntry
 end

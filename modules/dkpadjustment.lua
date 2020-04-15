@@ -85,6 +85,8 @@ function ErrorDKP:AdjustDKPWithItem(player, dkp, itemHistoryEntry)
             core.Sync:Send("ErrDKPAdjPAWI", { PTS = oldTimestamp, ATS = newTimestamp, IATS = core:GetLootDataTimestamp(), DataSet = entry, Item = itemHistoryEntry })
             core:Print(string.format(_L["MSG_DKP_ADJUST_AUTO"], player, dkp, itemHistoryEntry.ItemLink ))
             ErrorDKP:DKPTableUpdate()
+            -- Addo to Mizus Raidtracker if installed
+            core.MrtI:AddItem(deserialized.Item.ItemLink, deserialized.Item.Looter, deserialized.Item.Dkp)
         else 
             core:Print(string.format(_L["MSG_PLAYER_NOT_FOUND_DKP"], player)) 
         end
