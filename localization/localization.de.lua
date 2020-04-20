@@ -75,6 +75,7 @@ if GetLocale() == "deDE" then
         TOOLTIP_PRIO_LABEL = "Prio",
 
         MSG_NEW_VERSION_AVAILABLE = "Eine neuere Version von |cff90EE90ErrorDKP|r ist verfügbar. Gehe auf |cff90EE90wow-error.at|r und hol sie dir.",
+        MSG_NEW_VERSION_AVAILABLE_FORMAT = "Eine neuere Version von |cff90EE90ErrorDKP|r (%s%s) ist verfügbar. Gehe auf |cff90EE90curseforge.com|r und hol sie dir.",
         MSG_DKPTABLE_OUTOFDATE = "Deine DKP Liste ist nicht aktuell, Update-Anfrage wurde an Offiziere gesendet.",
         MSG_PLAYER_NOT_FOUND_DKP = "%s nicht in der Liste gedunden, aktualisieren nicht möglich.",
         MSG_DKP_ADJUST_AUTO = "%s %d DKP für %s",

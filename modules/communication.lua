@@ -88,21 +88,16 @@ function Sync:OnCommReceived(prefix, message, channel, sender)
                 if core.Type == "R" then
                     if deserialized["type"] == "R" and tonumber(deserialized["version"]) > core.Build then
                         core.LastUpdateAvailableMsg = time()
-                        core:Print(_L["MSG_NEW_VERSION_AVAILABLE"])
+                        core:Print(string.format(_L["MSG_NEW_VERSION_AVAILABLE_FORMAT"], deserialized["verion"], deserialized["type"]))
                     end
                 elseif core.Type == "B" then 
                     if (deserialized["type"] == "R" or deserialized["type"] == "B") and tonumber(deserialized["version"]) > core.Build then
                         core.LastUpdateAvailableMsg = time()
-                        core:Print(_L["MSG_NEW_VERSION_AVAILABLE"])
+                        core:Print(string.format(_L["MSG_NEW_VERSION_AVAILABLE_FORMAT"], deserialized["verion"], deserialized["type"]))
                     end
                 elseif tonumber(deserialized["version"]) > core.Build then
                     core.LastUpdateAvailableMsg = time()
-                        core:Print(_L["MSG_NEW_VERSION_AVAILABLE"])
-                end
-
-                if tonumber(deserialized["version"]) > core.Build and deserialized["type"] == core.Type then
-                    core.LastUpdateAvailableMsg = time()
-                    core:Print(_L["MSG_NEW_VERSION_AVAILABLE"])
+                    core:Print(string.format(_L["MSG_NEW_VERSION_AVAILABLE_FORMAT"], deserialized["verion"], deserialized["type"]))
                 end
             end
 
@@ -113,7 +108,7 @@ function Sync:OnCommReceived(prefix, message, channel, sender)
                    deserialized["type"] == "A" and core.Type == "A"
                 then
                     core:PrintDebug("I have newer Version, inform player")
-                    core.Sync:Send("ErrDKPBuildCheck", tostring(core.Build))
+                    core.Sync:Send("BuildCheck", { version = core.Build, type = core.Type })
                 end
             end
         end

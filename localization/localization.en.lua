@@ -74,6 +74,7 @@ local addonName, core = ...;
         TOOLTIP_PRIO_LABEL = "Prio",
 
         MSG_NEW_VERSION_AVAILABLE = "A newer version of |cff90EE90ErrorDKP|r is available. Visit |cff90EE90wow-error.at|r to download.",
+        MSG_NEW_VERSION_AVAILABLE_FORMAT = "A newer version of |cff90EE90ErrorDKP|r (%s%s) is available. Visit |cff90EE90curseforge.com|r to download.",
         MSG_DKPTABLE_OUTOFDATE = "Your dkp list ist out of date, a update request was sent to all officers.",
         MSG_PLAYER_NOT_FOUND_DKP = "%s not found in list, update not possible.",
         MSG_DKP_ADJUST_AUTO = "%s %d DKP for %s",
