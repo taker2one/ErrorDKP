@@ -324,6 +324,8 @@ function ErrorDKP_OnEventHandler(self, event, ...)
         self:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
         if IsInGuild() then
             core.Sync:Send("ErrDKPBuildCheck", tostring(core.Build))
+            -- BuildCheckV2
+            core.Sync:Send("BuildCheck", { version = core.Version, type = core.type })
         end
     --elseif event == "CHAT_MSG_LOOT" then
         --Add loot

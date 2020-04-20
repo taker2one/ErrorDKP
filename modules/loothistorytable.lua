@@ -241,7 +241,7 @@ function ErrorDKP:AddItemToHistory(itemLink, itemId, looter, dkp, lootTime, broa
             core:Print(string.format(_L["MSG_LOOT_ADDED"], historyEntry.ItemLink))
         end
         -- Add to MRT if installed, only do when broadcasting cause if not it will be added by DKP-Adjustment with item
-        core.MrtI:AddItem(deserialized.Item.ItemLink, deserialized.Item.Looter, deserialized.Item.Dkp)
+        core.MrtI:AddItem(historyEntry.ItemLink, historyEntry.Looter, historyEntry.Dkp) --historyEntry
     end
     return historyEntry
 end

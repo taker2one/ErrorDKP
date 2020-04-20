@@ -16,9 +16,9 @@ core.MrtI = MrtI
 
 function MrtI:AddItem(itemLink, looter, cost)
     core:PrintDebug("MrtI:AddItem()")
-    if(MizusRaidTracker == nil and MRT_ManualAddLoot == nil) then
+    if(MizusRaidTracker == nil or MRT_ManualAddLoot == nil) then
         core:PrintDebug("MizusRaidTracker is  not installed.")
-        return value
+        return
     end
     
     core:PrintDebug("MRT_ManualAddLoot is installed => AddItem.", itemLink, looter, cost)

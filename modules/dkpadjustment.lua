@@ -86,7 +86,7 @@ function ErrorDKP:AdjustDKPWithItem(player, dkp, itemHistoryEntry)
             core:Print(string.format(_L["MSG_DKP_ADJUST_AUTO"], player, dkp, itemHistoryEntry.ItemLink ))
             ErrorDKP:DKPTableUpdate()
             -- Addo to Mizus Raidtracker if installed
-            core.MrtI:AddItem(deserialized.Item.ItemLink, deserialized.Item.Looter, deserialized.Item.Dkp)
+            core.MrtI:AddItem(itemHistoryEntry.ItemLink, itemHistoryEntry.Looter, itemHistoryEntry.Dkp)
         else 
             core:Print(string.format(_L["MSG_PLAYER_NOT_FOUND_DKP"], player)) 
         end

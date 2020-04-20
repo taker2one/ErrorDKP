@@ -317,6 +317,10 @@ function LootSurvey:UpdateAnswerCount(sender, data)
     --data["response"],
     --data["id"]
     
+    if  not data["id"] or not data["itemIndex"] or not data["response"] then
+        return
+    end
+
     -- Check if survey is in progress and survey id matches
     if itemSurveyData and itemSurveyData["id"] == data["id"] then
         local entry = LootSurvey:GetEntry(data["itemIndex"])

@@ -45,6 +45,7 @@ function Sync:OnEnable()
     self:RegisterComm("ErrDKPAdjPAWI")         -- Adjust DKP Points caused by lootentry, also containes the historyentry
     self:RegisterComm("ErrDKPTableCheck")      -- Check for any updated tables
     self:RegisterComm("ErrDKPBuildCheck")      -- Inform about available update
+    self:RegisterComm("BuildCheck")            -- Inform about available update, new Version with Type included
     self:RegisterComm("ErrDKPManDKP")          -- Manual DKP Single Entry Update
 
     -- Raid
@@ -69,20 +70,53 @@ function Sync:OnCommReceived(prefix, message, channel, sender)
     core:PrintDebug("OnMessageReceived", prefix, channel, sender)
 
     if prefix == "ErrDKPBuildCheck" and sender ~= UnitName("player") then
-        -- Theres someone with a newer Version, print message then mute for 15 minutes
-        if time() - core.LastUpdateAvailableMsg > 900 then
-            if tonumber(message) > core.Build then
-                core.LastUpdateAvailableMsg = time()
-                core:Print(_L["MSG_NEW_VERSION_AVAILABLE"])
-            end
-        end
-
         -- This version is newer => inform sender
-        if tonumber(message) < core.Build then
+        if tonumber(message) < core.Build and tonumber(message) <= 1130408 and core.Type == "R" then
             core:PrintDebug("I have newer Version, inform player")
             core.Sync:Send("ErrDKPBuildCheck", tostring(core.Build))
         end
         return
+    elseif prefix == "BuildCheck" and sender ~= UnitName("player")
+    then
+        -- This is V2 of the BuildCheck which also includes Build and Type (Alpha,Beta,Release)
+        -- Create a second prefix for compatibility reasons
+        
+        local success, deserialized = Serializer:Deserialize(message)
+        if success then
+            -- Theres someone with a newer Version, print message then mute for 15 minutes
+            if time() - core.LastUpdateAvailableMsg > 900 then
+                if core.Type == "R" then
+                    if deserialized["type"] == "R" and tonumber(deserialized["version"]) > core.Build then
+                        core.LastUpdateAvailableMsg = time()
+                        core:Print(_L["MSG_NEW_VERSION_AVAILABLE"])
+                    end
+                elseif core.Type == "B" then 
+                    if (deserialized["type"] == "R" or deserialized["type"] == "B") and tonumber(deserialized["version"]) > core.Build then
+                        core.LastUpdateAvailableMsg = time()
+                        core:Print(_L["MSG_NEW_VERSION_AVAILABLE"])
+                    end
+                elseif tonumber(deserialized["version"]) > core.Build then
+                    core.LastUpdateAvailableMsg = time()
+                        core:Print(_L["MSG_NEW_VERSION_AVAILABLE"])
+                end
+
+                if tonumber(deserialized["version"]) > core.Build and deserialized["type"] == core.Type then
+                    core.LastUpdateAvailableMsg = time()
+                    core:Print(_L["MSG_NEW_VERSION_AVAILABLE"])
+                end
+            end
+
+            -- This version is newer => inform sender
+            if tonumber(deserialized["version"]) < core.Build then
+                if deserialized["type"] == "R" or 
+                   deserialized["type"] == "B" and (core.Type == "B" or  core.Type == "A") or
+                   deserialized["type"] == "A" and core.Type == "A"
+                then
+                    core:PrintDebug("I have newer Version, inform player")
+                    core.Sync:Send("ErrDKPBuildCheck", tostring(core.Build))
+                end
+            end
+        end
     elseif prefix == "ErrDKPAdjP" and sender ~= UnitName("player") 
     then
         -- Data is serialized { PTS, ATS, Data }
