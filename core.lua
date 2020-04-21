@@ -17,7 +17,7 @@ local deformat = LibStub("LibDeformat-3.0")
 -- Version
 core.Version = GetAddOnMetadata("ErrorDKP", "Version")
 core.Build = 1130409
-core.Type = "A" -- R = Release, B = Beta, A = Alpha
+core.Type = "R" -- R = Release, B = Beta, A = Alpha
 
 --SetCVar("ScriptErrors", 1)
 
