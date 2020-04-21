@@ -1,6 +1,6 @@
 .git/
 .gitignore
-modules/attendancetracker.lua
+ErrorDKP/modules/attendancetracker.lua
 pack.cmd
 exclude.txt
 ErrorDKP.zip
