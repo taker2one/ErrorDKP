@@ -82,6 +82,8 @@ function LootSurvey:Update(data)
         entryFrame.OffspecBtn:SetEnabled(true)
         entryFrame.OffspecBtn.ResponseCount = 0
         self:ApplyRespButtonText(entryFrame.OffspecBtn)
+
+        wipe(entryFrame.Responses)
         entryFrame:Show()
     end
 
@@ -206,6 +208,20 @@ function LootSurvey:HideAllEntries()
     end
 end
 
+local function BuildResponseTooltipTable(responsesTable, response)
+    local t = {}
+        for k,v in pairs(responsesTable) do
+            if v["response"] == response then
+                tinsert(t, v["player"])
+            end
+        end
+        if #t > 0 then
+            return t
+        else
+           return _LS["RESP_TOOLTIP_EMPTY"]
+        end
+end
+
 function LootSurvey:CreateEntry(name)
     local f = CreateFrame("Frame", name, UIParent)
     f:SetSize(478,80)
@@ -222,33 +238,73 @@ function LootSurvey:CreateEntry(name)
     icon:SetScript("OnLeave", function(self)
         ErrorDKP:HideItemTooltip()
     end)
+    icon:SetScript("OnMouseDown", function(self, button)
+        if button == "LeftButton" then
+            if IsShiftKeyDown() then
+                core:PutInChatbox( f.ItemText:GetText())
+            elseif IsControlKeyDown() then
+                DressUpItemLink(f.ItemText:GetText())
+            end
+        end
+    end)
 
     f.Icon = icon
 
     f.ItemText = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     f.ItemText:SetText("Text")
     f.ItemText:SetPoint("TOPLEFT", f, "TOPLEFT", 85, -15)
-    
 
     f.MainBtn = core:CreateButton(f, "MainSpecBtn", _LS["BTN_NEED"])
     f.MainBtn.Title = _LS["BTN_NEED"]
     f.MainBtn.ResponseCount = 0
     f.MainBtn:SetPoint("TOPLEFT", f, "TOPLEFT", 85, -40)
+    f.MainBtn:SetScript("OnEnter", function(self)
+        ErrorDKP.Tooltip:ShowTooltipBottom(self, _LS["RESP_TOOLTIP_TITLE"], function()
+            return BuildResponseTooltipTable(f.Responses, "MAIN")
+        end)
+    end)
+    f.MainBtn:SetScript("OnLeave", function(self)
+        ErrorDKP.Tooltip:Hide()
+    end)
 
     f.SecBtn = core:CreateButton(f, "SecSpecBtn", _LS["BTN_GREED"])
     f.SecBtn.Title = _LS["BTN_GREED"]
     f.SecBtn.ResponseCount = 0
     f.SecBtn:SetPoint("LEFT", f.MainBtn, "RIGHT")
+    f.SecBtn:SetScript("OnEnter", function(self)
+        ErrorDKP.Tooltip:ShowTooltipBottom(self, _LS["RESP_TOOLTIP_TITLE"], function()
+            return BuildResponseTooltipTable(f.Responses, "SECOND")
+        end)
+    end)
+    f.SecBtn:SetScript("OnLeave", function(self)
+        ErrorDKP.Tooltip:Hide()
+    end)
     
     f.OffspecBtn = core:CreateButton(f, "OffspecBtn", _LS["BTN_OFFSPEC"])
     f.OffspecBtn.Title = _LS["BTN_OFFSPEC"]
     f.OffspecBtn.ResponseCount = 0
-    f.OffspecBtn:SetPoint("LEFT", f.SecBtn, "RIGHT") 
+    f.OffspecBtn:SetPoint("LEFT", f.SecBtn, "RIGHT")
+    f.OffspecBtn:SetScript("OnEnter", function(self)
+        ErrorDKP.Tooltip:ShowTooltipBottom(self, _LS["RESP_TOOLTIP_TITLE"], function()
+            return BuildResponseTooltipTable(f.Responses, "OFFSPEC")
+        end)
+    end)
+    f.OffspecBtn:SetScript("OnLeave", function(self)
+        ErrorDKP.Tooltip:Hide()
+    end)
 
     f.PassBtn = core:CreateButton(f, "PassBtn", _LS["BTN_PASS"])
     f.PassBtn.Title = _LS["BTN_PASS"]
     f.PassBtn.ResponseCount = 0
     f.PassBtn:SetPoint("LEFT", f.OffspecBtn, "RIGHT")
+    f.PassBtn:SetScript("OnEnter", function(self)
+        ErrorDKP.Tooltip:ShowTooltipBottom(self, _LS["RESP_TOOLTIP_TITLE"], function()
+            return BuildResponseTooltipTable(f.Responses, "PASS")
+        end)
+    end)
+    f.PassBtn:SetScript("OnLeave", function(self)
+        ErrorDKP.Tooltip:Hide()
+    end)
 
 
     -- Show Offspec only to people which have an offspec
@@ -269,6 +325,8 @@ function LootSurvey:CreateEntry(name)
     f.OffspecBtn:SetScript("OnClick", function()
         LootSurvey:OnClickEntryButton("OFFSPEC", f.Index)
     end)
+
+    f.Responses = {}
 
     return f
 end
@@ -325,6 +383,7 @@ function LootSurvey:UpdateAnswerCount(sender, data)
     if itemSurveyData and itemSurveyData["id"] == data["id"] then
         local entry = LootSurvey:GetEntry(data["itemIndex"])
         core:PrintDebug("UpdateAnswerCount", data["response"])
+        table.insert(entry.Responses, { response = data["response"], player=sender })
         if data["response"] == "MAIN" then
             entry.MainBtn.ResponseCount = entry.MainBtn.ResponseCount + 1
             LootSurvey:ApplyRespButtonText(entry.MainBtn)

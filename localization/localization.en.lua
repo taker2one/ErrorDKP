@@ -40,7 +40,9 @@ local addonName, core = ...;
             BTN_NEED = "High Prio",
             BTN_GREED = "Low Prio",
             BTN_PASS = "Pass",
-            BTN_OFFSPEC = "Offspec"
+            BTN_OFFSPEC = "Offspec",
+            RESP_TOOLTIP_TITLE = "Responses",
+            RESP_TOOLTIP_EMPTY = "Currently no answers."
         },
         ML_SURVEY_RESULT = {
             TITLE = "Result",

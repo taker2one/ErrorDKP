@@ -41,7 +41,9 @@ if GetLocale() == "deDE" then
             BTN_NEED = "Hohe Prio",
             BTN_GREED = "Niedrige Prio",
             BTN_PASS = "Passe",
-            BTN_OFFSPEC = "Offspec"
+            BTN_OFFSPEC = "Offspec",
+            RESP_TOOLTIP_TITLE = "Antworten",
+            RESP_TOOLTIP_EMPTY = "Keine Antworten bisher."
         },
         ML_SURVEY_RESULT = {
             TITLE = "Ergebnis",
