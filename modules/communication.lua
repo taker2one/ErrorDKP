@@ -88,16 +88,16 @@ function Sync:OnCommReceived(prefix, message, channel, sender)
                 if core.Type == "R" then
                     if deserialized["type"] == "R" and tonumber(deserialized["version"]) > core.Build then
                         core.LastUpdateAvailableMsg = time()
-                        core:Print(string.format(_L["MSG_NEW_VERSION_AVAILABLE_FORMAT"], deserialized["verion"], deserialized["type"]))
+                        core:Print(string.format(_L["MSG_NEW_VERSION_AVAILABLE_FORMAT"], deserialized["version"], deserialized["type"]))
                     end
                 elseif core.Type == "B" then 
                     if (deserialized["type"] == "R" or deserialized["type"] == "B") and tonumber(deserialized["version"]) > core.Build then
                         core.LastUpdateAvailableMsg = time()
-                        core:Print(string.format(_L["MSG_NEW_VERSION_AVAILABLE_FORMAT"], deserialized["verion"], deserialized["type"]))
+                        core:Print(string.format(_L["MSG_NEW_VERSION_AVAILABLE_FORMAT"], deserialized["version"], deserialized["type"]))
                     end
                 elseif tonumber(deserialized["version"]) > core.Build then
                     core.LastUpdateAvailableMsg = time()
-                    core:Print(string.format(_L["MSG_NEW_VERSION_AVAILABLE_FORMAT"], deserialized["verion"], deserialized["type"]))
+                    core:Print(string.format(_L["MSG_NEW_VERSION_AVAILABLE_FORMAT"], deserialized["version"], deserialized["type"]))
                 end
             end
 
