@@ -26,8 +26,14 @@ function Tooltip:ShowTooltip(owner, anchorType, title, ...)
     for i=1, select("#", ...) do
       local line = select(i, ...)
       if (type(line) == "function") then line = line() end
-      if (type(line) == "table") then line = unpack(line) end
-      GameTooltip:AddLine(line, 1, 1, 1, true)
+      if (type(line) == "table") then
+        for k,v in pairs(line) do
+            GameTooltip:AddLine(v, 1, 1, 1, true)
+        end
+      else
+        GameTooltip:AddLine(line, 1, 1, 1, true)
+        end
+  
     end
     
     GameTooltip:Show()
