@@ -29,7 +29,7 @@ function GroupSwap:Swap(playerName1, playerName2)
     local p1Index, p2Index
     local p1grp, p2grp
 
-    for i = 1, GetNumGroupMembers() do
+    for i = 1, Members() do
         local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(i);
         --local unit = "party" .. i
 

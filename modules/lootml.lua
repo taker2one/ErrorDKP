@@ -15,30 +15,50 @@ function ErrorDKP:BuidLootSlotInfo()
 
         if numLootItems <= 0 then return end
 
-        table.wipe(core.LootSlotInfos)
         for i = 1, numLootItems do
-            if LootSlotHasItem(i) then
-                local lootIcon, lootName, lootQuantity, currencyID, lootQuality, locked, isQuestItem, questID, isActive = GetLootSlotInfo(i)
-                --local guid = self.Utils:ExtractCreatureID((GetLootSourceInfo(i)))
-                --if guid and self.lootGUIDToIgnore[guid] then return self:Debug("Ignoring loot from ignored source", guid) end
-                if lootIcon then
-                    local itemLink = GetLootSlotLink(i)
-                    if lootQuantity == 0 then
-                        core:PrintDebug("Ignore coins")
-                    --elseif not self.Utils:IsItemBlacklisted(link) then
+            if (LootSlotHasItem(i)) then
+                local lootSlotLink = GetLootSlotLink(i)
+                local lootSlotName = core:ItemStringFromItemLink(lootSlotLink)
+
+                if (not core.LootSlotInfos[i]) or
+                   ( lootSlotName == core.LootSlotInfos[i].name )
+                then
+                    core:PrintDebug("Build Lootslot", i)
+                    local lootIcon, lootName, lootQuantity, currencyID, lootQuality, locked, isQuestItem, questID, isActive = GetLootSlotInfo(i)
+                    if lootIcon then
+                        local itemLink = GetLootSlotLink(i)
+                        if lootQuantity == 0 then
+                            core.LootSlotInfos[i] = nil
+                            core:PrintDebug("Ignore coins")
+                        --elseif not self.Utils:IsItemBlacklisted(link) then
+                        else
+                            core:PrintDebug("Save info",i, itemLink, lootQuality, lootQuantity, GetLootSourceInfo(i))
+                            core.LootSlotInfos[i] = {
+                                icon = lootIcon,
+                                name = lootName,
+                                itemLink = itemLink,
+                                quantity = lootQuantity,
+                                quality = lootQuality,
+                            }
+
+                            if lootQuality >= core.ISettings.MasterLootMinQuality then
+                                tinsert(core.LootTable, {
+                                    name = lootName,
+                                    itemLink = itemLink,
+                                    quantity =  lootQuantity,
+                                    quality = lootQuality,
+                                    icon = lootIcon
+                                }) 
+                            end
+                        end
                     else
-                        core:PrintDebug("Save info",i, itemLink, lootQuality, lootQuantity, GetLootSourceInfo(i))
-                        core.LootSlotInfos[i] = {
-                            icon = lootIcon,
-                            name = lootName,
-                            itemLink = itemLink,
-                            quantity = lootQuantity,
-                            quality = lootQuality,
-                        }
+                        core:ErrorDebug("BuidLootSlotInfo, item hat no icon", GetLootSlotInfo(i))
                     end
                 else
-                    core:ErrorDebug("BuidLootSlotInfo, item hat no icon", GetLootSlotInfo(i))
+                    core:PrintDebug("Item already in lootslotlist")
                 end
+            else
+                core:PrintDebug("No loot in lootslots")
             end
         end
     end
@@ -46,9 +66,12 @@ end
 
 
 function ErrorDKP:OnLootOpened()
+    core:PrintDebug("ErrorDKP:OnLootOpened GetNumLootItems()", GetNumLootItems(), #core.LootSlotInfos)
     if not core.IsMLooter then return; end
+
     if GetNumLootItems() > 0 then
-        ErrorDKP:BuildLootTable()
+        ErrorDKP:BuidLootSlotInfo()
+        --ErrorDKP:BuildLootTable()
        
         if #core.LootTable > 0 and not core.SurveyInProgress then
 			ErrorDKP.MLSetupSurvey:Show(core.LootTable)
@@ -56,10 +79,17 @@ function ErrorDKP:OnLootOpened()
     end
 end
 
+function ErrorDKP:OnLootClosed()
+    table.wipe(core.LootSlotInfos)
+    table.wipe(core.LootTable)
+end
+
 -- Extract relevant items from LootSlotInfos
 function ErrorDKP:BuildLootTable()
     table.wipe(core.LootTable)
+    core:PrintDebug("ErrorDKP:BuildLootTable() LootSlotInfos", #core.LootSlotInfos)
     for i, v in ipairs(core.LootSlotInfos) do
+        core:PrintDebug("ErrorDKP:BuildLootTable()", i, v)
         if v.quality >= core.ISettings.MasterLootMinQuality then
             tinsert(core.LootTable, {
                 name = v.name,

@@ -40,9 +40,10 @@ function ErrorDKP:DKPTableUpdate()
         DKPTableData[index] = { index,  classInfo.classFile, playerNameColored, v.name, classString , v.dkp}
         index = index + 1
     end
-    table.sort(DKPTableData, function(a, b) return (a[6] > b[6]); end);
+    --table.sort(DKPTableData, function(a, b) return (a[6] > b[6]); end);
     UI.DKPTable:ClearSelection()
     UI.DKPTable:SetData(DKPTableData, true)
+    UI.DKPTable:SortData()
 
     -- Update Time string on top
     UI.DKPTable.DataTime:SetText(' - ' .. core:ToDateString(core:GetLocalDKPDataTimestamp()))
@@ -60,23 +61,62 @@ local menu = {
   }
 
 
-  -- We need to sort by name cause name is colored
-function TableSort(table, rowa, rowb, sortbycol)
+--  We need to sort by name cause name is colored
+function NameSort(table, rowa, rowb, sortbycol)
     local column = table.cols[sortbycol]
-    local direction = column.sort or column.defaultsort or 1
-    --core:PrintDebug("TableSort", direction)
     
     local a, b = string.lower(table:GetCell(rowa, 4)), string.lower(table:GetCell(rowb, 4))
     if a==b then
         return false
     else
-        local direction = column.sort or column.defaultsort or "asc"
-        if direction == "asc" then
+        local direction = column.sort or column.defaultsort or ScrollingTable.SORT_ASC
+        if direction == ScrollingTable.SORT_ASC then
 			return a < b;
 		else
 			return a > b;
 		end
     end
+end
+
+function ClassSort(table, rowa, rowb, sortbycol)
+
+    local column = table.cols[sortbycol]
+    core:Error("ClassSort", column.sort, column.defaultsort)
+    local direction = column.sort or column.defaultsort or "asc"
+    
+    -- local a, b = string.lower(table:GetCell(rowa, 4)), string.lower(table:GetCell(rowb, 4))
+    -- if a==b then
+    --     return false
+    -- else
+    --     local direction = column.sort or column.defaultsort or "asc"
+    --     if direction == "asc" then
+	-- 		    return a < b;
+	-- 	else
+	-- 		return a > b;
+	-- 	end
+    -- end
+
+    local a, b = string.lower(table:GetCell(rowa, sortbycol)), string.lower(table:GetCell(rowb, sortbycol))
+    if a == b then
+		if column.sortnext then
+			local nextcol = table.cols[column.sortnext];
+			if nextcol and not(nextcol.sort) then
+				if nextcol.comparesort then
+					return nextcol.comparesort(table, rowa, rowb, column.sortnext);
+				else
+					return table:CompareSort(rowa, rowb, column.sortnext);
+				end
+			end
+		end
+		return false
+	elseif not a or not b then return true
+	else
+		if direction == "asc" then
+			return a < b;
+		else
+			return a > b;
+		end
+	end
 end
 
 local tableDef = {
@@ -93,11 +133,11 @@ local tableDef = {
 				cellFrame:SetNormalTexture("Interface/ICONS/INV_Sigil_Thorim.png")
 			end
 		end
-	end}, -- classIcon
-  { ["name"] = _LS["COLNAME"], ["width"] = 100, ["comparesort"] = TableSort },
+    end}, -- classIcon
+  { ["name"] = _LS["COLNAME"], ["width"] = 100, ["comparesort"] = NameSort},
   { ["name"] = "", ["width"] = 1}, -- pure playername to append to other dialogs
-  { ["name"] = _LS["COLCLASS"], ["width"] = 80},
-  { ["name"] = _LS["COLDKP"], ["width"] = 50, ["defaultsort"] = "dsc" }
+  { ["name"] = _LS["COLCLASS"], ["width"] = 80, ["sortnext"] = 6, ["defaultsort"] = ScrollingTable.SORT_ASC},
+  { ["name"] = _LS["COLDKP"], ["width"] = 50, ["defaultsort"] = ScrollingTable.SORT_DSC, ["sort"] =  ScrollingTable.SORT_DSC}
 }
 
 local function tableFilter(self, row)

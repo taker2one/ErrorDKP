@@ -82,12 +82,15 @@ function LootSurvey:Update(data)
         entryFrame.OffspecBtn:SetEnabled(true)
         entryFrame.OffspecBtn.ResponseCount = 0
         self:ApplyRespButtonText(entryFrame.OffspecBtn)
+        entryFrame.TwinkBtn:SetEnabled(true)
+        entryFrame.TwinkBtn.ResponseCount = 0
+        self:ApplyRespButtonText(entryFrame.TwinkBtn)
 
         wipe(entryFrame.Responses)
         entryFrame:Show()
     end
 
-    f:SetHeight(#data.items*90+60)
+    f:SetHeight(#data.items*100+60)
 end
 
 function LootSurvey:OnClickEntryButton(button, index)
@@ -102,7 +105,7 @@ function LootSurvey:OnClickEntryButton(button, index)
 
     -- If Offspec roll
     local roll = 0
-    if button == "OFFSPEC" then
+    if button == "OFFSPEC" or button == "TWINK" then
         roll = core:Roll(true)
         core:Print(string.format(_L["MSG_OFFSPEC_ROLL_YOU"], tostring(roll), entry.itemLink))
         core.Sync:Send("OffspecRoll", { roll = roll, itemLink = entry.itemLink })
@@ -224,7 +227,7 @@ end
 
 function LootSurvey:CreateEntry(name)
     local f = CreateFrame("Frame", name, UIParent)
-    f:SetSize(478,80)
+    f:SetSize(478,100)
    
     local icon = CreateFrame("Frame", nil, f)
     icon:SetSize(50,50)
@@ -293,6 +296,20 @@ function LootSurvey:CreateEntry(name)
         ErrorDKP.Tooltip:Hide()
     end)
 
+    f.TwinkBtn = core:CreateButton(f, "TwinkBtn", _LS["BTN_TWINK"])
+    f.TwinkBtn.Title = _LS["BTN_TWINK"]
+    f.TwinkBtn.ResponseCount = 0
+    f.TwinkBtn:SetPoint("TOPLEFT", f.OffspecBtn, "BOTTOMLEFT")
+    f.TwinkBtn:SetScript("OnEnter", function(self)
+        ErrorDKP.Tooltip:ShowTooltipBottom(self, _LS["RESP_TOOLTIP_TITLE"], function()
+            return BuildResponseTooltipTable(f.Responses, "TWINK")
+        end)
+    end)
+    f.TwinkBtn:SetScript("OnLeave", function(self)
+        ErrorDKP.Tooltip:Hide()
+    end)
+    
+
     f.PassBtn = core:CreateButton(f, "PassBtn", _LS["BTN_PASS"])
     f.PassBtn.Title = _LS["BTN_PASS"]
     f.PassBtn.ResponseCount = 0
@@ -325,6 +342,9 @@ function LootSurvey:CreateEntry(name)
     f.OffspecBtn:SetScript("OnClick", function()
         LootSurvey:OnClickEntryButton("OFFSPEC", f.Index)
     end)
+    f.TwinkBtn:SetScript("OnClick", function()
+        LootSurvey:OnClickEntryButton("TWINK", f.Index)
+    end)
 
     f.Responses = {}
 
@@ -339,6 +359,7 @@ function LootSurvey:FinishEntry(index)
     f.SecBtn:SetEnabled(false)
     f.PassBtn:SetEnabled(false)
     f.OffspecBtn:SetEnabled(false)
+    f.TwinkBtn:SetEnabled(false)
 end
 
 function LootSurvey:FinishSurvey()
@@ -396,6 +417,9 @@ function LootSurvey:UpdateAnswerCount(sender, data)
         elseif data["response"] == "OFFSPEC" then
             entry.OffspecBtn.ResponseCount = entry.OffspecBtn.ResponseCount + 1
             LootSurvey:ApplyRespButtonText(entry.OffspecBtn)
+        elseif data["response"] == "TWINK" then
+            entry.TwinkBtn.ResponseCount = entry.TwinkBtn.ResponseCount + 1
+            LootSurvey:ApplyRespButtonText(entry.TwinkBtn)
         end
     end
 end

@@ -41,6 +41,7 @@ local addonName, core = ...;
             BTN_GREED = "Low Prio",
             BTN_PASS = "Pass",
             BTN_OFFSPEC = "Offspec",
+            BTN_TWINK = "Twink",
             RESP_TOOLTIP_TITLE = "Responses",
             RESP_TOOLTIP_EMPTY = "Currently no answers."
         },
@@ -54,6 +55,7 @@ local addonName, core = ...;
             RESPONSE_TIMEOUT = "|cFF0000FFPlayer didn't respond in time|r",
             RESPONSE_AUTOPASS = "|cFFB2B2B2Autopass|r",
             RESPONSE_OFFSPEC = "|cFFFF4F00Offspec|r",
+            RESPONSE_TWINK = "|cFFFF4F00Twink|r",
             COLPLAYER = "Player",
             COLRESPONSE = "Response",
             COLDKP = "DKP",

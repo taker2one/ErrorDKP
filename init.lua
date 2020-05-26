@@ -363,14 +363,18 @@ function ErrorDKP_OnEventHandler(self, event, ...)
         ErrorDKP:AddPendingMasterLoot(arg1)
     elseif (event == "LOOT_CLOSED") then 
         ErrorDKP:ClearPedingMasterLoot()
-    elseif (event == "LOOT_READY") then
+        ErrorDKP:OnLootClosed()
+    --elseif (event == "LOOT_READY") then
+        --core:PrintDebug(event, ...)
+        --ErrorDKP:BuidLootSlotInfo()
+    elseif (event == "LOOT_OPENED") then
         core:PrintDebug(event, ...)
-        ErrorDKP:BuidLootSlotInfo()
+        ErrorDKP:OnLootOpened()
     elseif (event == "ENCOUNTER_LOOT_RECEIVED") then
         core:PrintDebug(event, ...)
     elseif (event == "GUILD_ROSTER_UPDATE") then
         ErrorDKP.GNoteDKP:ResetUpdateCycle()
-        core:PrintDebug(event, ...)
+        --core:PrintDebug(event, ...)
         if not core.Initialized then
             core:PrintDebug("Addon not initalized, cannot update dkp from guildroster")
             return
@@ -384,9 +388,6 @@ function ErrorDKP_OnEventHandler(self, event, ...)
         else
             core:PrintDebug("Guild Data Cache not filled yet, wait....")
         end
-    elseif (event == "LOOT_OPENED") then
-        core:PrintDebug(event, ...)
-        ErrorDKP:OnLootOpened()
     elseif (event == "COMBAT_LOG_EVENT_UNFILTERED") then
         if 
         not UnitInRaid("player") and 
@@ -416,7 +417,7 @@ event:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
 event:RegisterEvent("RAID_INSTANCE_WELCOME")
 event:RegisterEvent("LOOT_SLOT_CLEARED")
 event:RegisterEvent("LOOT_CLOSED")
-event:RegisterEvent("LOOT_READY")
+--event:RegisterEvent("LOOT_READY")
 event:RegisterEvent("LOOT_OPENED")
 --event:RegisterEvent("ENCOUNTER_LOOT_RECEIVED") -- encounterID, itemID, "itemLink", quantity, "itemName", "fileName"
 event:RegisterEvent("GUILD_ROSTER_UPDATE")

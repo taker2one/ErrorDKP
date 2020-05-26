@@ -510,6 +510,7 @@ end
 
 function ErrorDKP:ClearPedingMasterLoot()
     if core.PendingMLI then
+        core:PrintDebug("ErrorDKP:ClearPedingMasterLoot()")
         table.wipe(core.PendingMLI) 
         core.PendingMLI = nil
     end

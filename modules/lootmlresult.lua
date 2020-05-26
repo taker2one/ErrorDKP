@@ -22,13 +22,14 @@ local CountdownActive = false
 local timerFrame = CreateFrame("Frame")
 
 local responseSortOrder = {
-	["PENDING"] = 4,
+	["PENDING"] = 5,
 	["MAIN"] = 1,
 	["SECOND"] = 2,
 	["PASS"] = 10,
-	["TIMEOUT"] = 6,
-	["OFFLINE"] = 5,
-	["OFFSPEC"] = 3
+	["TIMEOUT"] = 7,
+	["OFFLINE"] = 6,
+	["OFFSPEC"] = 3,
+	["TWINK"] = 4
 }
 
 local RACE_ICON_TCOORDS = {
@@ -318,6 +319,7 @@ function MLResult:SwitchItem(i)
 
 	f.ItemIcon:SetNormalTexture(item.icon)
 	f.ItemName:SetText(item.itemLink)
+	f.GiveLootBtn:SetEnabled(false)
 
     -- Set a proper item type text
     local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(item.itemLink)
@@ -392,6 +394,7 @@ function MLResult:UpdateScrollTable(players, responses, resetSorting)
 			st.cols[i].sort = nil
 		end
 		st.cols[5].sort = 1	
+		st:ClearSelection()
 	end
 
 	st:SetData(rows, true)
@@ -433,7 +436,8 @@ function MLResult:CreateFrame()
 	local f = core:CreateDefaultFrame("MLResultFrame", "Result", 310, 480, true, true)
 	core.UI.MLResult = f
 
-    local st = ScrollingTable:CreateST(colDef, 16, 20, nil, f)
+	local st = ScrollingTable:CreateST(colDef, 16, 20, nil, f)
+	st:EnableSelection(true)
     f.ScrollingTable = st
 	st.frame:SetPoint("TOPLEFT", f, "TOPLEFT", 22, -100)
 
@@ -474,11 +478,22 @@ function MLResult:CreateFrame()
 	f.ResponseFontString = responseFontString
 
 	local closeSurveyButton = core:CreateButton(f, "CloseSurveYbtn", "Close survey")
-	closeSurveyButton:SetPoint("TOPLEFT", responseFontString, "BOTTOMLEFT", -5, -5)
+	closeSurveyButton:SetPoint("TOPRIGHT", responseFontString, "BOTTOMRIGHT", 0, -5)
 	closeSurveyButton:SetScript("OnClick", function()
         MLResult:CloseSurvey()
 	end)
 	f.CloseSurveyBtn = closeSurveyButton
+
+	local giveLootButton = core:CreateButton(f, "GiveLootBtn", "Give loot")
+	giveLootButton:SetPoint("RIGHT", closeSurveyButton, "LEFT", 0, 0)
+	giveLootButton:SetScript("OnClick", function()
+		local selection = core.UI.MLResult.ScrollingTable:GetSelection()
+		if selection then
+		   MLResult:GiveLoot(core.UI.MLResult.ScrollingTable:GetCell(selection, 3), itemIndex)
+		end
+	end)
+	giveLootButton:SetEnabled(false)
+	f.GiveLootBtn = giveLootButton
 
 	-- Item toggle
 	local itemToggle = CreateFrame("Frame", nil, f)
@@ -521,6 +536,38 @@ function MLResult:CreateFrame()
 	 countdown:SetPoint("CENTER", bar, "CENTER", 0, 0)
 	 bar.countdownString = countdown
 	 bar.countdown = 0
+
+	st:RegisterEvents({
+		["OnClick"] = function (rowFrame, cellFrame, data, cols, row, realrow, column, scrollingTable, button, ...)
+				if button == "LeftButton" then	-- LS: only handle on LeftButton click (right passes thru)
+					if not (row or realrow) then
+						for i, col in ipairs(st.cols) do
+							if i ~= column then -- clear out all other sort marks
+								cols[i].sort = nil;
+							end
+						end
+						local sortorder = ScrollingTable.SORT_DSC;
+						if not cols[column].sort and cols[column].defaultsort then
+							sortorder = cols[column].defaultsort; -- sort by columns default sort first;
+						elseif cols[column].sort and cols[column].sort == ScrollingTable.SORT_DSC then
+							sortorder = ScrollingTable.SORT_ASC;
+						end
+						cols[column].sort = sortorder;
+						scrollingTable:SortData();
+
+					else
+						if scrollingTable:GetSelection() == realrow then
+							scrollingTable:ClearSelection();
+							scrollingTable.frame:GetParent().GiveLootBtn:SetEnabled(false)
+						else
+							scrollingTable:SetSelection(realrow);
+							scrollingTable.frame:GetParent().GiveLootBtn:SetEnabled(true)
+						end
+					end
+					return true;
+				end
+		end
+	})
 
     f:Hide()
 	return f;
@@ -612,4 +659,63 @@ function MLResult:CloseSurvey()
 	self:GetFrame().CountdownBar.countdownString:SetText(_LS["SURVEYCLOSED"])
 	self:FinishSurvey()
 	core.Sync:SendRaid("ErrDKPSurvClosed", core.ActiveSurveyData["id"])
+end
+
+function MLResult:GetLootSlot(itemLink)
+	if not GetNumLootItems() then return end
+
+	for i = 1, GetNumLootItems() do
+		local link = GetLootSlotLink(i)
+
+		if link == itemLink then
+			return i
+		end
+	end
+end
+
+function MLResult:GiveLoot(playerName, itemIndex, lootFrameIndex)
+	if not GetNumLootItems() then
+		core:Error("Lootframe needs to be open!")
+		return
+	end
+	if not lootFrameIndex then 
+		lootFrameIndex = itemIndex 
+	end
+	local lootSlotItemlink = GetLootSlotLink(lootFrameIndex)
+	if not lootSlotItemlink or lootSlotItemlink ~= core.ActiveSurveyData.items[itemIndex].itemLink then
+		local foundSlot = self:GetLootSlot(core.ActiveSurveyData.items[itemIndex].itemLink)
+		if not foundSlot then
+			core:Error("Item in Lootwindow doesn't match survey item, is the correct lootwindow open?")
+			return
+		end
+		-- Seems as the Lootwindows was closed in the meantime so call with new index
+		core:PrintDebug("IndemIndex in Lootframe has changed, call MLResult:GiveLoot with fixed index")
+		self:GiveLoot(playerName, itemIndex, foundSlot)
+	end
+	for ci = 1, GetNumGroupMembers() do
+		if (GetMasterLootCandidate(lootFrameIndex, ci) == playerName) then
+
+			StaticPopupDialogs["MLRESULT_GIVELOOT"] = {
+				text = string.format("Do you really want to give %s to player %s", lootSlotItemlink , playerName),
+				button1 = "Yes",
+				button2 = "No",
+				OnAccept = function()
+					GiveMasterLoot(lootFrameIndex, ci);
+					StaticPopup_Hide ("MLRESULT_GIVELOOT")
+				end,
+				OnCancel = function()
+				    StaticPopup_Hide ("MLRESULT_GIVELOOT")
+				end,
+				timeout = 0,
+				whileDead = true,
+				hideOnEscape = true,
+				preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
+				enterClicksFirstButton = true
+			}
+			StaticPopup_Show("MLRESULT_GIVELOOT")
+
+
+	  		
+		end
+   	end
 end

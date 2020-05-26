@@ -2,7 +2,7 @@
 --#  Project: ErrorDKP
 --#  File: core.lua
 --#  Author: Manuel "Doktorwho@Venoxis" Ebner
---#  Last Edit: 11.03.2020
+--#  Last Edit: 25.05.2020
 --###############################################
 
 local addonName, core = ...;
@@ -16,7 +16,7 @@ local deformat = LibStub("LibDeformat-3.0")
 
 -- Version
 core.Version = GetAddOnMetadata("ErrorDKP", "Version")
-core.Build = 1130412
+core.Build = 1130413
 core.Type = "R" -- R = Release, B = Beta, A = Alpha
 
 --SetCVar("ScriptErrors", 1)
@@ -417,6 +417,11 @@ function core:ItemInfo(linkorid)
   local itemColor = nil
   core:PrintDebug("Demposed id: ", itemId, itemLink)
   return itemName, itemLink, itemId, itemString, itemRarity, itemColor, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice, itemClassID, itemSubClassID;
+end
+
+function core:ItemStringFromItemLink(link)
+    local _, itemString, _ = deformat(itemLink or "", "|c%s|H%s|h%s|h|r")
+    return itemString
 end
 
 function core:Roll(dontPrint)

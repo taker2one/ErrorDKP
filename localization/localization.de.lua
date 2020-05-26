@@ -42,6 +42,7 @@ if GetLocale() == "deDE" then
             BTN_GREED = "Niedrige Prio",
             BTN_PASS = "Passe",
             BTN_OFFSPEC = "Offspec",
+            BTN_TWINK = "Twink",
             RESP_TOOLTIP_TITLE = "Antworten",
             RESP_TOOLTIP_EMPTY = "Keine Antworten bisher."
         },
@@ -55,6 +56,7 @@ if GetLocale() == "deDE" then
             RESPONSE_TIMEOUT = "|cFF0000FFSpieler hat nicht geantwortet|r",
             RESPONSE_AUTOPASS = "|cFFB2B2B2Autopass|r",
             RESPONSE_OFFSPEC = "|cFFFF4F00Offspec|r",
+            RESPONSE_TWINK = "|cFFFF4F00Twink|r",
             COLPLAYER = "Spieler",
             COLRESPONSE = "Antwort",
             COLDKP = "DKP",

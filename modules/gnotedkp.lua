@@ -264,7 +264,7 @@ function GNoteDKP:UpdateGInfoData(dkpinfo)
 end
 
 function GNoteDKP:ExtractGInfoData(ginfotext)
-    core:PrintDebug("ExtractGInfoData", string.len(ginfotext))
+    --core:PrintDebug("ExtractGInfoData", string.len(ginfotext))
     if not ginfotext then return nil end
     local p = string.match(ginfotext, "{.*}")
 
@@ -312,7 +312,7 @@ function GNoteDKP:InitRosterUpdate()
     updateFrame.lastCheck = time() - 10
     updateFrame:SetScript("OnUpdate", function()
         if ((time() - updateFrame.lastCheck) > 10) then
-            core:PrintDebug("Call Guildroster()")
+            --core:PrintDebug("Call Guildroster()")
             updateFrame.lastCheck = time();
             GuildRoster()
         end
