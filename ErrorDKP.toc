@@ -2,7 +2,7 @@
 ## Title: ErrorDKP
 ## Author: Manuel "Doktorwho@Venoxis" Ebner
 ## Notes:  DKP and raid utility for Guild WoW-Error@Venoxis
-## Version: 1.13.4.13
+## Version: 1.13.4.14
 ## DefaultState: enabled
 ## SavedVariables: ErrorDKPConfig, ErrorDKPDB, ErrorDKPDKPList, ErrorDKPDataInfo, ErrorDKPPriceList, ErrorDKPLootLog, ErrorDKPLootQueue
 
@@ -47,6 +47,7 @@ modules\groupswap.lua
 modules\gnotedkp.lua
 modules\mrtinterface.lua
 modules\tooltip.lua
+modules\follow.lua
 
 widgets\iconbutton.lua
 # modules\DropDownMenu\DropDownMenuTemplates.xml

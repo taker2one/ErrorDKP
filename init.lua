@@ -107,6 +107,18 @@ core.Commands = {
             core:Print("Local DKP-Timestamp:", ts)
         end
     },
+    ["follow"] = {
+        ["me"] = function(...)
+            core.Follow:Me()
+        end,
+        ["stop"] = function(...)
+            core.Follow:SendStop()
+        end,
+        ["test"] = function(...)
+            --TargetUnit("party1")
+            CastSpellByName("Healing Wave",1)
+        end,
+    },
     ["test"] = {
         ["corehound"] = function(...)
             if core:CheckSelfTrusted() then
@@ -148,6 +160,19 @@ core.Commands = {
         ["mrti"] = function(...)
             core:PrintDebug("Test MizusRaidtracker Interface")
             core.MrtI:AddItem("|cffa335ee|Hitem:16930::::::::60:::::::|h[Nemesis Leggings]|h|r", "Rassputin", 10)
+        end,
+        ["abs"] = function(...)
+            local actionType, id, subType = GetActionInfo(1)
+            core:Print(actionType, id, subType)
+            local name, rank, icon, castTime, minRange, maxRange, spellId = GetSpellInfo(id)
+            core:Print(name, rank, spellId)
+            actionType, id, subType = GetActionInfo(2)
+            core:Print(actionType, id, subType)
+            name, rank, icon, castTime, minRange, maxRange, spellId = GetSpellInfo(id)
+            core:Print(name, rank, spellId)
+
+            local rank = GetSpellSubtext(spellId)
+            core:Print(rank)
         end
     }
 }

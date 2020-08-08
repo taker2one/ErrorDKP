@@ -24,7 +24,7 @@ function ErrorDKP:ConextMenu(menu, xoffset, yoffset)
     if not isTrusted then
         for i,v in ipairs(menu) do
             if not v.onlyTrusted then
-                tinsert(m, b)
+                tinsert(m, v)
             end
         end
     else

@@ -56,6 +56,10 @@ function Sync:OnEnable()
     self:RegisterComm("CanLootSkinNpc")        -- Player report he can loot a skinnable creature
     self:RegisterComm("OffspecRoll")           -- Offspecroll for item
 
+    -- Party
+    self:RegisterComm("FollowMe")              -- Everyone follow sender
+    self:RegisterComm("FollowStop")            -- StopFollowing
+
     --Mixed
     self:RegisterComm("VerCheck")        -- Request Version from every Group/Guild member
     self:RegisterComm("VerResp")         -- Response to Versionrequest
@@ -332,6 +336,11 @@ function Sync:OnCommReceived(prefix, message, channel, sender)
                 ErrorDKP.LootSurvey:OnCommCloseReceived("CANCEL")
                 core:Print(string.format(_L["MSG_SURVEY_CANCELLED_BY"], sender))
             end
+        elseif prefix == "FollowMe" and sender ~= UnitName("player") then
+            core:Print("Got do follow from ", sender)
+            core.Follow:DoFollow(sender)
+        elseif prefix == "FollowStop" and sender ~= UnitName("player") then
+            core.Follow:Stop()
         end
     end
 
@@ -415,6 +424,20 @@ function Sync:SendRaid(prefix, data)
         self:SendCommMessage(prefix, serialized, "RAID")
     else
         self:SendCommMessage(prefix, data, "RAID")
+    end
+end
+
+function Sync:SendParty(prefix, data)
+    if IsInRaid() then
+        self:SendRaid(prefix, data)
+        return;
+    end
+    if type(data) == "table" then
+        core:PrintDebug("Data is a table -> serialize to string")
+        local serialized = Serializer:Serialize(data)
+        self:SendCommMessage(prefix, serialized, "PARTY")
+    else
+        self:SendCommMessage(prefix, data, "PARTY")
     end
 end
 
