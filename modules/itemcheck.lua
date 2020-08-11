@@ -19,6 +19,7 @@ local colDef = {
 }
 
 local players = {}
+local currentItemId = "";
 
 function ItemCheck:Show()
     self:GetFrame():Show()
@@ -55,9 +56,67 @@ function ItemCheck:Start(item, channel, itemText)
 end
 
 function ItemCheck:CreateFrame()
-    local f = core:CreateDefaultFrame("ErrorDKPItemCheck", "ItemCheck", 500, 400, true, true)
+    local f = core:CreateDefaultFrame("ErrorDKPItemCheck", "ItemCheck", 500, 420, true, true)
     core.UI.ItemCheck = f
     tinsert(UISpecialFrames, "ErrorDKPItemCheck")  
+
+
+    -- Input
+    local searchInput = CreateFrame("EditBox","EDKP_ItemCheck_Input", f, "InputBoxTemplate")
+    searchInput:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 20, 60)
+    --searchInput:SetPoint("BOTTOMLEFT", f, "BOTTOMRIGHT", 0, 5)
+    searchInput:SetSize(100, 32)
+    searchInput:SetMultiLine(false)
+    searchInput:SetAutoFocus(false)
+    --looterInput:EnableMouse(true)
+    --looterInput:EnableKeyboard(true)
+    searchInput:SetScript("OnEnterPressed", function(btn)
+        --local text = btn:GetText()
+        --core:Print(text);
+        --PriceListTableUpdate()
+        searchInput:ClearFocus()
+    end)
+    searchInput:SetScript("OnEscapePressed", function()
+        --PriceListTableUpdate()
+        searchInput:ClearFocus()
+    end)
+    searchInput:SetScript("OnEditFocusLost", function()
+        --PriceListTableUpdate()
+        searchInput:ClearFocus()
+    end)
+    f.SearchInput = searchInput
+
+    f.DoCheckBtutton = core:CreateButton(f, "ErrorDKPItemCheckDoCheck", "Start check")
+    f.DoCheckBtutton:SetWidth(130)
+    f.DoCheckBtutton:SetPoint("BOTTOMLEFT", f.SearchInput, "BOTTOMRIGHT", 20, 5)
+    f.DoCheckBtutton:SetScript("OnClick", function(button) 
+        local text = f.SearchInput:GetText();
+        if(not text) then
+            core:Error("Textfield is empty")
+            return
+        end
+        local exists = C_Item.DoesItemExistByID(text)
+        if not exists then
+            core:Error("Item doesnt exists")
+            return
+        end
+
+        -- Just do a request if not already in cache
+        if not C_Item.IsItemDataCachedByID(text) then
+            C_Item.RequestLoadItemDataByID(text)
+        end;
+
+        currentItemId = text;
+
+        local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(text)
+        if not itemLink then
+            itemLink = text;
+        end
+
+        --core.Print("Via Button", text);
+        self:Start(text, nil, itemLink) -- Aqual Quintessence
+    end)
+
 
     f.GroupCheckButton = core:CreateButton(f, "ErrorDKPItemCheckAQ", "Aqual Quintessence")
     f.GroupCheckButton:SetWidth(130)
@@ -78,6 +137,13 @@ function ItemCheck:CreateFrame()
     f.OnyCloakCheckButton:SetPoint("BOTTOMLEFT", f.OnyBagCheckButton, "BOTTOMRIGHT", 10, 0)
     f.OnyCloakCheckButton:SetScript("OnClick", function(button) 
         self:Start(15138, nil, button:GetText()) -- Onyxia Scale CLoak
+    end)
+
+    f.NatureResiPotsCheckButton = core:CreateButton(f, "ErrorDKPItemCheckNr", "Greater NR Pots")
+    f.NatureResiPotsCheckButton:SetWidth(100)
+    f.NatureResiPotsCheckButton:SetPoint("BOTTOMLEFT", f.OnyCloakCheckButton, "BOTTOMRIGHT", 10, 0)
+    f.NatureResiPotsCheckButton:SetScript("OnClick", function(button) 
+        self:Start(13458, nil, button:GetText()) 
     end)
 
     -- f.GuildCheckButton = core:CreateButton(f, "ErrorDKPItemCheckGuildButton", "Check in Guild")
@@ -124,6 +190,14 @@ function ItemCheck:UpdateTable(playerList, itemText)
     if itemText then
         st.Title:SetText(itemText)
     end
+
+    if st.Title:GetText() == currentItemId then
+        local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(currentItemId)
+        if itemLink then
+            st.Title:SetText(itemLink)
+        end
+    end
+
     local d = {}
     local sum = 0
     
