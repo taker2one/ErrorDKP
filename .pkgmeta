@@ -1,0 +1,5 @@
+package-as: ErrorDKP
+
+ignore:
+  - pack.cmd
+  - exclude.txt

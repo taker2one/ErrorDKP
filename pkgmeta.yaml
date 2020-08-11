@@ -1,7 +1,0 @@
-package-as: ErrorDKP
-enable-nolib-creation: no
-
-ignore:
-        - pack.cmd
-        - exclude.txt
-        - 
