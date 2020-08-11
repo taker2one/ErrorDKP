@@ -8,7 +8,7 @@ local addonName, core = ...
 
 local pricelistInfo = {
     ["version"] = "3.0",
-    ["timestamp"] = "1586263574"
+    ["timestamp"] = "1586263575"
 }
 
 local pricelist = {
@@ -130,7 +130,12 @@ local pricelist = {
     ["22399"] = { price = "40", prio = "" },
     ["20928"] = { price = "50", prio = "" },
     ["20932"] = { price = "50", prio = "" },
-
+    ["21838"] = { price = "40", prio = "Hexer prio" },
+    ["21837"] = { price = "10", prio = "" },
+    ["21888"] = { price = "5", prio = "" },
+    ["21856"] = { price = "40", prio = "" },
+    ["21836"] = { price = "60", prio = "" },
+    ["21891"] = { price = "10", prio = "" },
 
     -- 
     -- BWL
