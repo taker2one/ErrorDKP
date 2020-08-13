@@ -30,11 +30,16 @@ local addonName, core = ...;
             MENU_TOGGLE_ERRORDKP = "Toggle ErrorDKP window",
             MENU_ML_VOTE = "Lootsurvey result",
             MENU_VERSIONCHECK = "Version-check",
-            MENU_ITEMCHECK = "Item-check"
+            MENU_ITEMCHECK = "Item-check",
+            MENU_ASSIGNIMPORT = "Import assignment"
         },
         EXPORTDIALOG = {
             TITLE = "Export",
             HELPTEXT = "CRTL+C to copy content.\r\n ESC to close window."
+        },
+        ASSINPUTDIALOG = {
+            TITLE = "Import",
+            HELPTEXT = "Copy assignment and cklick ok"
         },
         LOOT_SURVEY = {
             BTN_NEED = "High Prio",

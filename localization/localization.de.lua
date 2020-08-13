@@ -31,11 +31,16 @@ if GetLocale() == "deDE" then
             MENU_TOGGLE_ERRORDKP = "ErrorDKP Ein-/Ausblenden",
             MENU_ML_VOTE = "Lootabstimmung-Ergebnis",
             MENU_VERSIONCHECK = "Versionscheck",
-            MENU_ITEMCHECK = "Itemcheck"
+            MENU_ITEMCHECK = "Itemcheck",
+            MENU_ASSIGNIMPORT = "Zuweisung importieren"
         },
         EXPORTDIALOG = {
             TITLE = "Exportieren",
             HELPTEXT = "STRG+C um Inhalt zu kopieren\r\nESC um Fenster zu schliessen."
+        },
+        ASSINPUTDIALOG = {
+            TITLE = "Import",
+            HELPTEXT = "Reinkopieren und ok klicken"
         },
         LOOT_SURVEY = {
             BTN_NEED = "Hohe Prio",

@@ -39,7 +39,9 @@ local menu = {
     { text = _L["MINIMAP"]["MENU_TOGGLE_ERRORDKP"], notCheckable = true, func = function() ErrorDKP:Toggle() end },
     { text = _L["MINIMAP"]["MENU_ML_VOTE"], notCheckable = true, func = function() ErrorDKP.MLResult:Show() end, onlyTrusted = true },
     { text = _L["MINIMAP"]["MENU_VERSIONCHECK"], notCheckable = true, func = function() ErrorDKP.VersionCheck:Show() end, onlyTrusted = true },
-    { text = _L["MINIMAP"]["MENU_ITEMCHECK"], notCheckable = true, func = function() ErrorDKP.ItemCheck:Show() end, onlyTrusted = true }
+    { text = _L["MINIMAP"]["MENU_ITEMCHECK"], notCheckable = true, func = function() ErrorDKP.ItemCheck:Show() end, onlyTrusted = true },
+    { text = _L["MINIMAP"]["MENU_ASSIGNIMPORT"], notCheckable = true, func = function() ErrorDKP.AssignmentImport:ShowFrame(" ") end, onlyTrusted = true },
+    { text = "Resend assignment", notCheckable = true, func = function() ErrorDKP.AssignmentImport:Resend() end, onlyTrusted = true }
 }
 
 local function IconMoveButton(self)

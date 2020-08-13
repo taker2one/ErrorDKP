@@ -65,6 +65,8 @@ function Sync:OnEnable()
     self:RegisterComm("VerResp")         -- Response to Versionrequest
     self:RegisterComm("ItemCheck")       -- Request Item amount of every Group/Guild member
     self:RegisterComm("ItemCheckResp")   -- Response to ItemCheck request
+
+    self:RegisterComm("AssignmentUpdate") -- Broadcast assignment update
 end
 
 --###############################################
@@ -341,7 +343,15 @@ function Sync:OnCommReceived(prefix, message, channel, sender)
             core.Follow:DoFollow(sender)
         elseif prefix == "FollowStop" and sender ~= UnitName("player") then
             core.Follow:Stop()
+        elseif prefix == "AssignmentUpdate" --and sender ~= UnitName("player") 
+        then
+            local success, deserialized = Serializer:Deserialize(message)
+            if success then            
+                core:PrintDebug("AssignmentUpdate")
+                ErrorDKP.AssignmentImport:GotAssignmentUpdate(deserialized)
+            end
         end
+
     end
 
     if prefix == "ItemCheck" then
