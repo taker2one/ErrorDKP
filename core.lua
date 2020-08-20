@@ -66,7 +66,8 @@ core.TrustedPlayers = {
   "Dichterin",
   "Karaffe",
   "Lightrider",
-  "Ðurza"
+  "Ðurza",
+  "Hochmuht"
 }
 
 core.ClassColors = {
