@@ -77,6 +77,7 @@ function MLSetupSurvey:Cancel()
     core.UI.MLSetupSurvey:Hide()
     core.UI.MLSetupSurvey.ScrollingTable:SetData({})
     table.wipe(core.LootTable)
+    table.wipe(core.LootSlotInfos)
     core:PrintDebug("MLSetupSurvey canceled")
 end
 
@@ -84,6 +85,7 @@ function MLSetupSurvey:CreateFrame()
     core.UI.MLSetupSurvey = core:CreateDefaultFrame("ErrorDKPSetupLootSurvey", "Setup", 260, 305, false, true)
     local f = core.UI.MLSetupSurvey
     f:SetPoint("CENTER", UIParent, "CENTER")
+    f:SetScript("OnMouseUp", self.OnMouseUp)
 
     local scrollingTable = ScrollingTable:CreateST(colDef, 5, 40, nil, f)
 	scrollingTable.frame:SetPoint("TOPLEFT",f,"TOPLEFT",10,-20)
@@ -143,4 +145,40 @@ end
 function MLSetupSurvey:GetFrame()
     local f = core.UI.MLSetupSurvey or self:CreateFrame()
     return f
+end
+
+function MLSetupSurvey:AddCursorItem()
+    if CursorHasItem() then
+      local infoType, itemID, itemLink = GetCursorInfo()
+  
+      if (infoType == "item") then
+        core:PrintDebug(infoType, itemID, itemLink)
+         --self.list:Add(itemID)
+         self:AddItemById(itemID)
+      end
+  
+      ClearCursor()
+    end
+end
+
+function MLSetupSurvey:OnMouseUp()
+    MLSetupSurvey:AddCursorItem()
+end
+
+function MLSetupSurvey:AddItemById(itemId)
+    core:PrintDebug("MLSetupSurvey:AddItemById", itemId)
+    local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(itemId)
+    if not itemName then return end -- should not happen
+
+    tinsert(core.LootTable,{
+        name = itemName,
+        itemLink = itemLink,
+        quantity = 1,
+        quality = itemRarity,
+        icon = itemTexture,
+        sourceGuid = "BAG",
+        lootframeIndex = 0
+    })
+
+    self:Show(core.LootTable)
 end

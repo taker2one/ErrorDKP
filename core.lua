@@ -16,7 +16,7 @@ local deformat = LibStub("LibDeformat-3.0")
 
 -- Version
 core.Version = GetAddOnMetadata("ErrorDKP", "Version")
-core.Build = 1130504
+core.Build = 1130505
 core.Type = "R" -- R = Release, B = Beta, A = Alpha
 
 --SetCVar("ScriptErrors", 1)
@@ -89,7 +89,7 @@ core.ISettings = {
         RowHeight = 18,
         RowCount = 27
     },
-    MasterLootMinQuality = _C.ITEMRARITY.EPIC,
+    MasterLootMinQuality = _C.ITEMRARITY.EPIC, --_C.ITEMRARITY.EPIC,
     ItemTracking_MinItemQualityToLog = _C.ITEMRARITY.EPIC,
     ItemTracking_IgnoreEnchantingMats = true
 }
@@ -185,7 +185,7 @@ end
 
 function core:CheckDKPOfficer()
     if core.IsDKPOfficer == nil then
-        core:PrintDebug(CheckDKPOfficer)
+        core:PrintDebug("CheckDKPOfficer")
         local isOfficer = self:CheckOfficer() 
         local canEditNote = CanEditPublicNote()
         local canEditGuildInfo = CanEditGuildInfo()
