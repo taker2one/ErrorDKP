@@ -674,13 +674,27 @@ function MLResult:GetLootSlot(itemLink)
 end
 
 function MLResult:GiveLoot(playerName, itemIndex, lootFrameIndex)
+	
+	local surveyItem = core.ActiveSurveyData.items[itemIndex]
+
+
+	if surveyItem["lfi"]  == 0 then
+		core:Print("This item was added from bag and is not distrebutable via Masterlooter.")
+		return
+	end
+
 	if not GetNumLootItems() then
 		core:Error("Lootframe needs to be open!")
 		return
 	end
+
+	local sourceGuiD = GetLootSourceInfo(surveyItem["lfi"])
 	if not lootFrameIndex then 
-		lootFrameIndex = itemIndex 
+		lootFrameIndex = surveyItem["lfi"] 
 	end
+
+	core:PrintDebug("Lootframeindex",lootFrameIndex)
+
 	local lootSlotItemlink = GetLootSlotLink(lootFrameIndex)
 	if not lootSlotItemlink or lootSlotItemlink ~= core.ActiveSurveyData.items[itemIndex].itemLink then
 		local foundSlot = self:GetLootSlot(core.ActiveSurveyData.items[itemIndex].itemLink)

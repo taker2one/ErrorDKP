@@ -10,7 +10,7 @@ local ErrorDKP = core.ErrorDKP
 -- Needed events 
 
 function ErrorDKP:BuidLootSlotInfo()
-    if core.IsMLooter then
+
         local numLootItems = GetNumLootItems()
 
         if numLootItems <= 0 then return end
@@ -18,22 +18,27 @@ function ErrorDKP:BuidLootSlotInfo()
         for i = 1, numLootItems do
             if (LootSlotHasItem(i)) then
                 local lootSlotLink = GetLootSlotLink(i)
+                local lootSourceGuid = GetLootSourceInfo(i)
                 local lootSlotName = core:ItemStringFromItemLink(lootSlotLink)
 
-                if (not core.LootSlotInfos[i]) or
-                   ( lootSlotName == core.LootSlotInfos[i].name )
+                if(not core.LootSlotInfos[lootSourceGuid]) then
+                    core.LootSlotInfos[lootSourceGuid] = {}
+                end
+
+                if (not core.LootSlotInfos[lootSourceGuid][i]) or
+                   ( lootSlotName == core.LootSlotInfos[lootSourceGuid][i].name )
                 then
                     core:PrintDebug("Build Lootslot", i)
                     local lootIcon, lootName, lootQuantity, currencyID, lootQuality, locked, isQuestItem, questID, isActive = GetLootSlotInfo(i)
                     if lootIcon then
                         local itemLink = GetLootSlotLink(i)
                         if lootQuantity == 0 then
-                            core.LootSlotInfos[i] = nil
+                            core.LootSlotInfos[lootSourceGuid][i] = nil
                             core:PrintDebug("Ignore coins")
                         --elseif not self.Utils:IsItemBlacklisted(link) then
                         else
                             core:PrintDebug("Save info",i, itemLink, lootQuality, lootQuantity, GetLootSourceInfo(i))
-                            core.LootSlotInfos[i] = {
+                            core.LootSlotInfos[lootSourceGuid][i] = {
                                 icon = lootIcon,
                                 name = lootName,
                                 itemLink = itemLink,
@@ -47,12 +52,14 @@ function ErrorDKP:BuidLootSlotInfo()
                                     itemLink = itemLink,
                                     quantity =  lootQuantity,
                                     quality = lootQuality,
-                                    icon = lootIcon
+                                    icon = lootIcon,
+                                    sourceGuid = lootSourceGuid,
+                                    lootframeIndex = i
                                 }) 
                             end
                         end
                     else
-                        core:ErrorDebug("BuidLootSlotInfo, item hat no icon", GetLootSlotInfo(i))
+                        core:ErrorDebug("BuidLootSlotInfo, item has no icon", GetLootSlotInfo(i))
                     end
                 else
                     core:PrintDebug("Item already in lootslotlist")
@@ -61,13 +68,22 @@ function ErrorDKP:BuidLootSlotInfo()
                 core:PrintDebug("No loot in lootslots")
             end
         end
-    end
+
 end
+
+-- function ErrorDKP:LootAlreadyInList()
+
+--     if not core.LootSlotInfos return nil end
+
+--     for i = 1 in #core.LootSlotInfos do
+        
+--     end
+-- end
 
 
 function ErrorDKP:OnLootOpened()
     core:PrintDebug("ErrorDKP:OnLootOpened GetNumLootItems()", GetNumLootItems(), #core.LootSlotInfos)
-    if not core.IsMLooter then return; end
+    if not core.IsMLooter or not core:CheckDKPOfficer() then return; end
 
     if GetNumLootItems() > 0 then
         ErrorDKP:BuidLootSlotInfo()
@@ -80,27 +96,27 @@ function ErrorDKP:OnLootOpened()
 end
 
 function ErrorDKP:OnLootClosed()
-    table.wipe(core.LootSlotInfos)
-    table.wipe(core.LootTable)
+    --table.wipe(core.LootSlotInfos)
+    --table.wipe(core.LootTable)
 end
 
 -- Extract relevant items from LootSlotInfos
-function ErrorDKP:BuildLootTable()
-    table.wipe(core.LootTable)
-    core:PrintDebug("ErrorDKP:BuildLootTable() LootSlotInfos", #core.LootSlotInfos)
-    for i, v in ipairs(core.LootSlotInfos) do
-        core:PrintDebug("ErrorDKP:BuildLootTable()", i, v)
-        if v.quality >= core.ISettings.MasterLootMinQuality then
-            tinsert(core.LootTable, {
-                name = v.name,
-                itemLink = v.itemLink,
-                quantity = v.quantity,
-                quality = v.quality,
-                icon = v.icon
-            }) 
-        end
-    end
-end
+-- function ErrorDKP:BuildLootTable()
+--     table.wipe(core.LootTable)
+--     core:PrintDebug("ErrorDKP:BuildLootTable() LootSlotInfos", #core.LootSlotInfos)
+--     for i, v in ipairs(core.LootSlotInfos) do
+--         core:PrintDebug("ErrorDKP:BuildLootTable()", i, v)
+--         if v.quality >= core.ISettings.MasterLootMinQuality then
+--             tinsert(core.LootTable, {
+--                 name = v.name,
+--                 itemLink = v.itemLink,
+--                 quantity = v.quantity,
+--                 quality = v.quality,
+--                 icon = v.icon
+--             }) 
+--         end
+--     end
+-- end
 
 function ErrorDKP:RemoveFromLootTable(index)
     table.remove(core.LootTable, index)
@@ -110,6 +126,7 @@ function BuildSurveyData()
     local id = core:GenUniqueId()
     local survey = {}
     survey["id"] = id
+    survey["time"] = time()
     survey["items"] = {}
     survey["players"] = {}
 
@@ -121,6 +138,8 @@ function BuildSurveyData()
             ["itemLink"] = v.itemLink,
             ["quality"] = v.quality,
             ["icon"] = v.icon,
+            ["sid"] = v.sourceGuid,
+            ["lfi"] = v.lootframeIndex,
             ["responses"] = {}
         }
         table.insert(survey.items, item)
@@ -167,6 +186,8 @@ function ErrorDKP:StartSurvey(timeout)
     core.Sync:SendRaid("ErrDKPSurvStart", { ["id"] = core.ActiveSurveyData.id, ["items"] = core.ActiveSurveyData.items, ["countdown"] = countdown })
     core.SurveyInProgress = true
     ErrorDKP.MLResult:Start(countdown+5)
+
+    C_Timer.After(5, ErrorDKP.ClosePlayersNotResponding)
 end
 
 function ErrorDKP:OnCommReceived_SurvAnsw(sender, data)
@@ -193,6 +214,21 @@ function ErrorDKP:OnCommReceived_SurvAnsw(sender, data)
         ErrorDKP.MLResult:SetVisualUpdateRequired(data["itemIndex"])
      end
 
+end
+
+
+function ErrorDKP:ClosePlayersNotResponding()
+
+    for i,player in ipairs(core.ActiveSurveyData["players"]) do
+        for i1,item in ipairs(core.ActiveSurveyData.items) do
+            local resp = item.responses[player.name]
+            if not resp then
+                core:PrintDebug(player.name, "is not in list")
+                item.responses[player.name] = { "OFFLINE", -1 }
+            end
+        end
+    end
+    ErrorDKP.MLResult:SetVisualUpdateRequired()
 end
 
 
