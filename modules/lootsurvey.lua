@@ -116,7 +116,7 @@ function LootSurvey:OnClickEntryButton(button, index)
         --  { ["id"], ["itemIndex"], ["response"]  } 
         core.Sync:SendRaid("ErrDKPSurvAnsw", {
             ["id"] = itemSurveyData["id"],
-            
+            ["itemIndex"] = index,
             ["response"] = button,
             ["hasItem"] = GetItemCount(entry.itemLink, true),
             ["roll"] = roll or 0
