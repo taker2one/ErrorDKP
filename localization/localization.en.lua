@@ -20,13 +20,13 @@ local addonName, core = ...;
             COLITEMLINK = "Item",
             COLLOOTER = "Looter",
             COLDKP = "DKP",
-            CHECKBTN_SHOWONLYTODAY = "Only items from today"
+            CHECKBTN_SHOWONLYTODAY = "Only items from last 24h"
         },
         DKPPRICE = "Price",
         DKPPRICEBIS = "BiS Price",
         MINIMAP = {
             DESCRLCLICK = "Left Click - Open Window",
-            MENU_SELECT = "Select an option:",
+            MENU_SELECT = "ErrorDKP",
             MENU_TOGGLE_ERRORDKP = "Toggle ErrorDKP window",
             MENU_ML_VOTE = "Lootsurvey result",
             MENU_VERSIONCHECK = "Version-check",
@@ -51,7 +51,7 @@ local addonName, core = ...;
             RESP_TOOLTIP_EMPTY = "Currently no answers."
         },
         ML_SURVEY_RESULT = {
-            TITLE = "Result",
+            TITLE = "Lootsurvey Result",
             RESPONSE_OFFLINE = "|cFFBDBDBDOffline or addon not installed|r",
             RESPONSE_PENDING = "|cFFBDBDBDPending|r",
             RESPONSE_PASS = "|cFFB2B2B2Pass|r",

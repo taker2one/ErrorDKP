@@ -20,10 +20,47 @@ local PlayerDropDownTableColDef = {
 function LootTracker:OnChatEdit_InsertLink(link)
     if core.UI.LootAddFrame and core.UI.LootAddFrame:IsVisible() then
         if core.UI.LootAddFrame.ItemInput:HasFocus() then
-            core:PrintDebug("LootTracker:OnChatEdit_InsertLink", link)
-            core.UI.LootAddFrame.ItemInput:SetText(link)
+            LootTracker:InsertItemLink(link)
         end
     end
+end
+
+function LootTracker:InsertItemLink(itemLink, paidwithgold)
+   
+            core:PrintDebug("LootTracker:InsertItemLink", itemLink)
+            core.UI.LootAddFrame.ItemInput:SetText(itemLink)
+
+            local _, _, itemId = core:ItemInfo(itemLink);
+
+            local priceListItem = core.ItemPriceList[tostring(itemId)]
+            if paidwithgold then
+                core:PrintDebug("Item paid with gold so set dkp to 0")
+                core.UI.LootAddFrame.PriceInput:SetText(0)
+            elseif priceListItem then
+                local priceListPrice = tonumber(priceListItem.price)
+                -- if priceListPrice then
+                --     dkpValue = priceListPrice
+                -- else
+                --     dkpvalue = 0
+                -- end
+        
+                -- if priceListPrice > 5 then
+                --     offspecValue = 5
+                -- else
+                --     offspecValue = priceListPrice
+                -- end
+
+                core.UI.LootAddFrame.PriceInput:SetText(priceListPrice)
+
+            else
+                core.UI.LootAddFrame.PriceInput:SetText("")
+            end
+end
+
+function LootTracker:InsertLooter(playerName)
+    local frame = self:GetAddFrame()
+    frame.Looter = playerName;
+    frame.LooterInput:SetText(playerName);
 end
 
 function LootTracker:Handler(t)
@@ -85,13 +122,17 @@ function LootTracker:ClearInputs()
 end
 
 function LootTracker:CreateAddFrame()
-    core.UI.LootAddFrame = core:CreateDefaultFrame("ErrorDKP_LootAddFrame", "Add Loot", 365, 285, true)
+    core.UI.LootAddFrame = core:CreateDefaultFrame("ErrorDKP_LootAddFrame", "Add Loot", 365, 250, true)
     local f = core.UI.LootAddFrame;
     f:SetPoint("CENTER", UIParent, "CENTER")
     f:SetFrameLevel(25)
     f:EnableMouse(true)
     f:EnableKeyboard(true)
     f:Hide()
+    f:SetScript("OnHide", function(self) 
+        LootTracker:Handler("CANCEL")
+        -- self:Hide()
+    end)
 
     --Item
     f.ItemLabel = f:CreateFontString(nil, "OVERLAY", "GameFontWhite")
@@ -165,7 +206,7 @@ function LootTracker:CreateAddFrame()
     local okButton = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
     f.OkButton = okButton
     okButton:SetSize(95,22)
-    okButton:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 25, 62)
+    okButton:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 25, 45)
     okButton:SetText(_L["OK"])
     okButton:SetScript("OnClick", function() 
         LootTracker:Handler("OK")
@@ -180,24 +221,25 @@ function LootTracker:CreateAddFrame()
         LootTracker:Handler("CANCEL")
     end)
 
-    local bankButton = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
-    f.BankButton = bankButton
-    bankButton:SetSize(95,22)
-    bankButton:SetPoint("TOP", okButton, "BOTTOM", 0, -15)
-    bankButton:SetText("Bank")
-    bankButton:SetScript("OnClick", function()
-        LootTracker:Handler("BANK") 
-    end)
-
     local dissButton = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
     f.DissButton = dissButton
     dissButton:SetSize(95,22)
-    dissButton:SetPoint("LEFT", bankButton, "RIGHT", 15, 0)
+    dissButton:SetPoint("LEFT", cancelButton, "RIGHT", 15, 0)
     dissButton:SetText("Disenchanted")
     dissButton:SetScript("OnClick", function()
         LootTracker:Handler("DISENCHANTED") 
     end)
 
+    local bankButton = CreateFrame("Button", nil, f, "GameMenuButtonTemplate")
+    f.BankButton = bankButton
+    bankButton:SetSize(95,22)
+    bankButton:SetPoint("TOP", dissButton, "BOTTOM", 0, -5)
+    bankButton:SetText("Bank")
+    bankButton:SetScript("OnClick", function()
+        LootTracker:Handler("BANK") 
+    end)
+
+    --Toggle Dropdown button
     local ddButton = CreateFrame("Button", nil, f)
     f.DdButton = ddButton
     ddButton:SetSize(16,16)
@@ -308,10 +350,15 @@ function LootTracker:ToggleAddDropDown(parent)
 end
 
 --Setup dialog an show
-function LootTracker:Show()
+function LootTracker:Show(itemLink, player, paidwithgold)
     local f = self:GetAddFrame()
     if f:IsShown() then core:PrintDebug("LootTracker:Show()", "Dialog already opened"); return; end
 
+    core:PrintDebug("LootTracker:Show()", "itemLink:", itemLink, "player:", player)
+
     LootTracker:SetupPlayerDropDown()
+
     f:Show()
+    if(player) then self:InsertLooter(player) end
+    if(itemLink) then self:InsertItemLink(itemLink, paidwithgold) end
 end

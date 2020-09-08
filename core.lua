@@ -18,6 +18,7 @@ local deformat = LibStub("LibDeformat-3.0")
 core.Version = GetAddOnMetadata("ErrorDKP", "Version")
 core.Build = 1130506
 core.Type = "R" -- R = Release, B = Beta, A = Alpha
+core.Guild = "WoW Error"
 
 --SetCVar("ScriptErrors", 1)
 
@@ -67,7 +68,8 @@ core.TrustedPlayers = {
   "Karaffe",
   "Lightrider",
   "Ðurza",
-  "Hochmuht"
+  "Hochmuht",
+  "Aryuna"
 }
 
 core.ClassColors = {
@@ -101,14 +103,16 @@ core.Settings = {
 -- Used to initial fill db settings table
 core.DefaultSettings = {
     ShowOnlyItemsToday = false,
-    ShowOnlyRaidmembers = false
+    ShowOnlyRaidmembers = false,
+    LoottrackEnabled = true,
+    SurveySetupEnabled = true
 }
 
 core.UI = {}
 
 -- Debug
 core.TestMode = false -- TestMode for some features -- DBG
-core.Debug = false -- Enable debug output -- DBG
+core.Debug = true -- Enable debug output -- DBG
 function core:PrintDebug(...)
     if core.Debug then
         print("|cff90EE90<ErrorDKP-Dbg>|r", ...)
@@ -168,7 +172,29 @@ function core:CheckTrusted(player)
     return nil
 end
 
-function core:CheckOfficer() 
+function core:CheckSelfOfficer()
+    if core.IsOfficer == nil then
+		if IsInGuild() then
+			local curPlayerRank = core:GetGuildRankIndex(UnitName("player"))
+			if curPlayerRank then
+				core.IsOfficer = C_GuildInfo.GuildControlGetRankFlags(curPlayerRank)[12]
+			end
+		else
+			core.IsOfficer = false;
+		end
+    end
+    
+    return core.IsOfficer
+end
+
+function core:CheckOfficer(name)
+
+    -- if name then
+    --     if IsInGuild() then
+    --         local curPlayerRank = core:GetGuildRankIndex(name);
+    --     end
+    -- end
+
 	if core.IsOfficer == nil then
 		if IsInGuild() then
 			local curPlayerRank = core:GetGuildRankIndex(UnitName("player"))

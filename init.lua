@@ -91,6 +91,16 @@ core.Commands = {
         core:Roll()
     end,
 
+    ["dkp"] = {
+        ["reset"] = function (...)
+            if core:CheckDKPOfficer() then
+                ErrorDKP.GNoteDKP:Reset(true)
+            else
+                core:Print("Not allowed.")
+            end
+        end
+    },
+
     ["import"] = {
         ["dkp"] = function(...)
             if core:CheckDKPOfficer() then
@@ -428,6 +438,19 @@ function ErrorDKP_OnEventHandler(self, event, ...)
                 core:HandleUnitDiedLogEvent(destName, destGUID)
             end) -- wait a bit till loot is ready
         end
+    elseif event == "TRADE_CLOSED" or
+           event == "TRADE_TARGET_ITEM_CHANGED" or
+           event == "TRADE_ACCEPT_UPDATE" or
+           event == "TRADE_SHOW"
+    then
+        ErrorDKP.Trading:HandleEvent(event, ...)
+    elseif event == "UI_INFO_MESSAGE" then
+        local messageType, message = ...
+        local errorName, soundKitID, voiceID = GetGameMessageInfo(messageType)
+
+        if errorName == "ERR_TRADE_CANCELLED" or errorName == "ERR_TRADE_COMPLETE" then
+            ErrorDKP.Trading:HandleEvent(errorName, ...)
+        end
     end
 end
 
@@ -442,13 +465,22 @@ event:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
 event:RegisterEvent("RAID_INSTANCE_WELCOME")
 event:RegisterEvent("LOOT_SLOT_CLEARED")
 event:RegisterEvent("LOOT_CLOSED")
---event:RegisterEvent("LOOT_READY")
 event:RegisterEvent("LOOT_OPENED")
---event:RegisterEvent("ENCOUNTER_LOOT_RECEIVED") -- encounterID, itemID, "itemLink", quantity, "itemName", "fileName"
+
 event:RegisterEvent("GUILD_ROSTER_UPDATE")
---event:RegisterEvent("OPEN_MASTER_LOOT_LIST")
+
+event:RegisterEvent("TRADE_SHOW")
+event:RegisterEvent("TRADE_CLOSED")
+event:RegisterEvent("TRADE_TARGET_ITEM_CHANGED")
+event:RegisterEvent("TRADE_ACCEPT_UPDATE")
+event:RegisterEvent("UI_INFO_MESSAGE")
+
 event:SetScript("OnEvent", ErrorDKP_OnEventHandler)
 
+
+--event:RegisterEvent("LOOT_READY")
+--event:RegisterEvent("ENCOUNTER_LOOT_RECEIVED") -- encounterID, itemID, "itemLink", quantity, "itemName", "fileName"
+--event:RegisterEvent("OPEN_MASTER_LOOT_LIST")
 
 --LOOT_CLOSED --Firest before lat chat loot event
 --LOOT_OPENED

@@ -20,16 +20,25 @@ end
 
 function ErrorDKP:ConextMenu(menu, xoffset, yoffset)
     local isTrusted = core:CheckSelfTrusted()
+    local isOfficer = core:CheckSelfOfficer()
     local m = {}
-    if not isTrusted then
-        for i,v in ipairs(menu) do
-            if not v.onlyTrusted then
-                tinsert(m, v)
-            end
+
+    for i,v in ipairs(menu) do
+        if (not v.onlyTrusted or v.onlyTrusted and isTrusted) and
+           (not v.onlyOfficer or v.onlyOfficer and isOfficer) then
+            tinsert(m, v)
         end
-    else
-        m = menu
     end
+
+    -- if not isTrusted then
+    --     for i,v in ipairs(menu) do
+    --         if not v.onlyTrusted then
+    --             tinsert(m, v)
+    --         end
+    --     end
+    -- else
+    --     m = menu
+    -- end
 
 
     menuFrame = ErrorDKP:GetContextMenu()

@@ -9,6 +9,7 @@
 local addonName, core = ...
 local ErrorDKP = core.ErrorDKP
 local _L = core._L
+local _C = core.CONSTANTS
 
 
 -------------------------------------------------
@@ -34,16 +35,6 @@ local minimapShapes = {
 	["TRICORNER-BOTTOMRIGHT"] = {true, true, true, false},
 }
 
-local menu = {
-    { text = _L["MINIMAP"]["MENU_SELECT"], isTitle = true, notCheckable = true},
-    { text = _L["MINIMAP"]["MENU_TOGGLE_ERRORDKP"], notCheckable = true, func = function() ErrorDKP:Toggle() end },
-    { text = _L["MINIMAP"]["MENU_ML_VOTE"], notCheckable = true, func = function() ErrorDKP.MLResult:Show() end, onlyTrusted = true },
-    { text = _L["MINIMAP"]["MENU_VERSIONCHECK"], notCheckable = true, func = function() ErrorDKP.VersionCheck:Show() end, onlyTrusted = true },
-    { text = _L["MINIMAP"]["MENU_ITEMCHECK"], notCheckable = true, func = function() ErrorDKP.ItemCheck:Show() end, onlyTrusted = true },
-    { text = _L["MINIMAP"]["MENU_ASSIGNIMPORT"], notCheckable = true, func = function() ErrorDKP.AssignmentImport:ShowFrame(" ") end, onlyTrusted = true },
-    { text = "Resend assignment", notCheckable = true, func = function() ErrorDKP.AssignmentImport:Resend() end, onlyTrusted = true },
-    { text = "Open survey setup", notCheckable = true, func = function() ErrorDKP.MLSetupSurvey:Show() end, onlyTrusted = true }
-}
 
 local function IconMoveButton(self)
 	if self.dragMode == "free" then
@@ -80,10 +71,54 @@ local function IconMoveButton(self)
 	end
 end
 
+local function BuildMenu()
+    return {
+        { text = _L["MINIMAP"]["MENU_SELECT"], isTitle = true, notCheckable = true},
+        { text = _L["MINIMAP"]["MENU_TOGGLE_ERRORDKP"], notCheckable = true, func = function() ErrorDKP:Toggle() end },
+        { text = _L["MINIMAP"]["MENU_VERSIONCHECK"], notCheckable = true, func = function() ErrorDKP.VersionCheck:Show() end, onlyTrusted = true },
+        { text = _L["MINIMAP"]["MENU_ITEMCHECK"], notCheckable = true, func = function() ErrorDKP.ItemCheck:Show() end, onlyTrusted = true },
+
+        { text = "Assignments", isTitle = true, notCheckable = true, onlyTrusted = true},
+        { text = _L["MINIMAP"]["MENU_ASSIGNIMPORT"], notCheckable = true, func = function() ErrorDKP.AssignmentImport:ShowFrame(" ") end, onlyTrusted = true },
+        { text = "Resend assignment", notCheckable = true, func = function() ErrorDKP.AssignmentImport:Resend() end, onlyTrusted = true },
+
+
+        { text = "Loot survey", isTitle = true, notCheckable = true, onlyTrusted = true},
+        { text = _L["MINIMAP"]["MENU_ML_VOTE"], notCheckable = true, func = function() ErrorDKP.MLResult:Show() end, onlyTrusted = true, onlyOfficer = true,
+            disabled = not core:CheckMasterLooter()    
+        },
+        { text = "Open survey setup", notCheckable = true, func = function() ErrorDKP.MLSetupSurvey:Show() end, onlyTrusted = true, onlyOfficer = true,
+            disabled = not core:CheckMasterLooter()
+        },
+        { text = "Loot survey config", isTitle = true, notCheckable = true, onlyTrusted = true},
+        { text = "Auto open Survey-Setup", checked = function() return core.Settings.SurveySetupEnabled end, func = function(self, arg1, arg2 , checked) 
+            core.Settings.SurveySetupEnabled = checked
+            core:PrintDebug(core.Settings.SurveySetupEnabled)
+        end, 
+        onlyTrusted = true, keepShownOnClick = true },
+        { text = "Enable Loottrack", checked = function() return core.Settings.LoottrackEnabled end, func = function(self, arg1, arg2 , checked) 
+            core.Settings.LoottrackEnabled = checked
+            core:PrintDebug(core.Settings.LoottrackEnabled)
+        end, onlyTrusted = true, keepShownOnClick = true },
+        { text = "Track Quality", disabled = false, notCheckable = true, onlyTrusted = true, keepShownOnClick = true,  hasArrow = true, menuList = { 
+                {text = "Track Qualitiy", isTitle = true},
+                {text = ITEM_QUALITY_COLORS[_C.ITEMRARITY.EPIC].hex .. "Epic|r", value = _C.ITEMRARITY.EPIC, checked = function() return core.ISettings.ItemTracking_MinItemQualityToLog == _C.ITEMRARITY.EPIC end, func = RarityMenuClick}, 
+                {text =ITEM_QUALITY_COLORS[_C.ITEMRARITY.RARE].hex .. "Rare|r", value = _C.ITEMRARITY.RARE, checked = function() return core.ISettings.ItemTracking_MinItemQualityToLog == _C.ITEMRARITY.RARE end, func = RarityMenuClick},
+                {text =ITEM_QUALITY_COLORS[_C.ITEMRARITY.UNCOMMON].hex .. "Uncommon|r", value = _C.ITEMRARITY.UNCOMMON, checked = function() return core.ISettings.ItemTracking_MinItemQualityToLog == _C.ITEMRARITY.UNCOMMON end, func = RarityMenuClick} 
+ 
+            } 
+        },
+    }
+end
+
+function RarityMenuClick(self)
+    core.ISettings.ItemTracking_MinItemQualityToLog = self.value
+end
+
 local function MiniMapIconOnClick(self, button)
     if button == "RightButton" then
         core:PrintDebug("MiniMapIconOnClick", button)
-        ErrorDKP:ConextMenu(menu,10,-15)
+        ErrorDKP:ConextMenu(BuildMenu(),10,-15)
     elseif button == "LeftButton" then
         core:PrintDebug("MiniMapIconOnClick", button)
 		ErrorDKP:Toggle()

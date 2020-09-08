@@ -322,3 +322,22 @@ end
 function GNoteDKP:ResetUpdateCycle()
     updateFrame.lastCheck = time()
 end
+
+function GNoteDKP:Reset(updateInfo)
+    if not core:CheckDKPOfficer() then
+        core:Error("Cannot update points you are no DKP-Officer")
+        return
+    end
+
+    local dkpTable = self:GetAll()
+
+    for i,v in ipairs(dkpTable) do
+        self:UpdateNote(v.name, "")
+    end
+
+    if updateInfo then
+        C_Timer.After(5, function() ErrorDKP.GNoteDKP:UpdateDKPInfo() end)
+    end
+
+    core:Print("DKP reset done.")
+end

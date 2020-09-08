@@ -159,8 +159,8 @@ MLResult.DemoSurveyData = {
 	items = {
 		{
             ["index"] = 1,
-            ["name"] = "Nemesis Leggings",
-            ["itemLink"] = "|cffa335ee|Hitem:16930::::::::60:::::::|h[Nemesis Leggings]|h|r",
+            ["name"] = "Arcanist Crown",
+            ["itemLink"] = "|cffa335ee|Hitem:16795::::::::60:::::::|h[Arcanist Crown]|h|r",
             ["quality"] = 4,
 			["icon"] = "Interface\\Icons\\inv_pants_07",
 			["responses"] = {
@@ -182,10 +182,10 @@ MLResult.DemoSurveyData = {
         },
         {
             ["index"] = 3,
-            ["name"] = "Seal of the Archmagus",
-            ["itemLink"] = "|cffa335ee|Hitem:17110::::::::60:::::::|h[Seal of the Archmagus]|h|r",
+            ["name"] = "Mageweave Cloth",
+            ["itemLink"] = "|cffffffff|Hitem:4338::::::::60:::::::|h[Mageweave Cloth]|h|r",
             ["quality"] = 4,
-			["icon"] = "Interface\\Icons\\inv_jewelry_ring_21",
+			["icon"] = "Interface\\Icons\\inv_fabric_mageweave_01",
 			["responses"] = {
 				["Doktorwho"] = { "OFFSPEC", 0, 55 },
 				["Rassputin"] = { "SECOND", 1 },
@@ -209,6 +209,12 @@ MLResult.DemoSurveyData = {
 		},
 		{
 			["name"] = "Rassputin",
+			["classFileName"] = "MAGE",
+			["race"] = "Scourge",
+			["gender"] = "2"
+		},
+		{
+			["name"] = "Repawareff",
 			["classFileName"] = "MAGE",
 			["race"] = "Scourge",
 			["gender"] = "2"
@@ -320,6 +326,7 @@ function MLResult:SwitchItem(i)
 	f.ItemIcon:SetNormalTexture(item.icon)
 	f.ItemName:SetText(item.itemLink)
 	f.GiveLootBtn:SetEnabled(false)
+	f.TakeAllBtn:SetEnabled(false)
 
     -- Set a proper item type text
     local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(item.itemLink)
@@ -433,13 +440,13 @@ function MLResult:CheckResponsesMissing()
 end
 
 function MLResult:CreateFrame()
-	local f = core:CreateDefaultFrame("MLResultFrame", "Result", 310, 480, true, true)
+	local f = core:CreateDefaultFrame("MLResultFrame", _LS["TITLE"], 310, 530, true, true)
 	core.UI.MLResult = f
 
-	local st = ScrollingTable:CreateST(colDef, 16, 20, nil, f)
+	local st = ScrollingTable:CreateST(colDef, 16, 21, nil, f)
 	st:EnableSelection(true)
     f.ScrollingTable = st
-	st.frame:SetPoint("TOPLEFT", f, "TOPLEFT", 22, -100)
+	st.frame:SetPoint("TOPLEFT", f, "TOPLEFT", 22, -130)
 
 	local item = CreateFrame("Button", nil, f)
     item:SetNormalTexture("Interface/ICONS/INV_Misc_QuestionMark")
@@ -494,6 +501,43 @@ function MLResult:CreateFrame()
 	end)
 	giveLootButton:SetEnabled(false)
 	f.GiveLootBtn = giveLootButton
+
+	local takeAllButton = core:CreateButton(f, "TakeAllBtn", "Loot all")
+	takeAllButton:SetPoint("BOTTOMRIGHT", giveLootButton, "TOPRIGHT", 0, 0)
+	takeAllButton:SetScript("OnClick", function()
+		MLResult:TakeAll()
+	end)
+	f.TakeAllBtn = takeAllButton
+
+	local tradeItemButton = core:CreateButton(f, "TradeItem", "TradeItem")
+	tradeItemButton:SetPoint("TOPRIGHT", giveLootButton, "BOTTOMRIGHT", 0, 0)
+	tradeItemButton:SetScript("OnClick", function()
+		local selection = core.UI.MLResult.ScrollingTable:GetSelection()
+		local surveyItem = core.ActiveSurveyData.items[itemIndex]
+		local selectedPlayer = nil
+		if selection then
+			selectedPlayer = core.UI.MLResult.ScrollingTable:GetCell(selection, 3)
+		end
+
+		MLResult:TradeItem(surveyItem.itemLink, selectedPlayer)
+	end)
+	tradeItemButton:SetEnabled(false)
+	f.TradeItemBtn = tradeItemButton
+
+	local addItemToHistBtn = core:CreateButton(f, "AddItemToHistBtn", "Add Item to History")
+	addItemToHistBtn:SetPoint("TOPRIGHT", giveLootButton, "TOPLEFT", 0, 0)
+	addItemToHistBtn:SetScript("OnClick", function()
+		local selection = core.UI.MLResult.ScrollingTable:GetSelection()
+		local surveyItem = core.ActiveSurveyData.items[itemIndex]
+		local selectedPlayer = nil
+		if selection then
+			selectedPlayer = core.UI.MLResult.ScrollingTable:GetCell(selection, 3)
+		end
+
+		ErrorDKP.LootTracker:Show(surveyItem.itemLink, selectedPlayer)
+	end)
+	f.AddItemToHistBtn = addItemToHistBtn
+
 
 	-- Item toggle
 	local itemToggle = CreateFrame("Frame", nil, f)
@@ -559,9 +603,11 @@ function MLResult:CreateFrame()
 						if scrollingTable:GetSelection() == realrow then
 							scrollingTable:ClearSelection();
 							scrollingTable.frame:GetParent().GiveLootBtn:SetEnabled(false)
+							scrollingTable.frame:GetParent().TradeItemBtn:SetEnabled(false)
 						else
 							scrollingTable:SetSelection(realrow);
 							scrollingTable.frame:GetParent().GiveLootBtn:SetEnabled(true)
+							scrollingTable.frame:GetParent().TradeItemBtn:SetEnabled(true)
 						end
 					end
 					return true;
@@ -673,12 +719,46 @@ function MLResult:GetLootSlot(itemLink)
 	end
 end
 
+function MLResult:TakeAll()
+	core:PrintDebug("Loot everything.")
+
+	local itemCount = GetNumLootItems()
+	if itemCount == 0 then 
+		core:Print("Nothing to loot")
+		return 
+	end
+
+	for ci = 1, GetNumGroupMembers() do
+		if (GetMasterLootCandidate(lootFrameIndex, ci) == playerName) then
+
+			StaticPopupDialogs["MLRESULT_GIVELOOT"] = {
+				text = string.format("Do you really want to give %s to player %s", lootSlotItemlink , playerName),
+				button1 = "Yes",
+				button2 = "No",
+				OnAccept = function()
+					GiveMasterLoot(lootFrameIndex, ci);
+					StaticPopup_Hide ("MLRESULT_GIVELOOT")
+				end,
+				OnCancel = function()
+				    StaticPopup_Hide ("MLRESULT_GIVELOOT")
+				end,
+				timeout = 0,
+				whileDead = true,
+				hideOnEscape = true,
+				preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
+				enterClicksFirstButton = true
+			}
+			StaticPopup_Show("MLRESULT_GIVELOOT")
+		end
+   	end
+end
+
 function MLResult:GiveLoot(playerName, itemIndex, lootFrameIndex)
 	
 	local surveyItem = core.ActiveSurveyData.items[itemIndex]
 
 
-	if surveyItem["lfi"]  == 0 then
+	if surveyItem["lfi"] == 0 or surveyItem["lfi"] == nil then
 		core:Print("This item was added from bag and is not distrebutable via Masterlooter.")
 		return
 	end
@@ -705,6 +785,7 @@ function MLResult:GiveLoot(playerName, itemIndex, lootFrameIndex)
 		-- Seems as the Lootwindows was closed in the meantime so call with new index
 		core:PrintDebug("IndemIndex in Lootframe has changed, call MLResult:GiveLoot with fixed index")
 		self:GiveLoot(playerName, itemIndex, foundSlot)
+		return
 	end
 	for ci = 1, GetNumGroupMembers() do
 		if (GetMasterLootCandidate(lootFrameIndex, ci) == playerName) then
@@ -733,3 +814,63 @@ function MLResult:GiveLoot(playerName, itemIndex, lootFrameIndex)
 		end
    	end
 end
+
+local function GetItemBagAndSlot(itemLink)
+	for bag = 0,4 do
+		 for slotIndex=1, GetContainerNumSlots(bag) do
+			local bagItem = GetContainerItemLink(bag,slotIndex)
+			if bagItem == itemLink then
+			    return bag, slotIndex
+			end
+		 end
+	end
+end
+
+local function TradeCallback(partnerName, partnerGuild, itemLink, playerGold, partnerGold, playerItems, partnerItems)
+	core:PrintDebug("TradeCallback", partnerName, partnerGuild, itemLink, playerGold, partnerGold, playerItems, partnerItems)
+	
+	ErrorDKP.LootTracker:Show(itemLink, partnerName, tonumber(partnerGold) > 0)
+end
+
+function MLResult:TradeItem(item, playerName)
+
+	-- Find player
+	local unit = nil
+	local numRaidMembers = GetNumGroupMembers()
+    for i=1, numRaidMembers do
+        if IsInRaid() then
+            name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(i)
+            if name == playerName then
+                unit = string.format("raid%d", i)
+            end
+        elseif IsInGroup() then
+            local name = UnitName(string.format("party%d",i))
+            if name == playerName then
+                unit = string.format("party%d",i)
+            end
+        end
+	end
+	
+	if unit == nil then
+		core:Print("Unit not in Raid/Group")
+		return
+	end
+
+	local bag, slot = GetItemBagAndSlot(item)
+	core:PrintDebug("Item ", item, "in ", bag, slot)
+	--InitiateTrade(unit)
+
+	if bag ~= nil and slot ~= nil then
+		local inRange = CheckInteractDistance(unit, 2) -- Check i unit is in range for trade
+		if inRange then
+			ErrorDKP.Trading:AddSpecificListener(item, function(...) TradeCallback(...) end)
+		    PickupContainerItem(bag, slot)
+			DropItemOnUnit(unit)
+		else
+			core:Print(playerName, "is not in range for trading")
+		end
+	end
+
+	core:PrintDebug("MLResult:TradeItem", "item:", item, "playername:", playerName)
+end
+

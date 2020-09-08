@@ -21,13 +21,13 @@ if GetLocale() == "deDE" then
             COLITEMLINK = "Item",
             COLLOOTER = "Looter",
             COLDKP = "DKP",
-            CHECKBTN_SHOWONLYTODAY = "Nur items von Heute"
+            CHECKBTN_SHOWONLYTODAY = "Nur items der letzten 24h"
         },
         DKPPRICE = "Preis",
         DKPPRICEBIS = "BiS Preis",
         MINIMAP = {
             DESCRLCLICK = "Linke Maustaste - Öffne Fenster",
-            MENU_SELECT = "Wähle aus",
+            MENU_SELECT = "ErrorDKP",
             MENU_TOGGLE_ERRORDKP = "ErrorDKP Ein-/Ausblenden",
             MENU_ML_VOTE = "Lootabstimmung-Ergebnis",
             MENU_VERSIONCHECK = "Versionscheck",

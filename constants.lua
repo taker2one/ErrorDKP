@@ -36,6 +36,7 @@ c.CLASSID_EQDKP = {
 c.IGNORED_ITEMS = {  
     -- Shards
     [20725] = true,     -- Nexus Crystal
+    [18562] = true      -- Elementium ore
 }
 
 core.CONSTANTS = c

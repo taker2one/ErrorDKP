@@ -49,6 +49,7 @@ modules\mrtinterface.lua
 modules\tooltip.lua
 modules\follow.lua
 modules\assignmentimport.lua
+modules\trading.lua
 
 widgets\iconbutton.lua
 # modules\DropDownMenu\DropDownMenuTemplates.xml
