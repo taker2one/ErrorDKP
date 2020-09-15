@@ -8,7 +8,7 @@ local addonName, core = ...
 
 local pricelistInfo = {
     ["version"] = "3.1",
-    ["timestamp"] = "1586263576"
+    ["timestamp"] = "1586263578"
 }
 
 local pricelist = {
@@ -40,7 +40,7 @@ local pricelist = {
 ["21839"] = { price = "250", prio = "" },
 ["21221"] = { price = "100", prio = "Caster, Healer, Hunter" },
 ["20929"] = { price = "50", prio = "" },
-["20933"] = { price = "50", prio = "" },
+["20933"] = { price = "10", prio = "" },
 ["21128"] = { price = "20", prio = "wenns keiner kauft verrollt" },
 ["21698"] = { price = "10", prio = "" },
 ["21699"] = { price = "10", prio = "" },
@@ -413,7 +413,7 @@ local pricelist = {
 ["17077"] = { price = "0", prio = "DKP" },
 ["16839"] = { price = "0", prio = "Heal Schamane" },
 ["18861"] = { price = "0", prio = "Krieger Tank" },
-["16849"] = { price = "30", prio = "Jäger" },
+["16849"] = { price = "0", prio = "Jäger" },
 ["16812"] = { price = "0", prio = "Priester" },
 ["18879"] = { price = "0", prio = "DKP" },
 ["18872"] = { price = "0", prio = "DKP" },

@@ -326,7 +326,7 @@ function MLResult:SwitchItem(i)
 	f.ItemIcon:SetNormalTexture(item.icon)
 	f.ItemName:SetText(item.itemLink)
 	f.GiveLootBtn:SetEnabled(false)
-	f.TakeAllBtn:SetEnabled(false)
+	f.TradeItemBtn:SetEnabled(false)
 
     -- Set a proper item type text
     local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(item.itemLink)
@@ -721,36 +721,50 @@ end
 
 function MLResult:TakeAll()
 	core:PrintDebug("Loot everything.")
-
+	local playerName = UnitName("player")
 	local itemCount = GetNumLootItems()
 	if itemCount == 0 then 
 		core:Print("Nothing to loot")
 		return 
 	end
 
-	for ci = 1, GetNumGroupMembers() do
-		if (GetMasterLootCandidate(lootFrameIndex, ci) == playerName) then
+	StaticPopupDialogs["MLRESULT_GIVELOOT"] = {
+		text = string.format("Do you really want to give %s to player %s", lootName , playerName),
+		button1 = "Yes",
+		button2 = "No",
+		OnAccept = function()
+			MLResult:DoTakeAll();
+			StaticPopup_Hide ("MLRESULT_GIVELOOT")
+		end,
+		OnCancel = function()
+			StaticPopup_Hide ("MLRESULT_GIVELOOT")
+		end,
+		timeout = 0,
+		whileDead = true,
+		hideOnEscape = true,
+		preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
+		enterClicksFirstButton = true
+	}
+	StaticPopup_Show("MLRESULT_GIVELOOT")
+end
 
-			StaticPopupDialogs["MLRESULT_GIVELOOT"] = {
-				text = string.format("Do you really want to give %s to player %s", lootSlotItemlink , playerName),
-				button1 = "Yes",
-				button2 = "No",
-				OnAccept = function()
-					GiveMasterLoot(lootFrameIndex, ci);
-					StaticPopup_Hide ("MLRESULT_GIVELOOT")
-				end,
-				OnCancel = function()
-				    StaticPopup_Hide ("MLRESULT_GIVELOOT")
-				end,
-				timeout = 0,
-				whileDead = true,
-				hideOnEscape = true,
-				preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
-				enterClicksFirstButton = true
-			}
-			StaticPopup_Show("MLRESULT_GIVELOOT")
-		end
-   	end
+function MLResult:DoTakeAll()
+	core:PrintDebug("Loot everything.")
+	local playerName = UnitName("player")
+	local itemCount = GetNumLootItems()
+	if itemCount == 0 then 
+		core:Print("Nothing to loot")
+		return 
+	end
+
+	for slot = 1, itemCount do
+		local lootIcon, lootName, lootQuantity, rarity, locked, isQuestItem, questId, isActive = GetLootSlotInfo(slot);
+		for ci = 1, GetNumGroupMembers() do
+			if (GetMasterLootCandidate(slot, ci) == playerName) then
+				GiveMasterLoot(slot, ci);
+			end
+		   end
+	end
 end
 
 function MLResult:GiveLoot(playerName, itemIndex, lootFrameIndex)
